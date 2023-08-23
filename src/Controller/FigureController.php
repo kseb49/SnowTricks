@@ -17,6 +17,10 @@ class FigureController extends AbstractController
     {
         $figure = new Figures();
         $form = $this->createForm(FigureForm::class, $figure);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            
+        }
         return $this->render('edition/new_figure.html.twig', [
             'figure_form' => $form]);
 

@@ -5,6 +5,13 @@
 {% block body %}
 <div class="container">
  <h1>Création d'une figure </h1>
-    {{ form(figure_form) }}
+    {{ form_start(figure_form) }}
+    {{ form_row(figure_form.name)}}
+    {{ form_row(figure_form.description)}}
+    {{ form_row(figure_form.groups_id)}}
+    {{ form_row(figure_form.images)}}
+    {{ form_row(figure_form.videos)}}
+        <button type="submit" class="btn btn-primary">Créer</button>
+    {{ form_start(figure_form) }}
 </div>
 {% endblock %}
