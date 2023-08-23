@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\FiguresRepository;
+use DateTime;
+use DateTimeZone;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -36,7 +38,7 @@ class Figures
     #[ORM\JoinColumn(name:'groups_id',nullable: false)]
     private ?Groups $groups_id = null;
 
-    #[ORM\ManyToMany(targetEntity: Images::class)]
+    #[ORM\ManyToMany(targetEntity: Images::class,cascade:["persist"])]
     private Collection $images;
 
     public function __construct()
@@ -78,7 +80,7 @@ class Figures
         return $this->creation_date;
     }
 
-    public function setCreationDate(\DateTimeInterface $creation_date): static
+    public function setCreationDate(\DateTimeInterface $creation_date = new DateTime()): static
     {
         $this->creation_date = $creation_date;
 

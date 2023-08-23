@@ -24,7 +24,7 @@ class FiguresRepository extends ServiceEntityRepository
     public function findForHome()
     {
         $conn = $this->getEntityManager()->getConnection();
-        // $entityManager = $this->getEntityManager();
+        $entityManager = $this->getEntityManager();
         $sql = '
         SELECT *,
         f.name as figure,
@@ -37,9 +37,9 @@ class FiguresRepository extends ServiceEntityRepository
         ';
         $result = $conn->executeQuery($sql);
         return $result->fetchAllAssociative();
-        $query = $entityManager->createQuery('SELECT f, u, g from App\Entity\Figures f join f.users_id u join f.groups_id g ORDER BY f.creation_date DESC');
-        dd($query->getResult());
-        return $query->getResult();
+        // $query = $entityManager->createQuery('SELECT f, u, g from App\Entity\Figures f join f.users_id u join f.groups_id g ORDER BY f.creation_date DESC');
+        // dd($query->getResult());
+        // return $query->getResult();
     }
 //    /**
 //     * @return Figures[] Returns an array of Figures objects
