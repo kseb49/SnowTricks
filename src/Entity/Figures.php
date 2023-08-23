@@ -28,15 +28,15 @@ class Figures
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $update_date = null;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?users $users_id = null;
+    #[ORM\ManyToOne(targetEntity:Users::class, inversedBy:'figures')]
+    #[ORM\JoinColumn(name:'users_id',nullable: false)]
+    private ?Users $users_id = null;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?groups $groups_id = null;
+    #[ORM\ManyToOne(targetEntity:Groups::class)]
+    #[ORM\JoinColumn(name:'groups_id',nullable: false)]
+    private ?Groups $groups_id = null;
 
-    #[ORM\ManyToMany(targetEntity: images::class)]
+    #[ORM\ManyToMany(targetEntity: Images::class)]
     private Collection $images;
 
     public function __construct()
@@ -97,24 +97,24 @@ class Figures
         return $this;
     }
 
-    public function getUsersId(): ?users
+    public function getUsersId(): ?Users
     {
         return $this->users_id;
     }
 
-    public function setUsersId(?users $users_id): static
+    public function setUsersId(?Users $users_id): static
     {
         $this->users_id = $users_id;
 
         return $this;
     }
 
-    public function getGroupsId(): ?groups
+    public function getGroupsId(): ?Groups
     {
         return $this->groups_id;
     }
 
-    public function setGroupsId(?groups $groups_id): static
+    public function setGroupsId(?Groups $groups_id): static
     {
         $this->groups_id = $groups_id;
 
@@ -129,7 +129,7 @@ class Figures
         return $this->images;
     }
 
-    public function addImage(images $image): static
+    public function addImage(Images $image): static
     {
         if (!$this->images->contains($image)) {
             $this->images->add($image);
@@ -138,7 +138,7 @@ class Figures
         return $this;
     }
 
-    public function removeImage(images $image): static
+    public function removeImage(Images $image): static
     {
         $this->images->removeElement($image);
 
