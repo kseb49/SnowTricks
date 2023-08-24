@@ -1,69 +1,38 @@
 {% extends 'base.html.twig' %}
 {% block body %}
-<div class="subnav container-fluid">
-    <div class="row">
-        <div class="col-sm">
-            <p>Découvrez un monde de créativité glacée<br>Explorez notre site dédié aux snow tricks et plongez dans l'univers sensationnel des figures sur neige !</p>
+    <div class="subnav container-fluid">
+        <div class="row">
+            <div class="col-sm">
+                <p>Découvrez un monde de créativité glacée<br>Explorez notre site dédié aux snow tricks et plongez dans l'univers sensationnel des figures sur neige !</p>
+            </div>
         </div>
     </div>
-</div>
-<div class="container pt-4">
-{# {% for figures in result | batch(2)%} #}
-    <div class="row">
-        {% for figure in result %}
-            <div class="col-sm">
-                <div class="card" style="width: 18rem;">
-                    <img class="card-img-top" src={{asset('images/card.jpg')}} alt="Card image cap">
-                    <div class="card-body">
-                        <h5 class="card-title">{{figure.figure}}</h5>
-                        <p class="card-text">{{figure.description}}</p>
-                        {% if app.user and app.user.id == figure.users_id %}
-                        <button type="button" class="btn btn-danger m-1">🗑️ Supprimer</button><button type="button" class="btn btn-info ">✍️ Modifier</button>
-                        {% endif %}
-                    </div>
-                     <div class="card-footer text-muted">
-                       Ajouté le {{figure.creation_date |date("d/m/y")}} par @{{figure.username}}
-                    {% if figure.update_date %}
-                       Dèrnière mise à jour le {{figure.update_date |date("d/m/y")}}
-                    {% endif %}
+    <div class="container pt-4">
+        {% for figures in result | batch(3)%}
+            <div class="row">
+                {% for key, figure in figures %}
+                    <div class="col-sm">
+                        <div class="card" style="width: 18rem;">
+                            <img class="card-img-top" src={{asset('images/card.jpg')}} alt="Card image cap">
+                            <div class="card-body">
+                                <h5 class="card-title text-capitalize">{{figure[0].name}}</h5>
+                                 <h6 class="card-subtitle mb-2 text-muted">{{figure[0].groups_id.group_name}}</h6>
+                                <p class="card-text">{{figure.descr}}...</p>
+                                {% if app.user.id == figure[0].users_id.id %}
+                                <button type="button" class="btn btn-danger m-1 btn-sm">🗑️ Supprimer</button><button type="button" class="btn btn-info btn-sm">✍️ Modifier</button>
+                                {% endif %}
+                            </div>
+                            <div class="card-footer text-muted">
+                            Ajouté le {{figure[0].creation_date |date("d/m/y")}} par @{{figure[0].users_id.name}}
+                            {% if figure[0].update_date %}
+                            Dèrnière mise à jour le {{figure[0].update_date | date("d/m/y")}}
+                            {% endif %}
 
+                            </div>
+                        </div>
                     </div>
-                </div>
+                {% endfor %}
             </div>
         {% endfor %}
     </div>
-{# {% endfor %} #}
-        {# <div class="col-sm">
-            <div class="card" style="width: 18rem;">
-                <img class="card-img-top" src={{asset('images/card.jpg')}} alt="Card image cap">
-                <div class="card-body">
-                    <h5 class="card-title">style week</h5>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                    <button type="button" class="btn btn-danger m-1">🗑️ Supprimer</button><button type="button" class="btn btn-info ">✍️ Modifier</button>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm">
-            <div class="card" style="width: 18rem;"> #}
-                    {# <div class="card-header">
-                        <ul class="nav nav-tabs card-header-tabs">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="#">✍️</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">🗑️</a>
-                        </li>
-                        
-                        </ul>
-                    </div> #}
-                {# <img class="card-img-top" src={{asset('images/card.jpg')}} alt="Card image cap">
-                <div class="card-body">
-                    <h5 class="card-title">mute</h5>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                    <button type="button" class="btn btn-danger m-1">🗑️ Supprimer</button><button type="button" class="btn btn-info ">✍️ Modifier</button>
-                </div> #}
-            {# </div> #}
-        {# </div> #}
-    {# </div> #}
-</div>
 {% endblock %}

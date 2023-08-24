@@ -23,23 +23,39 @@ class FiguresRepository extends ServiceEntityRepository
 
     public function findForHome()
     {
-        $conn = $this->getEntityManager()->getConnection();
+        
+        /******* */
+        // $conn = $this->getEntityManager()->getConnection();
+        // $sql = '
+        // SELECT *,
+        // f.name as figure,
+        // u.name AS username,
+        // SUBSTRING(f.description,100)
+        // FROM figures f
+        // left join users u on u.id = f.users_id
+        // JOIN `groups` g on g.id = f.groups_id
+        // ORDER BY creation_date DESC
+        // ';
+        // $result = $conn->executeQuery($sql);
+        // return $result->fetchAllAssociative();
+
+        /******* */
         $entityManager = $this->getEntityManager();
-        $sql = '
-        SELECT *,
-        f.name as figure,
-        u.name AS username,
-        SUBSTRING(f.description,100)
-        FROM figures f
-        left join users u on u.id = f.users_id
-        JOIN `groups` g on g.id = f.groups_id
-        ORDER BY creation_date DESC
-        ';
-        $result = $conn->executeQuery($sql);
-        return $result->fetchAllAssociative();
-        // $query = $entityManager->createQuery('SELECT f, u, g from App\Entity\Figures f join f.users_id u join f.groups_id g ORDER BY f.creation_date DESC');
+        $query = $entityManager->createQuery('
+        SELECT f,SUBSTRING(f.description,1,50) descr, u, g from App\Entity\Figures f
+         join f.users_id u 
+         join f.groups_id g 
+         ORDER BY f.creation_date DESC');
+        $query->getResult();
         // dd($query->getResult());
-        // return $query->getResult();
+        return $query->getResult();
+
+        // $qb = $this->createQueryBuilder('f')
+        // ->addSelect('u')
+        // ->addSelect('g')
+        // ->join('f.users_id')
+
+
     }
 //    /**
 //     * @return Figures[] Returns an array of Figures objects

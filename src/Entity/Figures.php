@@ -4,7 +4,6 @@ namespace App\Entity;
 
 use App\Repository\FiguresRepository;
 use DateTime;
-use DateTimeZone;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -44,6 +43,8 @@ class Figures
     public function __construct()
     {
         $this->images = new ArrayCollection();
+        $this->creation_date = new DateTime();
+        $this->update_date = null;
     }
 
     public function getId(): ?int
@@ -75,7 +76,7 @@ class Figures
         return $this;
     }
 
-    public function getCreationDate(): ?\DateTimeInterface
+    public function getcreation_date(): ?\DateTimeInterface
     {
         return $this->creation_date;
     }
@@ -87,7 +88,7 @@ class Figures
         return $this;
     }
 
-    public function getUpdateDate(): ?\DateTimeInterface
+    public function getupdate_date(): ?\DateTimeInterface
     {
         return $this->update_date;
     }
@@ -99,7 +100,7 @@ class Figures
         return $this;
     }
 
-    public function getUsersId(): ?Users
+    public function getusers_id(): ?Users
     {
         return $this->users_id;
     }
@@ -111,7 +112,7 @@ class Figures
         return $this;
     }
 
-    public function getGroupsId(): ?Groups
+    public function getgroups_id(): ?Groups
     {
         return $this->groups_id;
     }
