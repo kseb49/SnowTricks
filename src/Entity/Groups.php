@@ -22,7 +22,7 @@ class Groups
         return $this->id;
     }
 
-    public function getgroup_name(): ?string
+    public function getGroupName(): ?string
     {
         return $this->group_name;
     }

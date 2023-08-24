@@ -12,8 +12,15 @@ class HomeController extends AbstractController
     #[Route('/', name: 'home')]
     public function index(FiguresRepository $figures): Response
     {
-        $result = $figures->findForHome();
-        // dd($result);
-        return $this->render('home/index.html.twig',['result' => $result]);
+
+        $res = $figures->findBy([],['creation_date' => 'desc']);
+        // Get truncated description with specified width
+        foreach ($res as $key => $value) {
+            $shortDesc[] = [$value->getName() => mb_strimwidth($value->getDescription(),0,75,'...')];
+        }
+        return $this->render('home/index.html.twig',['result' => $figures->findBy([],['creation_date' => 'desc']), 'short_desc' => $shortDesc]);
+
     }
+
+
 }

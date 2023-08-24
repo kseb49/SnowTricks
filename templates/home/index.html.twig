@@ -15,17 +15,23 @@
                         <div class="card" style="width: 18rem;">
                             <img class="card-img-top" src={{asset('images/card.jpg')}} alt="Card image cap">
                             <div class="card-body">
-                                <h5 class="card-title text-capitalize">{{figure[0].name}}</h5>
-                                 <h6 class="card-subtitle mb-2 text-muted">{{figure[0].groups_id.group_name}}</h6>
-                                <p class="card-text">{{figure.descr}}...</p>
-                                {% if app.user.id == figure[0].users_id.id %}
+                                <h5 class="card-title text-capitalize">{{figure.name}}</h5>
+                                 <h6 class="card-subtitle mb-2 text-muted">{{figure.GroupsId.GroupName}}</h6>
+                                 {% for desc in short_desc %}
+                                    {% for keys, short_d in desc %}
+                                        {% if figure.name == keys %}
+                                              <p class="card-text">{{short_d}}</p>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                                {% if app.user and app.user.id == figure.UsersId.id %}
                                 <button type="button" class="btn btn-danger m-1 btn-sm">🗑️ Supprimer</button><button type="button" class="btn btn-info btn-sm">✍️ Modifier</button>
                                 {% endif %}
                             </div>
                             <div class="card-footer text-muted">
-                            Ajouté le {{figure[0].creation_date |date("d/m/y")}} par @{{figure[0].users_id.name}}
-                            {% if figure[0].update_date %}
-                            Dèrnière mise à jour le {{figure[0].update_date | date("d/m/y")}}
+                            Ajouté le {{figure.CreationDate |date("d/m/y")}} par @{{figure.UsersId.name}}
+                            {% if figure.UpdateDate %}
+                            Dèrnière mise à jour le {{figure.update_date | date("d/m/y")}}
                             {% endif %}
 
                             </div>

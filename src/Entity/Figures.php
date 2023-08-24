@@ -76,7 +76,7 @@ class Figures
         return $this;
     }
 
-    public function getcreation_date(): ?\DateTimeInterface
+    public function getCreationDate(): ?\DateTimeInterface
     {
         return $this->creation_date;
     }
@@ -88,7 +88,7 @@ class Figures
         return $this;
     }
 
-    public function getupdate_date(): ?\DateTimeInterface
+    public function getUpdateDate(): ?\DateTimeInterface
     {
         return $this->update_date;
     }
@@ -100,7 +100,7 @@ class Figures
         return $this;
     }
 
-    public function getusers_id(): ?Users
+    public function getUsersId(): ?Users
     {
         return $this->users_id;
     }
@@ -112,7 +112,7 @@ class Figures
         return $this;
     }
 
-    public function getgroups_id(): ?Groups
+    public function getGroupsId(): ?Groups
     {
         return $this->groups_id;
     }
