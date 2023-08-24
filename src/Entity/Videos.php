@@ -2,10 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\VideosRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\VideosRepository;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: VideosRepository::class)]
+#[UniqueEntity(fields: ['src'], message: 'Cette vidéo est déjà utilisée')]
 class Videos
 {
     #[ORM\Id]
@@ -14,10 +17,11 @@ class Videos
     private ?int $id = null;
 
     #[ORM\Column(length: 255, unique: true)]
+    #[Assert\NotBlank]
     private ?string $src = null;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity:Figures::class, inversedBy:'videos')]
+    #[ORM\JoinColumn(name: 'figures_id')]
     private ?figures $figures_id = null;
 
     public function getId(): ?int

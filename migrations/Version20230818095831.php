@@ -32,8 +32,8 @@ final class Version20230818095831 extends AbstractMigration
         $this->addSql('ALTER TABLE figures ADD CONSTRAINT FK_ABF1009A2EE7F9F3 FOREIGN KEY (groups_id) REFERENCES `groups` (id)');
         $this->addSql('ALTER TABLE figures_images ADD CONSTRAINT FK_BDAA97725C7F3A37 FOREIGN KEY (figures_id) REFERENCES figures (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE figures_images ADD CONSTRAINT FK_BDAA9772D44F05E5 FOREIGN KEY (images_id) REFERENCES images (id) ON DELETE CASCADE');
-        $this->addSql('ALTER TABLE messages ADD CONSTRAINT FK_DB021E9698333A1E FOREIGN KEY (users_id) REFERENCES users (id)');
-        $this->addSql('ALTER TABLE videos ADD CONSTRAINT FK_29AA6432A27684AD FOREIGN KEY (figures_id) REFERENCES figures (id)');
+        $this->addSql('ALTER TABLE messages ADD CONSTRAINT FK_DB021E9698333A1E FOREIGN KEY (users_id) REFERENCES users (id) ON DELETE CASCADE');
+        $this->addSql('ALTER TABLE videos ADD CONSTRAINT FK_29AA6432A27684AD FOREIGN KEY (figures_id) REFERENCES figures (id) ON DELETE CASCADE');
     }
 
     public function down(Schema $schema): void

@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Validator\Constraints\All;
 
 class FigureForm extends AbstractType 
@@ -29,7 +30,7 @@ class FigureForm extends AbstractType
             'choice_label' => 'group_name',
             'label' => 'A quel groupe appartient ce trick?',
             'required' => true])
-        ->add('videos', TextType::class,['mapped' => false,'label' => 'Liens vers des vidéos you tube',])
+        ->add('videos', UrlType::class,['mapped' => false,'label' => 'Liens vers des vidéos you tube',])
         ->add('images', FileType::class,[
             'mapped' => false,
             'help' => 'Une ou plusieurs images pour illustrer la figure',

@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Figures;
 use App\Entity\Images;
+use App\Entity\Videos;
 use App\Form\FigureForm;
 use App\Service\ImageUploader;
 use Doctrine\ORM\EntityManagerInterface;
@@ -42,6 +43,9 @@ class FigureController extends AbstractController
                 $figure->setCreationDate();
                 $figure->setUsersId($this->getUser());
                 $figure->setGroupsId($form->get('groups_id')->getData());
+                $videos = new Videos;
+                $videos->setSrc($form->get('videos')->getData());
+                $videos->setFiguresId($form->get('videos')->getData());
                 $entityManager->persist($figure);
                 $entityManager->flush();
             }
