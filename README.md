@@ -1,1 +1,2 @@
 # SnowTricks
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/383f44a9ae874cd2bfb1af4c0c20654d)](https://app.codacy.com/gh/kseb49/SnowTricks/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
