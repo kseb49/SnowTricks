@@ -6,7 +6,6 @@ use App\Entity\Figures;
 use App\Entity\Images;
 use App\Entity\Videos;
 use App\Form\FigureForm;
-use App\Repository\FiguresRepository;
 use App\Service\ImageUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,7 +18,11 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 #[Route('/figures',name:'figures')]
 class FigureController extends AbstractController 
 {
-
+    
+    /**
+     * The default image
+     */
+    const DEFAULT_IMG = "snow_board.jpeg";
 
     
     #[Route('/{slug}', name:'details')]
@@ -65,6 +68,11 @@ class FigureController extends AbstractController
                     }
                 }
             }
+            else {
+                $picture = new Images;
+                $picture->setImageName(self::DEFAULT_IMG);
+                $figure->addImage($picture);
+            }
                 $figure->setName($form->get('name')->getData());
                 $figure->setSlug(strtolower($slugger->slug($form->get('name')->getData())));
                 $figure->setDescription($form->get('description')->getData());
@@ -76,6 +84,8 @@ class FigureController extends AbstractController
                 $figure->addVideos($videos);
                 $entityManager->persist($figure);
                 $entityManager->flush();
+
+                return $this->redirectToRoute('home',['success' => 'La figure est en ligne 😊']);
             }
         return $this->render('edition/new_figure.html.twig', [
             'figure_form' => $form]);
@@ -93,5 +103,18 @@ class FigureController extends AbstractController
     // {
 
     // }
+
+
+    #[Route('/delete/{id}')]
+    /**
+     * Delete a trick
+     *
+     * @param Figures $figures
+     * @return Response
+     */
+    public function delete(Figures $figures) :Response
+    {
+
+    }
 
 }

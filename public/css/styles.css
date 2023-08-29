@@ -622,7 +622,7 @@ progress {
   background-color: #fff;
   border: 1px solid var(--bs-border-color);
   border-radius: 0.375rem;
-  max-width: 25%;
+  max-width: 100%;
   height: auto;
   margin-bottom: 2rem;
  }

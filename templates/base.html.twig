@@ -51,6 +51,9 @@
             </div>
         </nav>
 {% endblock %}
+        {% if success is defined %}
+            {% block message %}{% include 'layout/message.html.twig' %}{% endblock %}
+        {% endif %}
         {% block body %}{% endblock %}
     </body>
         {% block footer %}
