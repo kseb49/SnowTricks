@@ -13,14 +13,18 @@
                 {% for key, figure in figures %}
                     <div class="col-sm">
                         <div class="card" style="width: 18rem;">
-                            <img class="card-img-top" src={{asset('images/card.jpg')}} alt="Card image cap">
+                            {% for image in figure.images %}
+                                {% if loop.first %}
+                                    <img class="card-img-top" src={{asset('images/figures/')}}{{image.ImageName}} alt="Card image cap">
+                                {% endif %}
+                            {% endfor %}
                             <div class="card-body">
                                 <h5 class="card-title text-capitalize">{{figure.name}}</h5>
-                                 <h6 class="card-subtitle mb-2 text-muted">{{figure.GroupsId.GroupName}}</h6>
+                                <h6 class="card-subtitle mb-2 text-muted">{{figure.GroupsId.GroupName}}</h6>
                                 {% for desc in short_desc %}
                                     {% for keys, short_d in desc %}
                                         {% if figure.name == keys %}
-                                              <p class="card-text">{{short_d}}</p>
+                                            <p class="card-text">{{short_d}}</p><a href="{{path('figuresdetails', {slug : figure.slug})}}">voir plus</a>
                                         {% endif %}
                                     {% endfor %}
                                 {% endfor %}

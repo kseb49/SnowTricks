@@ -21,8 +21,15 @@ class FigureController extends AbstractController
 {
 
 
+    
     #[Route('/{slug}', name:'details')]
-    public function details(FiguresRepository $figures) :Response
+    /**
+     * Page of a single trick
+     *
+     * @param Figures $figures 
+     * @return Response
+     */
+    public function details(Figures $figures) :Response
     {
         return $this->render('details.html.twig', [
             'figures' => $figures]);
@@ -30,6 +37,15 @@ class FigureController extends AbstractController
 
 
     #[Route('/creation-figure', name:'creation', priority: 1)]
+    /**
+     * Create a trick page
+     *
+     * @param Request $request
+     * @param EntityManagerInterface $entityManager
+     * @param ImageUploader $upload
+     * @param SluggerInterface $slugger
+     * @return Response
+     */
     public function create (Request $request, EntityManagerInterface $entityManager,ImageUploader $upload, SluggerInterface $slugger) :Response
     {
         $figure = new Figures();
@@ -65,5 +81,17 @@ class FigureController extends AbstractController
             'figure_form' => $form]);
 
     }
+
+    // #[Route('/edit/{id}')]
+    // /**
+    //  * Edit a trick
+    //  *
+    //  * @param Figures $figures
+    //  * @return Response
+    //  */
+    // public function edit(Figures $figures) :Response
+    // {
+
+    // }
 
 }

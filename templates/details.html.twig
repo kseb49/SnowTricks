@@ -1,6 +1,50 @@
 {% extends 'base.html.twig' %}
 {% block body %}
-    <div class="container">
-        <img src={{ figures.images }} alt="" class="img-fluid">
+    <div class="container"> 
+        <h1 class="text-center m-5">{{ figures.name }}</h1>
+        {% if app.user %}
+            <div class="btn-group" role="group" aria-label="Suppression ou édition">
+                <a  href="" type="button" class="btn btn-danger btn-sm m-1">🗑️</a>
+                <a  href="" type="button" class="btn btn-info btn-sm m-1">✍️</a>
+            </div>
+            {% endif %}
+          <p>
+          Ajouté le {{figures.CreationDate |date("d/m/y")}} par @{{figures.UsersId.name}}<br>
+            {% if figures.UpdateDate %}
+            Dèrnière mise à jour le {{figures.update_date | date("d/m/y")}}
+            {% endif %}
+            </p>
+        {# <p>{{ figures.CreationDate |date("d/m/y")}}</p> #}
+    {% for image in figures.images %}
+        {% if loop.first %}
+            <div class="row">
+                <div class="col">
+                     <img src={{asset('images/figures/')}}{{image.ImageName}} alt="" class="img-fluid">
+                </div>
+            </div>
+            <div class="row">
+        {% else %}
+            <div class="col">
+                <img src={{asset('images/figures/')}}{{image.ImageName}} alt="" class="img-thumbnail">
+            </div>
+            {% endif %}
+        {% endfor %}
+            </div>
+        {% for video in figures.videos %}
+            {% if loop.first %}
+                <div class="embed-responsive embed-responsive-16by9">
+            {% endif %}
+                <iframe class="embed-responsive-item" src={{video.src}} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"allowfullscreen></iframe>
+                {% if loop.last %}
+                     </div>
+                {% endif %}
+        {% endfor %}
+           
+        <p class="text-justify p-2 desc">{{ figures.description}}</p>
+        <p class="text-right">{{ figures.UsersId.name}}</p>
+        
+       
+        
     </div>
+
 {% endblock %}
