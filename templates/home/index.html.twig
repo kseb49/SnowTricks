@@ -17,7 +17,7 @@
                             <div class="card-body">
                                 <h5 class="card-title text-capitalize">{{figure.name}}</h5>
                                  <h6 class="card-subtitle mb-2 text-muted">{{figure.GroupsId.GroupName}}</h6>
-                                 {% for desc in short_desc %}
+                                {% for desc in short_desc %}
                                     {% for keys, short_d in desc %}
                                         {% if figure.name == keys %}
                                               <p class="card-text">{{short_d}}</p>

@@ -6,6 +6,7 @@ use App\Entity\Figures;
 use App\Entity\Images;
 use App\Entity\Videos;
 use App\Form\FigureForm;
+use App\Repository\FiguresRepository;
 use App\Service\ImageUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,13 +14,23 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/figures',name:'figures')]
 class FigureController extends AbstractController 
 {
 
-    #[Route('/creation-figure', name:'creation')]
-    public function create (Request $request, EntityManagerInterface $entityManager,ImageUploader $upload) :Response
+
+    #[Route('/{slug}', name:'details')]
+    public function details(FiguresRepository $figures) :Response
+    {
+        return $this->render('details.html.twig', [
+            'figures' => $figures]);
+    }
+
+
+    #[Route('/creation-figure', name:'creation', priority: 1)]
+    public function create (Request $request, EntityManagerInterface $entityManager,ImageUploader $upload, SluggerInterface $slugger) :Response
     {
         $figure = new Figures();
         $form = $this->createForm(FigureForm::class, $figure);
@@ -39,13 +50,14 @@ class FigureController extends AbstractController
                 }
             }
                 $figure->setName($form->get('name')->getData());
+                $figure->setSlug(strtolower($slugger->slug($form->get('name')->getData())));
                 $figure->setDescription($form->get('description')->getData());
                 $figure->setCreationDate();
                 $figure->setUsersId($this->getUser());
                 $figure->setGroupsId($form->get('groups_id')->getData());
                 $videos = new Videos;
                 $videos->setSrc($form->get('videos')->getData());
-                $videos->setFiguresId($form->get('videos')->getData());
+                $figure->addVideos($videos);
                 $entityManager->persist($figure);
                 $entityManager->flush();
             }

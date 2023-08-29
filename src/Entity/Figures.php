@@ -27,12 +27,15 @@ class Figures
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank]
     private ?string $description = null;
-
+    
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $creation_date = null;
-
+    
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $update_date = null;
+    
+    #[ORM\Column(length: 100)]
+    private ?string $slug = null;
 
     #[ORM\ManyToOne(targetEntity:Users::class, inversedBy:'figures')]
     #[ORM\JoinColumn(name:'users_id',nullable: false)]
@@ -42,11 +45,12 @@ class Figures
     #[ORM\JoinColumn(name:'groups_id',nullable: false)]
     private ?Groups $groups_id = null;
 
-    #[ORM\OneToMany(targetEntity:Videos::class, mappedBy:'figures_id')]
+    #[ORM\ManyToMany(targetEntity:Videos::class, cascade:["persist"])]
     private Collection $videos;
 
-    #[ORM\ManyToMany(targetEntity: Images::class,cascade:["persist"])]
+    #[ORM\ManyToMany(targetEntity: Images::class, cascade:["persist"])]
     private Collection $images;
+
 
     public function __construct()
     {
@@ -59,6 +63,24 @@ class Figures
     public function getVideos(): Collection
     {
         return $this->videos;
+    }
+
+
+    public function addVideos(Videos $videos): static
+    {
+        if (!$this->videos->contains($videos)) {
+            $this->videos->add($videos);
+        }
+
+        return $this;
+    }
+
+
+    public function removeVideos(Images $videos): static
+    {
+        $this->videos->removeElement($videos);
+
+        return $this;
     }
 
 
@@ -159,6 +181,18 @@ class Figures
     public function removeImage(Images $image): static
     {
         $this->images->removeElement($image);
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): static
+    {
+        $this->slug = $slug;
 
         return $this;
     }
