@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Users;
 use App\Form\RegistrationFormType;
 use App\Security\UsersAuthenticator;
+use App\Service\ImageUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,7 +19,7 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 class RegistrationController extends AbstractController //https://symfony.com/doc/current/forms.html#processing-forms
 {
     #[Route('/inscription', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, UserAuthenticatorInterface $userAuthenticator, UsersAuthenticator $authenticator, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
+    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, UserAuthenticatorInterface $userAuthenticator, UsersAuthenticator $authenticator, EntityManagerInterface $entityManager, ImageUploader $fileUploader): Response
     {
 
         $user = new Users();
@@ -27,17 +28,15 @@ class RegistrationController extends AbstractController //https://symfony.com/do
         if ($form->isSubmitted() && $form->isValid()) {
             $photo = $form->get('photo')->getData();
             if ($photo) {
-                $photo_name = preg_replace("#[0-9]#", "", pathinfo($photo->getClientOriginalName(),PATHINFO_FILENAME));
-                $safeFilename = $slugger->slug($photo_name);
-                $new_photo_name =  $safeFilename.'-'.uniqid().$photo->guessExtension();
                 try {
-                    $photo->move($this->getParameter('avatars_directory'),$new_photo_name);
+                    $photo_name = $fileUploader->upload($photo,'avatars_directory');
+
                 } catch (FileException $e) {
                     return $this->redirectToRoute('app_register',["error" => $e]);
+
                 }
-                // updates the 'brochureFilename' property to store the PDF file name
-                // instead of its contents
-                $user->setPhoto($new_photo_name);
+                $user->setPhoto($photo_name);
+
             }
             else {
                 $user->setPhoto();

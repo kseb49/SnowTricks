@@ -614,16 +614,18 @@ progress {
 .img-fluid {
   max-width: 100%;
   height: auto;
-}
+  margin-bottom: 2rem;
+ }
 
 .img-thumbnail {
   padding: 0.25rem;
   background-color: #fff;
   border: 1px solid var(--bs-border-color);
   border-radius: 0.375rem;
-  max-width: 100%;
+  max-width: 25%;
   height: auto;
-}
+  margin-bottom: 2rem;
+ }
 
 .figure {
   display: inline-block;
@@ -3307,6 +3309,12 @@ textarea.form-control-lg {
   text-align: center;
   font-family: 'Snowburst One', cursive;
   font-weight: bold;
+}
+.desc{
+  /* font-family: 'Snowburst One', cursive; */
+  background-color: rgba(131, 149, 167,0.2);
+  border-radius: 2%;
+  margin-top: 2rem;
 }
 @media (min-width: 576px) {
   .dropdown-menu-sm-start {

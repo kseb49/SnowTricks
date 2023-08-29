@@ -2,13 +2,17 @@
 
 namespace App\Entity;
 
-use App\Repository\FiguresRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use DateTime;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\FiguresRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: FiguresRepository::class)]
+#[UniqueEntity(fields: ['name'], message: 'Cette figure existe déjà')]
 class Figures
 {
     #[ORM\Id]
@@ -16,17 +20,22 @@ class Figures
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 100)]
+    #[ORM\Column(length: 100, unique:true)]
+    #[Assert\NotBlank]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\NotBlank]
     private ?string $description = null;
-
+    
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $creation_date = null;
-
+    
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $update_date = null;
+    
+    #[ORM\Column(length: 100)]
+    private ?string $slug = null;
 
     #[ORM\ManyToOne(targetEntity:Users::class, inversedBy:'figures')]
     #[ORM\JoinColumn(name:'users_id',nullable: false)]
@@ -36,13 +45,44 @@ class Figures
     #[ORM\JoinColumn(name:'groups_id',nullable: false)]
     private ?Groups $groups_id = null;
 
-    #[ORM\ManyToMany(targetEntity: Images::class)]
+    #[ORM\ManyToMany(targetEntity:Videos::class, cascade:["persist"])]
+    private Collection $videos;
+
+    #[ORM\ManyToMany(targetEntity: Images::class, cascade:["persist"])]
     private Collection $images;
+
 
     public function __construct()
     {
         $this->images = new ArrayCollection();
+        $this->videos = new ArrayCollection();
+        $this->creation_date = new DateTime();
+        $this->update_date = null;
     }
+
+    public function getVideos(): Collection
+    {
+        return $this->videos;
+    }
+
+
+    public function addVideos(Videos $videos): static
+    {
+        if (!$this->videos->contains($videos)) {
+            $this->videos->add($videos);
+        }
+
+        return $this;
+    }
+
+
+    public function removeVideos(Images $videos): static
+    {
+        $this->videos->removeElement($videos);
+
+        return $this;
+    }
+
 
     public function getId(): ?int
     {
@@ -78,7 +118,7 @@ class Figures
         return $this->creation_date;
     }
 
-    public function setCreationDate(\DateTimeInterface $creation_date): static
+    public function setCreationDate(\DateTimeInterface $creation_date = new DateTime()): static
     {
         $this->creation_date = $creation_date;
 
@@ -141,6 +181,18 @@ class Figures
     public function removeImage(Images $image): static
     {
         $this->images->removeElement($image);
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): static
+    {
+        $this->slug = $slug;
 
         return $this;
     }
