@@ -1,10 +1,12 @@
 {% extends 'base.html.twig' %}
 {% block body %}
     <div class="container"> 
+    {% include 'utils/deletemodal.html.twig' with {'key' : '', 'name' : figures.name} %}
         <h1 class="text-center m-5">{{ figures.name }}</h1>
         {% if app.user %}
             <div class="btn-group" role="group" aria-label="Suppression ou édition">
-                <a  href="" type="button" class="btn btn-danger btn-sm m-1">🗑️</a>
+                <a  href={{ path('figuresdelete',{id : figures.id}) }} type="button" class="btn btn-danger m-1 btn-sm" data-toggle="modal" data-target="#deleteModal">🗑️</button>
+                {# <a  href={{ path('figuresdelete',{id : figures.id}) }} type="button" class="btn btn-danger btn-sm m-1">🗑️</a> #}
                 <a  href="" type="button" class="btn btn-info btn-sm m-1">✍️</a>
             </div>
             {% endif %}
