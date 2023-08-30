@@ -13,7 +13,10 @@
         {% endblock %}
         <title>{% block title %}Snow Tricks{% endblock %}</title>
         {% block javascripts %}
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+            {# <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script> #}
+            <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+            <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
             <script src={{asset('js/scripts.js')}}></script>
         {% endblock %}
     </head>
@@ -29,13 +32,13 @@
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href={{ path('app_logout') }}>Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href={#{{ path('details')}}#}>Tricks</a></li>
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href={{ path('home') }}>Home</a></li>
+                        {# <li class="nav-item"><a class="nav-link" href={{ path('details')}}>Tricks</a></li> #}
                         {% if app.user %}
                         <li class="nav-item"><a class="nav-link" href={{ path('app_logout') }}>Log out</a></li>
                         {% else %}
                         <li class="nav-item"><a class="nav-link" href={{ path('app_login') }}>Log in</a></li>
-                        <li class="nav-item"><a class="nav-link" href={{path("app_register")}}>Sign up</a></li>
+                        <li class="nav-item"><a class="nav-link" href={{ path("app_register") }}>Sign up</a></li>
                         {% endif %}
                         {# <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Dropdown</a>
@@ -51,9 +54,10 @@
             </div>
         </nav>
 {% endblock %}
-        {% if success is defined %}
-            {% block message %}{% include 'layout/message.html.twig' %}{% endblock %}
-        {% endif %}
+        {# {% if success is defined %} #}
+            {% block message %}{% include 'utils/message.html.twig' %}{% endblock %}
+            {# {% block modal %}{% include 'layout/modal.html.twig' %} #}
+        {# {% endif %} #}
         {% block body %}{% endblock %}
     </body>
         {% block footer %}

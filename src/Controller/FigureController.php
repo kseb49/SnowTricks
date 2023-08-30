@@ -34,12 +34,16 @@ class FigureController extends AbstractController
      */
     public function details(Figures $figures) :Response
     {
+        if (!$figures) {
+            $this->addFlash('danger', "Cette figure n'existe pas");
+            return $this->redirectToRoute('home');
+        }
         return $this->render('details.html.twig', [
             'figures' => $figures]);
     }
 
 
-    #[Route('/creation-figure', name:'creation', priority: 1)]
+    #[Route('/creation-figure', name:'create', priority: 1)]
     /**
      * Create a trick page
      *
@@ -49,7 +53,7 @@ class FigureController extends AbstractController
      * @param SluggerInterface $slugger
      * @return Response
      */
-    public function create (Request $request, EntityManagerInterface $entityManager,ImageUploader $upload, SluggerInterface $slugger) :Response
+    public function create(Request $request, EntityManagerInterface $entityManager,ImageUploader $upload, SluggerInterface $slugger) :Response
     {
         $figure = new Figures();
         $form = $this->createForm(FigureForm::class, $figure);
@@ -84,9 +88,11 @@ class FigureController extends AbstractController
                 $figure->addVideos($videos);
                 $entityManager->persist($figure);
                 $entityManager->flush();
+                $this->addFlash('success', "La figure est en ligne 😊");
+                return $this->redirectToRoute('home');
 
-                return $this->redirectToRoute('home',['success' => 'La figure est en ligne 😊']);
             }
+
         return $this->render('edition/new_figure.html.twig', [
             'figure_form' => $form]);
 
@@ -105,16 +111,25 @@ class FigureController extends AbstractController
     // }
 
 
-    #[Route('/delete/{id}')]
+    #[Route('/suppression/{id}', name:'delete')]
     /**
      * Delete a trick
      *
      * @param Figures $figures
+     * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function delete(Figures $figures) :Response
+    public function delete(Figures $figures, EntityManagerInterface $entityManager) :Response
     {
+        if (!$figures) {
+            $this->addFlash('danger', "Cette figure n'existe pas");
+            return $this->redirectToRoute('home');
+        }
 
+        $entityManager->remove($figures);
+        $entityManager->flush();
+        $this->addFlash('success', "Suppression réussit 😊");
+        return $this->redirectToRoute('home');
     }
 
 }
