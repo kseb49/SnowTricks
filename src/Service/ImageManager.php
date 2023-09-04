@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 
-class ImageUploader
+class ImageManager
 {
 
     public function __construct(
@@ -27,6 +27,17 @@ class ImageUploader
         $new_photo_name =  $safeFilename.'-'.uniqid().'.'.$image->guessExtension();
         $image->move($this->getTargetDirectory()->get($targetDir),$new_photo_name);
         return $new_photo_name;
+
+    }
+
+
+    public function delete(string $targetDir, string $path) :bool
+    {
+
+        if (unlink($this->getTargetDirectory()->get($targetDir).$path)) {
+            return true;
+        }
+        throw new \Exception("Fichier non supprimé");
 
     }
 

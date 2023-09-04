@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modification d'une image{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>Remplacer cette image </h1>
+        {% for image in figure.images %}
+            <img class=" img-fluid" src ={{asset('images/figures/')}}{{image.ImageName}}>
+        {% endfor %}
+            {{ form_start(image_form) }}
+                {{ form_errors(image_form) }}
+                {{ form_row(image_form.images)}}
+                <button type="submit" class="btn btn-primary">Modifier</button>
+            {{ form_end(image_form) }}
+    </div>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modification d'une figure{% endblock %}
+
+{% block body %}
+<div class="container">
+ <h1>Modification d'une figure </h1>
+    {{ form_start(figure_form) }}
+    {{form_errors(figure_form)}}
+    {{ form_row(figure_form.name)}}
+    {{ form_row(figure_form.description)}}
+    {{ form_row(figure_form.groups_id)}}
+ 
+    <button type="submit" class="btn btn-primary">Créer</button>
+    {{ form_end(figure_form) }}
+</div>
+{% endblock %}

@@ -3,38 +3,44 @@
     <div class="container"> 
     {% include 'utils/deletemodal.html.twig' with {'key' : '', 'name' : figures.name} %}
         <h1 class="text-center m-5">{{ figures.name }}</h1>
-        {% if app.user %}
-            <div class="btn-group" role="group" aria-label="Suppression ou édition">
-                <a  href={{ path('figuresdelete',{id : figures.id}) }} type="button" class="btn btn-danger m-1 btn-sm" data-toggle="modal" data-target="#deleteModal">🗑️</button>
-                {# <a  href={{ path('figuresdelete',{id : figures.id}) }} type="button" class="btn btn-danger btn-sm m-1">🗑️</a> #}
-                <a  href="" type="button" class="btn btn-info btn-sm m-1">✍️</a>
-            </div>
-            {% endif %}
           <p>
           Ajouté le {{figures.CreationDate |date("d/m/y")}} par @{{figures.UsersId.name}}<br>
             {% if figures.UpdateDate %}
-            Dèrnière mise à jour le {{figures.update_date | date("d/m/y")}}
+            Dèrnière mise à jour le {{figures.UpdateDate | date("d/m/y")}}
             {% endif %}
             </p>
-        {# <p>{{ figures.CreationDate |date("d/m/y")}}</p> #}
     {% for image in figures.images %}
         {% if loop.first %}
             <div class="row">
                 <div class="col">
-                     <img src={{asset('images/figures/')}}{{image.ImageName}} alt="" class="img-fluid">
+                        {% if app.user and app.user.id == figures.UsersId.id %}
+                            {% if image.ImageName == default_image %}
+                                {% include 'utils/button.html.twig' with {id : figures.id, img: image.Id, path : 'figuresedit_image'} %}
+                            {% else %}
+                                {% include 'utils/button.html.twig' with {id : figures.id, display : true, img: image.Id, path : 'figuresedit_image'} %}
+                            {% endif %}
+                        {% endif %}
+                    <img src={{asset('images/figures/')}}{{image.ImageName}} alt="" class="img-fluid">
                 </div>
             </div>
             <div class="row">
         {% else %}
             <div class="col">
+                {% if app.user and app.user.id == figures.UsersId.id %}
+                    {% include 'utils/button.html.twig' with {id : figures.id, display : true, img: image.Id, path : 'figuresedit_image'} %}
+                {% endif %}
                 <img src={{asset('images/figures/')}}{{image.ImageName}} alt="" class="img-thumbnail">
             </div>
-            {% endif %}
-        {% endfor %}
+        {% endif %}
+    {% endfor %}
+
             </div>
         {% for video in figures.videos %}
             {% if loop.first %}
                 <div class="embed-responsive embed-responsive-16by9">
+            {% endif %}
+            {% if app.user and app.user.id == figures.UsersId.id %}
+                {% include 'utils/button.html.twig' with {id : figures.id, display : true, img: video.Id, path : 'figuresedit_video'} %}
             {% endif %}
                 <iframe class="embed-responsive-item" src={{video.src}} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"allowfullscreen></iframe>
                 {% if loop.last %}
@@ -42,11 +48,12 @@
                 {% endif %}
         {% endfor %}
            
-        <p class="text-justify p-2 desc">{{ figures.description}}</p>
-        <p class="text-right">{{ figures.UsersId.name}}</p>
-        
-       
-        
+        <p class="text-justify p-2 desc">{{ figures.description}}<br>
+        {% if app.user and app.user.id == figures.UsersId.id %}
+            <a  href={{path('figuresedit',{'id' : figures.id})}} type="button" class="btn btn-info btn-sm m-1">✍️ Modifier</a></p>
+                <div class="m-2">
+                    <a  href={{ path('figuresdelete',{id : figures.id}) }} type="button" class="btn btn-danger m-1 btn-sm" data-toggle="modal" data-target="#deleteModal">🗑️ Supprimer</a>
+                </div>
+        {% endif %}
     </div>
-
 {% endblock %}

@@ -30,7 +30,7 @@ class FigureForm extends AbstractType
             'choice_label' => 'group_name',
             'label' => 'A quel groupe appartient ce trick?',
             'required' => true])
-        ->add('videos', UrlType::class,['mapped' => false,'label' => 'Liens vers des vidéos you tube',])
+        ->add('videos', UrlType::class,['mapped' => false,'label' => 'Liens vers des vidéos you tube', 'required' => false])
         ->add('slug', HiddenType::class,['mapped' => false])
         ->add('images', FileType::class,[
             'mapped' => false,
