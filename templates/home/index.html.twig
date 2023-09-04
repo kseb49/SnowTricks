@@ -11,7 +11,7 @@
         {% for figures in result | batch(3)%}
             <div class="row">
                 {% for key, figure in figures %}
-                    {% include 'utils/deletemodal.html.twig' with {'name' : figure.name} %}
+                    {% include 'utils/deletemodal.html.twig' with {name : figure.name, path : 'figuresdelete', id : figure.id} %}
                     <div class="col-sm m-1">
                         <div class="card" style="width: 18rem;">
                             {% for image in figure.images %}
@@ -30,7 +30,7 @@
                                     {% endfor %}
                                 {% endfor %}
                                 {% if app.user and app.user.id == figure.UsersId.id %}
-                                    <a type="button" href={{path('figuresdelete',{id : figure.id})}} class="btn btn-danger m-1 btn-sm" data-toggle="modal" data-target="#deleteModal{{key}}">🗑️ Supprimer</a><a type="button" class="btn btn-info btn-sm">✍️ Modifier</a>
+                                    <button type="button" class="btn btn-danger m-1 btn-sm" data-toggle="modal" data-target="#deleteModal{{key}}">🗑️ Supprimer</button><a type="button" class="btn btn-info btn-sm">✍️ Modifier</a>
                                 {% endif %}
                             </div>
                             <div class="card-footer text-muted">

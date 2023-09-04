@@ -9,6 +9,8 @@ use App\Entity\Figures;
 use App\Form\ImageForm;
 use App\Form\FigureForm;
 use App\Form\EditFigureForm;
+use App\Repository\FiguresRepository;
+use App\Repository\ImagesRepository;
 use App\Service\ImageManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -176,14 +178,14 @@ class FigureController extends AbstractController
             }
         }
         return $this->render('edition/image_form.html.twig', [
-            'image_form' => $form, 'figure' =>  $figure]);
+            'image_form' => $form, 'figure' =>  $figure, 'img_id' => $image_id]);
 
     }
 
     #[Route('/modification-video/{id}/{video_id}',name:'edit_video')]
     public function editVideo(Request $request, EntityManagerInterface $entityManager,int $id, int $image_id) :Response
     {
-        
+
         return $this->render('edition/image_form.html.twig', [
             'image_form' => $form, 'figure' =>  $figure]);
 
@@ -212,4 +214,30 @@ class FigureController extends AbstractController
         return $this->redirectToRoute('home');
     }
 
-}
+
+    #[Route('/suppression-image/{id}/{image_id}', name:'image_delete')]
+    #[IsGranted('ROLE_USER', message:"Connectez vous pour supprimer une image")]
+    public function deleteImage(EntityManagerInterface $entityManager,int $id, int $image_id,ImageManager $manager,ImagesRepository $imrepo) :Response
+    {
+        $figure = $entityManager->getRepository(Figures::class)->find($id);
+        $image = $entityManager->getRepository(Images::class)->find($image_id);
+        // if there are more than one image
+        if ($imrepo->findImages($id)[1] > 1) {
+            $figure->removeImage($image);
+            $entityManager->persist($figure);
+            $entityManager->flush();
+            if ($image->getImageName() !== self::DEFAULT_IMG) {
+                $manager->delete('figures_directory',$image->getImageName());
+            }
+            $this->addFlash('success', "Suppression réussit 😊");
+            return $this->redirectToRoute('figuresdetails', [
+                'slug' => $figure->getSlug()]);
+        }
+        $this->addFlash('danger', "Cette image ne peut pas être supprimé car c'est la seule pour ce trick");
+            return $this->redirectToRoute('figuresdetails', [
+                'slug' => $figure->getSlug()]);
+        }
+        
+        #[Route('/suppression-video/{id}/{video_id}',name:'video_delete')]
+        public function deleteVideo(){}
+    }
