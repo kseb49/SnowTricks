@@ -16,6 +16,13 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ImagesRepository extends ServiceEntityRepository
 {
+
+     /**
+     * The default image used when the request hasn't any
+     */
+    const DEFAULT_IMG = "snow_board.jpeg";
+
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Images::class);
@@ -40,8 +47,13 @@ class ImagesRepository extends ServiceEntityRepository
 
     }
 
-
-    public function finfAllImages(int $id): array
+    /**
+     * Get all the images of a trick
+     *
+     * @param integer $id
+     * @return array
+     */
+    public function findAllImages(int $id): array
     {
         $entityManager = $this->getEntityManager();
         $query = $entityManager->createQuery(
@@ -50,6 +62,18 @@ class ImagesRepository extends ServiceEntityRepository
         INNER JOIN f.images i
         WHERE f.id = :id'
         )->setParameter('id', $id);
+        return $query->getResult();
+
+    }
+
+
+    public function removeImages(string $image_name): array
+    {
+        $entityManager = $this->getEntityManager();
+        $query = $entityManager->createQuery(
+        'DELETE FROM App\Entity\Images i
+        WHERE i.image_name = :image_name'
+        )->setParameter('image_name', $image_name);
         return $query->getResult();
 
     }

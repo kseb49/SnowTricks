@@ -5,12 +5,13 @@ namespace App\Form;
 use App\Entity\Figures;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\All;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 
 
-class ImageForm extends AbstractType 
+class AddImageForm extends AbstractType 
 {
 
 
@@ -19,19 +20,26 @@ class ImageForm extends AbstractType
         $builder
         ->add('images', FileType::class,[
             'mapped' => false,
-            'required' => true,
+            'help' => 'Une ou plusieurs images pour illustrer la figure',
+            'required' => false,
+            'multiple' => true,
+            'label' => "Images d'illustrations",
             'constraints' => [
-                new File([
-                    'maxSize' => '10000k',
-                    'mimeTypes' => [
-                        'image/jpeg',
-                        'image/gif',
-                        'image/png',
-                        'image/webp'
-                    ],
-                    'mimeTypesMessage' => 'Please upload a valid image {{types}}'
-                ])
-            ]]);
+                new All([
+                    new File([
+                        'maxSize' => '10000k',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/gif',
+                            'image/png',
+                            'image/webp'
+                        ],
+                        'mimeTypesMessage' => 'Please upload a valid image {{types}}'
+                    ])
+                    ])
+            ]
+
+                    ]);
 
     }
 

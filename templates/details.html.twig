@@ -3,6 +3,7 @@
     <div class="container"> 
     {% include 'utils/deletemodal.html.twig' with {name : figures.name, path : 'figuresdelete', id : figures.id} %}
         <h1 class="text-center m-5">{{ figures.name }}</h1>
+        <p class="text-center">{{figures.GroupsID.GroupName}}</p>
           <p>
           Ajouté le {{figures.CreationDate |date("d/m/y")}} par @{{figures.UsersId.name}}<br>
             {% if figures.UpdateDate %}
@@ -10,15 +11,15 @@
             {% endif %}
             </p>
     {% for image in figures.images %}
-        {% include 'utils/deletemodal.html.twig' with {name : image.ImageName, path :"figuresimage_delete", subject : 'image', key : image.Id,id:figures.id} %}
+        {% include 'utils/deletemodal.html.twig' with {name : image.ImageName, path :"delete_image", subject : 'image', key : image.Id,id:figures.id} %}
             {% if loop.first %}
                 <div class="row">
                     <div class="col">
                             {% if app.user and app.user.id == figures.UsersId.id %}
                                 {% if image.ImageName == default_image %}
-                                    {% include 'utils/button.html.twig' with {id : figures.id, file: image.Id, path : 'figuresedit_image', type:'image'} %}
+                                    {% include 'utils/button.html.twig' with {id : figures.id, file: image.Id, path : 'edit_image', type:'image'} %}
                                 {% else %}
-                                    {% include 'utils/button.html.twig' with {id : figures.id, display : true, file: image.Id, path : 'figuresedit_image', type:'image'} %}
+                                    {% include 'utils/button.html.twig' with {id : figures.id, display : true, file: image.Id, path : 'edit_image', type:'image'} %}
                                 {% endif %}
                             {% endif %}
                         <img src={{asset('images/figures/')}}{{image.ImageName}} alt="" class="img-fluid">
@@ -28,7 +29,7 @@
             {% else %}
                 <div class="col">
                     {% if app.user and app.user.id == figures.UsersId.id %}
-                        {% include 'utils/button.html.twig' with {id : figures.id, display : true, file: image.Id, path : 'figuresedit_image',type:'image',path_delete : "figuresimage_delete"} %}
+                        {% include 'utils/button.html.twig' with {id : figures.id, display : true, file: image.Id, path : 'edit_image',type:'image',path_delete : "delete_image"} %}
                     {% endif %}
                     <img src={{asset('images/figures/')}}{{image.ImageName}} alt="" class="img-thumbnail">
                 </div>
@@ -55,7 +56,13 @@
         {% if app.user and app.user.id == figures.UsersId.id %}
             <a  href={{path('figuresedit',{'id' : figures.id})}} type="button" class="btn btn-info btn-sm m-1">✍️ Modifier</a></p>
                 <div class="m-2">
-                    <a  href={{ path('figuresdelete',{id : figures.id}) }} type="button" class="btn btn-danger m-1 btn-sm" data-toggle="modal" data-target="#deleteModal">🗑️ Supprimer</a>
+                    <button type="button" class="btn btn-danger m-1 btn-sm" data-toggle="modal" data-target="#deleteModal">🗑️ Supprimer</a>
+                </div>
+                <div class="m-2">
+                    <a href = {{path('add_image',{trick_id : figures.id})}} type="button" class="btn btn-success m-1 btn-sm">Ajouter une image</a>
+                </div>
+                <div class="m-2">
+                    <a href = type="button" class="btn btn-success m-1 btn-sm">Ajouter une vidéo</a>
                 </div>
         {% endif %}
     </div>

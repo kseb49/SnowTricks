@@ -21,6 +21,37 @@ class VideosRepository extends ServiceEntityRepository
         parent::__construct($registry, Videos::class);
     }
 
+
+     /**
+     * Get all the videos of a trick
+     *
+     * @param integer $id
+     * @return array
+     */
+    public function findAllVideos(int $id): array
+    {
+        $entityManager = $this->getEntityManager();
+        $query = $entityManager->createQuery(
+        'SELECT v.src
+        FROM App\Entity\Figures f
+        INNER JOIN f.videos v
+        WHERE f.id = :id'
+        )->setParameter('id', $id);
+        return $query->getResult();
+
+    }
+
+
+    public function removeVideos(string $video_src): int
+    {
+        $entityManager = $this->getEntityManager();
+        $query = $entityManager->createQuery(
+        'DELETE FROM App\Entity\Videos v
+        WHERE v.src = :video_src'
+        )->setParameter('video_src', $video_src);
+        return $query->getResult();
+
+    }
 //    /**
 //     * @return Videos[] Returns an array of Videos objects
 //     */
