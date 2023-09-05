@@ -9,6 +9,7 @@ use App\Entity\Figures;
 use App\Form\ImageForm;
 use App\Form\FigureForm;
 use App\Form\EditFigureForm;
+use App\Repository\ImagesRepository;
 use App\Service\ImageManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,13 +24,13 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 #[Route('/figures',name:'figures')]
 class FigureController extends AbstractController 
 {
-    
+
     /**
      * The default image used when the request hasn't any
      */
     const DEFAULT_IMG = "snow_board.jpeg";
 
-    
+
     #[Route('/{slug}', name:'details')]
     /**
      * Page of a single trick
@@ -112,7 +113,7 @@ class FigureController extends AbstractController
     #[Route('/modification/{id}',name:'edit')]
     #[IsGranted('ROLE_USER', message:"Connectez vous pour modifier une figure")]
     /**
-     * Edit a trick - All the text part and the related group
+     * Edit a trick - All the text parts and the related group
      *
      * @param Figures $figures
      * @return Response
@@ -123,12 +124,12 @@ class FigureController extends AbstractController
         $form = $this->createForm(EditFigureForm::class, $figure);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-        $figure->setUpdateDate(new DateTime());
-        $figure->setSlug(strtolower($slugger->slug($form->get('name')->getData())));
-        $entityManager->persist($figure);
-        $entityManager->flush();
-        $this->addFlash('success','modifé avec succès');
-        return $this->redirectToRoute('home');
+            $figure->setUpdateDate(new DateTime());
+            $figure->setSlug(strtolower($slugger->slug($form->get('name')->getData())));
+            $entityManager->persist($figure);
+            $entityManager->flush();
+            $this->addFlash('success','modifé avec succès');
+            return $this->redirectToRoute('home');
         }
         // $this->addFlash('danger','erreur');
         return $this->render('edition/edit_figure.html.twig', [
@@ -176,14 +177,14 @@ class FigureController extends AbstractController
             }
         }
         return $this->render('edition/image_form.html.twig', [
-            'image_form' => $form, 'figure' =>  $figure]);
+            'image_form' => $form, 'figure' =>  $figure, 'img_id' => $image_id]);
 
     }
 
     #[Route('/modification-video/{id}/{video_id}',name:'edit_video')]
     public function editVideo(Request $request, EntityManagerInterface $entityManager,int $id, int $image_id) :Response
     {
-        
+
         return $this->render('edition/image_form.html.twig', [
             'image_form' => $form, 'figure' =>  $figure]);
 
@@ -199,17 +200,48 @@ class FigureController extends AbstractController
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function delete(Figures $figures, EntityManagerInterface $entityManager) :Response
+    public function delete(Figures $figures, EntityManagerInterface $entityManager,ImagesRepository $imrepo, ImageManager $manager,int $id) :Response
     {
         if (!$figures) {
             $this->addFlash('danger', "Cette figure n'existe pas");
             return $this->redirectToRoute('home');
         }
-
+        // Delete the images files linked
+        foreach($imrepo->finfAllImages($id) as $value) {
+            if($value['image_name'] !== self::DEFAULT_IMG) {
+                $manager->delete('figures_directory',$value['image_name']);
+            }
+        };
         $entityManager->remove($figures);
         $entityManager->flush();
         $this->addFlash('success', "Suppression réussit 😊");
         return $this->redirectToRoute('home');
     }
 
-}
+
+    #[Route('/suppression-image/{id}/{image_id}', name:'image_delete')]
+    #[IsGranted('ROLE_USER', message:"Connectez vous pour supprimer une image")]
+    public function deleteImage(EntityManagerInterface $entityManager,int $id, int $image_id,ImageManager $manager,ImagesRepository $imrepo) :Response
+    {
+        $figure = $entityManager->getRepository(Figures::class)->find($id);
+        $image = $entityManager->getRepository(Images::class)->find($image_id);
+        // if there are more than one image
+        if ($imrepo->countImages($id)[1] > 1) {
+            $figure->removeImage($image);
+            $entityManager->persist($figure);
+            $entityManager->flush();
+            if ($image->getImageName() !== self::DEFAULT_IMG) {
+                $manager->delete('figures_directory',$image->getImageName());
+            }
+            $this->addFlash('success', "Suppression réussit 😊");
+            return $this->redirectToRoute('figuresdetails', [
+                'slug' => $figure->getSlug()]);
+        }
+        $this->addFlash('danger', "Cette image ne peut pas être supprimé car c'est la seule pour ce trick");
+            return $this->redirectToRoute('figuresdetails', [
+                'slug' => $figure->getSlug()]);
+        }
+        
+        #[Route('/suppression-video/{id}/{video_id}',name:'video_delete')]
+        public function deleteVideo(){}
+    }

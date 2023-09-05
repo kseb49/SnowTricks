@@ -1,19 +1,24 @@
-<div class="modal fade" id="deleteModal{{key}}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="deleteModalLabel">⚠️ Vous êtes sur le pont de supprimer une figure </h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="AClose">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        Etes vous sûr de vouloir supprimer : <strong>{{name}}</strong> ?
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal"> ⛔ Abandonner</button>
-        <button type="button" class="btn btn-danger">👌 Supprimer</button>
-      </div>
+<div class="modal fade" id="deleteModal{{key|default('')}}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">⚠️ Vous êtes sur le pont de supprimer une {{subject|default('figure')}} </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="AClose">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Etes vous sûr de vouloir supprimer : <strong>{{name}}</strong> ?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"> ⛔ Abandonner </button>
+                {# Videos or images #}
+                {% if subject is defined %}
+                    <a type="button" class="btn btn-danger" href= {{ path(path, {id: id, (subject)~'_id' : key}) }}>👌 Supprimer</a>
+                {% else %}
+                    <a type="button" class="btn btn-danger" href= {{ path(path, {id: id}) }}>👌 Supprimer</a>
+                {% endif %}
+            </div>
+        </div>
     </div>
-  </div>
 </div>

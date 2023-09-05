@@ -57,6 +57,22 @@ class FiguresRepository extends ServiceEntityRepository
 
 
     }
+
+
+    // public function findImages(int $id): array
+    // {
+    //     $entityManager = $this->getEntityManager();
+    //     $query = $entityManager->createQuery(
+    //     'SELECT COUNT(i.id)
+    //     FROM App\Entity\Figures f
+    //     INNER JOIN f.images i
+    //     WHERE f.id = :id'
+    //     )->setParameter('id', $id);
+    //     return $query->getOneOrNullResult();
+
+    // }
+
+
 //    /**
 //     * @return Figures[] Returns an array of Figures objects
 //     */

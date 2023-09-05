@@ -6,7 +6,9 @@
     <div class="container">
         <h1>Remplacer cette image </h1>
         {% for image in figure.images %}
-            <img class=" img-fluid" src ={{asset('images/figures/')}}{{image.ImageName}}>
+            {% if image.id == img_id %}
+                <img class=" img-fluid" src ={{asset('images/figures/')}}{{image.ImageName}}>
+            {% endif  %}
         {% endfor %}
             {{ form_start(image_form) }}
                 {{ form_errors(image_form) }}

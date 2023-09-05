@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 {% block body %}
     <div class="container"> 
-    {% include 'utils/deletemodal.html.twig' with {'key' : '', 'name' : figures.name} %}
+    {% include 'utils/deletemodal.html.twig' with {name : figures.name, path : 'figuresdelete', id : figures.id} %}
         <h1 class="text-center m-5">{{ figures.name }}</h1>
           <p>
           Ajouté le {{figures.CreationDate |date("d/m/y")}} par @{{figures.UsersId.name}}<br>
@@ -10,37 +10,40 @@
             {% endif %}
             </p>
     {% for image in figures.images %}
-        {% if loop.first %}
-            <div class="row">
-                <div class="col">
-                        {% if app.user and app.user.id == figures.UsersId.id %}
-                            {% if image.ImageName == default_image %}
-                                {% include 'utils/button.html.twig' with {id : figures.id, img: image.Id, path : 'figuresedit_image'} %}
-                            {% else %}
-                                {% include 'utils/button.html.twig' with {id : figures.id, display : true, img: image.Id, path : 'figuresedit_image'} %}
+        {% include 'utils/deletemodal.html.twig' with {name : image.ImageName, path :"figuresimage_delete", subject : 'image', key : image.Id,id:figures.id} %}
+            {% if loop.first %}
+                <div class="row">
+                    <div class="col">
+                            {% if app.user and app.user.id == figures.UsersId.id %}
+                                {% if image.ImageName == default_image %}
+                                    {% include 'utils/button.html.twig' with {id : figures.id, file: image.Id, path : 'figuresedit_image', type:'image'} %}
+                                {% else %}
+                                    {% include 'utils/button.html.twig' with {id : figures.id, display : true, file: image.Id, path : 'figuresedit_image', type:'image'} %}
+                                {% endif %}
                             {% endif %}
-                        {% endif %}
-                    <img src={{asset('images/figures/')}}{{image.ImageName}} alt="" class="img-fluid">
+                        <img src={{asset('images/figures/')}}{{image.ImageName}} alt="" class="img-fluid">
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-        {% else %}
-            <div class="col">
-                {% if app.user and app.user.id == figures.UsersId.id %}
-                    {% include 'utils/button.html.twig' with {id : figures.id, display : true, img: image.Id, path : 'figuresedit_image'} %}
-                {% endif %}
-                <img src={{asset('images/figures/')}}{{image.ImageName}} alt="" class="img-thumbnail">
-            </div>
-        {% endif %}
+                <div class="row">
+            {% else %}
+                <div class="col">
+                    {% if app.user and app.user.id == figures.UsersId.id %}
+                        {% include 'utils/button.html.twig' with {id : figures.id, display : true, file: image.Id, path : 'figuresedit_image',type:'image',path_delete : "figuresimage_delete"} %}
+                    {% endif %}
+                    <img src={{asset('images/figures/')}}{{image.ImageName}} alt="" class="img-thumbnail">
+                </div>
+            {% endif %}
     {% endfor %}
 
             </div>
         {% for video in figures.videos %}
+        {% include 'utils/deletemodal.html.twig' with {name : figures.name, path :"figuresvideo_delete", subject : 'video', key : video.Id, id:figures.id} %}
+
             {% if loop.first %}
                 <div class="embed-responsive embed-responsive-16by9">
             {% endif %}
             {% if app.user and app.user.id == figures.UsersId.id %}
-                {% include 'utils/button.html.twig' with {id : figures.id, display : true, img: video.Id, path : 'figuresedit_video'} %}
+                {% include 'utils/button.html.twig' with {id : figures.id, display : true, file: video.Id, path : 'figuresedit_video',type:'video',path_delete : "figuresvideo_delete"} %}
             {% endif %}
                 <iframe class="embed-responsive-item" src={{video.src}} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"allowfullscreen></iframe>
                 {% if loop.last %}

@@ -21,6 +21,38 @@ class ImagesRepository extends ServiceEntityRepository
         parent::__construct($registry, Images::class);
     }
 
+    /**
+     * Get the numbers of images for a trick
+     *
+     * @param integer $id Identifier of the trick
+     * @return array
+     */
+    public function countImages(int $id): array
+    {
+        $entityManager = $this->getEntityManager();
+        $query = $entityManager->createQuery(
+        'SELECT COUNT(i.id)
+        FROM App\Entity\Figures f
+        INNER JOIN f.images i
+        WHERE f.id = :id'
+        )->setParameter('id', $id);
+        return $query->getOneOrNullResult();
+
+    }
+
+
+    public function finfAllImages(int $id): array
+    {
+        $entityManager = $this->getEntityManager();
+        $query = $entityManager->createQuery(
+        'SELECT i.image_name
+        FROM App\Entity\Figures f
+        INNER JOIN f.images i
+        WHERE f.id = :id'
+        )->setParameter('id', $id);
+        return $query->getResult();
+
+    }
 //    /**
 //     * @return Images[] Returns an array of Images objects
 //     */
