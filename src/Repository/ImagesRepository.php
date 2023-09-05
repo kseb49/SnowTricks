@@ -27,7 +27,7 @@ class ImagesRepository extends ServiceEntityRepository
      * @param integer $id Identifier of the trick
      * @return array
      */
-    public function findImages(int $id): array
+    public function countImages(int $id): array
     {
         $entityManager = $this->getEntityManager();
         $query = $entityManager->createQuery(
@@ -37,6 +37,20 @@ class ImagesRepository extends ServiceEntityRepository
         WHERE f.id = :id'
         )->setParameter('id', $id);
         return $query->getOneOrNullResult();
+
+    }
+
+
+    public function finfAllImages(int $id): array
+    {
+        $entityManager = $this->getEntityManager();
+        $query = $entityManager->createQuery(
+        'SELECT i.image_name
+        FROM App\Entity\Figures f
+        INNER JOIN f.images i
+        WHERE f.id = :id'
+        )->setParameter('id', $id);
+        return $query->getResult();
 
     }
 //    /**

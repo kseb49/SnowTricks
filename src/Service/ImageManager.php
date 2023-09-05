@@ -18,7 +18,13 @@ class ImageManager
     {
     }
 
-
+    /**
+     * Manage the incoming image - rename and store
+     *
+     * @param UploadedFile $image
+     * @param string $targetDir
+     * @return string The name of the image
+     */
     public function upload(UploadedFile $image, string $targetDir) :string
     {
 
@@ -30,7 +36,13 @@ class ImageManager
 
     }
 
-
+    /**
+     * Delete a file
+     *
+     * @param string $targetDir Services.yaml parameters
+     * @param string $path Path of the file from $targetDir
+     * @return boolean
+     */
     public function delete(string $targetDir, string $path) :bool
     {
 
@@ -45,5 +57,8 @@ class ImageManager
     public function getTargetDirectory() :ParameterBagInterface
     {
         return $this->targetDirectory;
+
     }
+
+
 }
