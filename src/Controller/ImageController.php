@@ -7,7 +7,7 @@ use App\Entity\Figures;
 use App\Form\ImageForm;
 use App\Form\AddImageForm;
 use App\Service\ImageManager;
-use App\Controller\Parameters;
+use App\Service\Parameters;
 use App\Repository\ImagesRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,7 +20,6 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class ImageController extends AbstractController 
 {
-    public function __construct( private $parameters = new Parameters()){}
     
     #[Route('/ajout-image/{trick_id}', name:'add_image')]
     #[IsGranted('ROLE_USER', message:"Connectez vous pour ajouter une image")]
@@ -34,7 +33,7 @@ class ImageController extends AbstractController
      * @param ImagesRepository $imrepo
      * @return Response
      */
-    public function addImage(EntityManagerInterface $entityManager, Request $request, int $trick_id,ImageManager $manager,ImagesRepository $imrepo) :Response
+    public function addImage(EntityManagerInterface $entityManager, Request $request, int $trick_id,ImageManager $manager,ImagesRepository $imrepo, Parameters $parameters) :Response
     {
         $figure = $entityManager->getRepository(Figures::class)->find($trick_id);
         $form = $this->createForm(AddImageForm::class, $figure);
@@ -45,7 +44,7 @@ class ImageController extends AbstractController
                 foreach ($images as $value) {
                     try {
                         // The maximum number of images allowed
-                        if ($imrepo->countImages($trick_id)[1] >= $this->parameters::MAX) {
+                        if ($imrepo->countImages($trick_id)[1] >= $parameters::MAX) {
                             $this->addFlash('warning',"Le nombre maximum d'images est atteint");
                             return $this->redirectToRoute('figuresdetails',["slug" => $figure->getSlug()]);
                         }
@@ -81,7 +80,7 @@ class ImageController extends AbstractController
      * @param ImagesRepository $imrepo
      * @return Response
      */
-    public function deleteImage(EntityManagerInterface $entityManager,int $id, int $image_id,ImageManager $manager,ImagesRepository $imrepo) :Response
+    public function deleteImage(EntityManagerInterface $entityManager,int $id, int $image_id,ImageManager $manager,ImagesRepository $imrepo, Parameters $parameters) :Response
     {
         $figure = $entityManager->getRepository(Figures::class)->find($id);
         $image = $entityManager->getRepository(Images::class)->find($image_id);
@@ -91,7 +90,7 @@ class ImageController extends AbstractController
             $entityManager->remove($image);
             $entityManager->persist($figure);
             $entityManager->flush();
-            if ($image->getImageName() !== $this->parameters::DEFAULT_IMG) {
+            if ($image->getImageName() !== $parameters::DEFAULT_IMG) {
                 $manager->delete('figures_directory',$image->getImageName());
             }
             $this->addFlash('success', "Suppression réussit 😊");
@@ -117,7 +116,7 @@ class ImageController extends AbstractController
      * @param ImageManager $upload
      * @return Response
      */
-    public function editImage(Request $request, EntityManagerInterface $entityManager,int $id, int $image_id, ImageManager $upload) :Response
+    public function editImage(Request $request, EntityManagerInterface $entityManager,int $id, int $image_id, ImageManager $upload, Parameters $parameters) :Response
     {
         $figure = $entityManager->getRepository(Figures::class)->find($id);
         $form = $this->createForm(ImageForm::class, $figure);
@@ -134,7 +133,7 @@ class ImageController extends AbstractController
                     $figure->removeImage($eximage);
                     $entityManager->remove($eximage);
                     // Delete the file too, unless the file is the default one
-                    if ($eximage->getImageName() !== $this->parameters::DEFAULT_IMG) {
+                    if ($eximage->getImageName() !== $parameters::DEFAULT_IMG) {
                         $upload->delete('figures_directory',$eximage->getImageName());
                     }
                     $entityManager->persist($figure);

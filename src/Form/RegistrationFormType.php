@@ -25,7 +25,7 @@ class RegistrationFormType extends AbstractType
                 'required' => false,
                 'constraints' => [
                     new File([
-                        'maxSize' => '5000k',
+                        'maxSize' => '10000k',
                         'mimeTypes' => [
                             'image/jpeg',
                             'image/gif',
@@ -37,41 +37,23 @@ class RegistrationFormType extends AbstractType
                 ]
             ],
             )
-            // ->add('agreeTerms', CheckboxType::class, [
-            //     'mapped' => false,
-            //     'constraints' => [
-            //         new IsTrue([
-            //             'message' => 'You should agree to our terms.',
-            //         ]),
-            //     ],
-            // ])
             ->add('password', RepeatedType::class,[
-                // instead of being set onto the object directly,
-                // this is read and encoded in the controller
                 'type' => PasswordType::class,
                 'first_options'  => ['label' => 'Mot de passe'],
                 'second_options' => ['label' => 'Répétez votre mot de passe'],
-                // 'mapped' => false,
                 'attr' => ['autocomplete' => 'new-password'],
-                // 'constraints' => [
-                //     new NotBlank([
-                //         'message' => 'Please enter a password',
-                //     ]),
-                //     new Length([
-                //         'min' => 6,
-                //         'minMessage' => 'Your password should be at least {{ limit }} characters',
-                //         // max length allowed by Symfony for security reasons
-                //         'max' => 4096,
-                //     ]),
-                // ],
             ])
         ;
     }
+
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Users::class,
         ]);
+
     }
+
+
 }

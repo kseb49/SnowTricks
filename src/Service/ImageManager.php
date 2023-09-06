@@ -23,7 +23,7 @@ class ImageManager
      *
      * @param UploadedFile $image
      * @param string $targetDir
-     * @return string The name of the image
+     * @return string The name of the image with a uniqid
      */
     public function upload(UploadedFile $image, string $targetDir) :string
     {

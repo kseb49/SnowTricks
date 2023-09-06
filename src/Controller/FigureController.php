@@ -11,7 +11,7 @@ use App\Form\EditFigureForm;
 use App\Repository\ImagesRepository;
 use App\Repository\VideosRepository;
 use App\Service\ImageManager;
-use App\Controller\Parameters;
+use App\Service\Parameters;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,8 +24,6 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 #[Route('/figures',name:'figures')]
 class FigureController extends AbstractController 
 {
-
-    public function __construct(private $parameters = new Parameters){}
    
     #[Route('/{slug}', name:'details')]
     /**
@@ -34,14 +32,14 @@ class FigureController extends AbstractController
      * @param Figures $figures 
      * @return Response
      */
-    public function details(Figures $figures) :Response
+    public function details(Figures $figures, Parameters $parameters) :Response
     {
         if (!$figures) {
             $this->addFlash('danger', "Cette figure n'existe pas");
             return $this->redirectToRoute('home');
         }
         return $this->render('details.html.twig', [
-            'figures' => $figures, 'default_image' => $this->parameters::DEFAULT_IMG]);
+            'figures' => $figures, 'default_image' => $parameters::DEFAULT_IMG]);
     }
 
 
@@ -56,7 +54,7 @@ class FigureController extends AbstractController
      * @param SluggerInterface $slugger
      * @return Response
      */
-    public function create(Request $request, EntityManagerInterface $entityManager,ImageManager $upload, SluggerInterface $slugger) :Response
+    public function create(Request $request, EntityManagerInterface $entityManager,ImageManager $upload, SluggerInterface $slugger, Parameters $parameters) :Response
     {
         $figure = new Figures();
         $form = $this->createForm(FigureForm::class, $figure);
@@ -78,7 +76,7 @@ class FigureController extends AbstractController
             else {
                 //set the default image
                 $picture = new Images;
-                $picture->setImageName($this->parameters::DEFAULT_IMG);
+                $picture->setImageName($parameters::DEFAULT_IMG);
                 $figure->addImage($picture);
             }
                 $figure->setName($form->get('name')->getData());
@@ -142,7 +140,7 @@ class FigureController extends AbstractController
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function delete(Figures $figures, EntityManagerInterface $entityManager,ImagesRepository $imrepo, VideosRepository $virepo, ImageManager $manager,int $id) :Response
+    public function delete(Figures $figures, EntityManagerInterface $entityManager,ImagesRepository $imrepo, VideosRepository $virepo, ImageManager $manager,int $id, Parameters $parameters) :Response
     {
         if (!$figures) {
             $this->addFlash('danger', "Cette figure n'existe pas");
@@ -150,7 +148,7 @@ class FigureController extends AbstractController
         }
         // Delete the images files linked
         foreach($imrepo->findAllImages($id) as $value) {
-            if($value['image_name'] !== $this->parameters::DEFAULT_IMG) {
+            if($value['image_name'] !== $parameters::DEFAULT_IMG) {
                 $manager->delete('figures_directory',$value['image_name']);
                 $imrepo->removeImages($value['image_name']);
             }

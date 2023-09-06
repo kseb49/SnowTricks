@@ -17,10 +17,10 @@ use Doctrine\Persistence\ManagerRegistry;
 class ImagesRepository extends ServiceEntityRepository
 {
 
-     /**
-     * The default image used when the request hasn't any
-     */
-    const DEFAULT_IMG = "snow_board.jpeg";
+    //  /**
+    //  * The default image used when the request hasn't any
+    //  */
+    // const DEFAULT_IMG = "snow_board.jpeg";
 
 
     public function __construct(ManagerRegistry $registry)
