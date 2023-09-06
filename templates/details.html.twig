@@ -44,7 +44,7 @@
                 <div class="embed-responsive embed-responsive-16by9">
             {% endif %}
             {% if app.user and app.user.id == figures.UsersId.id %}
-                {% include 'utils/button.html.twig' with {id : figures.id, display : true, file: video.Id, path : 'figuresedit_video',type:'video',path_delete : "figuresvideo_delete"} %}
+                {% include 'utils/button.html.twig' with {id : figures.id, display : true, file: video.Id, path : 'edit_video',type:'video',path_delete : "figuresvideo_delete"} %}
             {% endif %}
                 <iframe class="embed-responsive-item" src={{video.src}} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"allowfullscreen></iframe>
                 {% if loop.last %}

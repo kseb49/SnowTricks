@@ -32,7 +32,7 @@ class RegistrationFormType extends AbstractType
                             'image/png',
                             'image/webp'
                         ],
-                        'mimeTypesMessage' => 'Please upload a valid PDF document',
+                        'mimeTypesMessage' => 'Please upload a valid document',
                     ])
                 ]
             ],
