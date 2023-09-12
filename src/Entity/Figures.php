@@ -51,6 +51,9 @@ class Figures
     #[ORM\ManyToMany(targetEntity: Images::class, cascade:["persist"])]
     private Collection $images;
 
+    #[ORM\OneToMany(mappedBy: 'figures', targetEntity: Messages::class, orphanRemoval: true, cascade:["persist"])]
+    private Collection $messages;
+
 
     public function __construct()
     {
@@ -58,6 +61,7 @@ class Figures
         $this->videos = new ArrayCollection();
         $this->creation_date = new DateTime();
         $this->update_date = null;
+        $this->messages = new ArrayCollection();
     }
 
     public function getVideos(): Collection
@@ -193,6 +197,36 @@ class Figures
     public function setSlug(string $slug): static
     {
         $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Messages>
+     */
+    public function getMessages(): Collection
+    {
+        return $this->messages;
+    }
+
+    public function addMessage(Messages $message): static
+    {
+        if (!$this->messages->contains($message)) {
+            $this->messages->add($message);
+            $message->setFigures($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessage(Messages $message): static
+    {
+        if ($this->messages->removeElement($message)) {
+            // set the owning side to null (unless already changed)
+            if ($message->getFigures() === $this) {
+                $message->setFigures(null);
+            }
+        }
 
         return $this;
     }

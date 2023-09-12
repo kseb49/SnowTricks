@@ -6,6 +6,7 @@ use DateTime;
 use App\Entity\Images;
 use App\Entity\Videos;
 use App\Entity\Figures;
+use App\Form\AddMessagesForm;
 use App\Form\FigureForm;
 use App\Form\EditFigureForm;
 use App\Repository\ImagesRepository;

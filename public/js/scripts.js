@@ -9,5 +9,6 @@
 // const button = document.querySelector('#addVideo')
 // console.log(document.querySelector(".btn .btn-primary"))
 // button.addEventListener('click',(e)=> {
-//     console.log('hello')
+   const form = document.querySelector('#mess_form')
+  fetch('')
 // })

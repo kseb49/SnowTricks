@@ -1,0 +1,9 @@
+
+<div class="container">
+    <h1>Ajouter un commentaire</h1><br>
+    {{ form_start(message_form, {'action': path('add_message',{ id : figure } )}) }}
+        {{ form_errors(message_form) }}
+        {{ form_row(message_form.content) }}
+        <button type="submit" class="btn btn-primary">Ajouter</button>
+    {{ form_end(message_form) }}
+</div>
