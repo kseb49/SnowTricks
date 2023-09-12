@@ -22,6 +22,8 @@ use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 
 class RegistrationController extends AbstractController //https://symfony.com/doc/current/forms.html#processing-forms
 {
+
+
     #[Route('/inscription', name: 'app_register')]
     public function register(Parameters $parameters, Request $request, UserPasswordHasherInterface $userPasswordHasher, UserAuthenticatorInterface $userAuthenticator, UsersAuthenticator $authenticator, EntityManagerInterface $entityManager, ImageManager $fileUploader, SendEmail $mail): Response
     {
@@ -60,7 +62,7 @@ class RegistrationController extends AbstractController //https://symfony.com/do
             try {
                 $mail->sendEmail(to: $user->getEmail(), subject : $parameters->getMailParameters($parameters::CONFIRM)['sujet'], template: $parameters->getMailParameters($parameters::CONFIRM)['template'], context:['mail' => $user->getEmail(), 'token' => $token, 'route' => $parameters->getMailParameters($parameters::CONFIRM)['route']]);
 
-            } catch(TransportExceptionInterface $e) {
+            } catch (TransportExceptionInterface $e) {
                 $this->addFlash('warning', $e);
                 return $this->redirectToRoute('home');
             }
@@ -80,12 +82,12 @@ class RegistrationController extends AbstractController //https://symfony.com/do
     public function confirm(Request $request, EntityManagerInterface $entityManager, Parameters $parameters, SendEmail $mail) :Response
     {
         if ($user = $entityManager->getRepository(Users::class)->findOneBy(['email' => $request->query->get('mail')])) {
-            if ($user->getConfirmationDate() == null) {
+            if ($user->getConfirmationDate() === null) {
                 $limit = $user->getsendLink();
                 $now = new DateTime(date('Y-m-d H:i:s'));
                 $diff = $limit->diff($now);
                 // The link must be less than 24hrs.
-                if ($diff->format("%D") < 1 && $request->query->get('token') == $user->getToken()) {
+                if ($diff->format("%D") < 1 && $request->query->get('token') === $user->getToken()) {
                     $user->setConfirmationDate(new DateTime());
                     $user->setSendLink(null);
                     $user->setToken(null);
@@ -93,8 +95,8 @@ class RegistrationController extends AbstractController //https://symfony.com/do
                     $entityManager->flush();
                     $this->addFlash('success', 'Votre compte est confirmé');
                     return $this->redirectToRoute('home');
-                 }
-                 try {
+                }
+                try {
                     $token = hash('md5',uniqid(true));
                     $user->setToken($token);
                     $user->setSendLink(new DateTime());
@@ -102,17 +104,17 @@ class RegistrationController extends AbstractController //https://symfony.com/do
                     $entityManager->persist($user);
                     $entityManager->flush();
      
-                 } catch(TransportExceptionInterface $e) {
+                } catch(TransportExceptionInterface $e) {
                     $this->addFlash('warning', $e);
                     return $this->redirectToRoute('home');
-                 }
-                 $this->addFlash('danger', 'Ce lien n\'est pas valable. Un nouveau vous a été envoyé à votre adresse mail');
-                 return $this->redirectToRoute('home');
+                }
+                $this->addFlash('danger', 'Ce lien n\'est pas valable. Un nouveau vous a été envoyé à votre adresse mail');
+                return $this->redirectToRoute('home');
             }
-             $this->addFlash('warning', 'Votre compte est dèjà confirmé');
-             return $this->redirectToRoute('home');
+            $this->addFlash('warning', 'Votre compte est dèjà confirmé');
+            return $this->redirectToRoute('home');
         }
-        // The user mail doesn't exist in the DB
+        // The user mail doesn't exist in the DB.
         $this->addFlash('warning', "Ce lien n'est pas valable");
         return $this->redirectToRoute('home');
 

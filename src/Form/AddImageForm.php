@@ -36,10 +36,10 @@ class AddImageForm extends AbstractType
                         ],
                         'mimeTypesMessage' => 'Please upload a valid image {{types}}'
                     ])
-                    ])
+                ])
             ]
 
-                    ]);
+        ]);
 
     }
 

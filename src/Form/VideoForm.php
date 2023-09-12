@@ -16,7 +16,7 @@ class VideoForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options) :void
     {
         $builder
-        ->add('videos', UrlType::class,['mapped' => false,'label' => 'Liens vers des vidéos you tube', 'required' => true]);
+        ->add('videos', UrlType::class,['mapped' => false, 'label' => 'Liens vers des vidéos you tube', 'required' => true]);
 
     }
 

@@ -13,15 +13,17 @@ use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 class SendEmail extends AbstractController
 {
 
-    public function __construct(private MailerInterface $mailer){}
+    public function __construct(private MailerInterface $mailer)
+    {}
+
 
     /**
      * Send an email
      *
-     * @param string $to 
-     * @param string $subject
-     * @param string $template
-     * @param string $token
+     * @param string $to       The recipient adress
+     * @param string $subject  The subject
+     * @param string $template The template of the email
+     * @param array $context   The variables needed
      * @return Response
      */
     public function sendEmail(string $to, string $subject, string $template, array $context): void

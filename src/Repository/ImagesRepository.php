@@ -17,16 +17,12 @@ use Doctrine\Persistence\ManagerRegistry;
 class ImagesRepository extends ServiceEntityRepository
 {
 
-    //  /**
-    //  * The default image used when the request hasn't any
-    //  */
-    // const DEFAULT_IMG = "snow_board.jpeg";
-
 
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Images::class);
     }
+
 
     /**
      * Get the numbers of images for a trick
@@ -46,6 +42,7 @@ class ImagesRepository extends ServiceEntityRepository
         return $query->getOneOrNullResult();
 
     }
+
 
     /**
      * Get all the images of a trick
@@ -67,6 +64,12 @@ class ImagesRepository extends ServiceEntityRepository
     }
 
 
+    /**
+     * Delete an image from the DB
+     *
+     * @param string $image_name
+     * @return array
+     */
     public function removeImages(string $image_name): array
     {
         $entityManager = $this->getEntityManager();

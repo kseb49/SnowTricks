@@ -20,7 +20,8 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class ImageController extends AbstractController 
 {
-    
+
+
     #[Route('/ajout-image/{trick_id}', name:'add_image')]
     #[IsGranted('ROLE_USER', message:"Connectez vous pour ajouter une image")]
     /**
@@ -31,23 +32,25 @@ class ImageController extends AbstractController
      * @param integer $trick_id
      * @param ImageManager $manager
      * @param ImagesRepository $imrepo
+     * @param Parameters $parameters The variables needed in the app
      * @return Response
      */
-    public function addImage(EntityManagerInterface $entityManager, Request $request, int $trick_id,ImageManager $manager,ImagesRepository $imrepo, Parameters $parameters) :Response
+    public function addImage(EntityManagerInterface $entityManager, Request $request, int $trick_id, ImageManager $manager, ImagesRepository $imrepo, Parameters $parameters) :Response
     {
         $figure = $entityManager->getRepository(Figures::class)->find($trick_id);
         $form = $this->createForm(AddImageForm::class, $figure);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() === true  && $form->isValid() === true) {
             $images = $form->get('images')->getData();
             if ($images) {
                 foreach ($images as $value) {
                     try {
-                        // The maximum number of images allowed
+                        // The maximum number of images allowed.
                         if ($imrepo->countImages($trick_id)[1] >= $parameters::MAX) {
                             $this->addFlash('warning',"Le nombre maximum d'images est atteint");
                             return $this->redirectToRoute('figuresdetails',["slug" => $figure->getSlug()]);
                         }
+
                         $images_name = $manager->upload($value,'figures_directory');
                         $picture = new Images;
                         $picture->setImageName($images_name);
@@ -62,8 +65,7 @@ class ImageController extends AbstractController
                 return $this->redirectToRoute('figuresdetails',["slug" => $figure->getSlug()]);
             }
         }
-        return $this->render('edition/add_image_form.html.twig', [
-            'add_image_form' => $form, 'figure' =>  $figure]);
+        return $this->render('edition/add_image_form.html.twig', ['add_image_form' => $form, 'figure' => $figure]);
 
     }
 
@@ -80,11 +82,11 @@ class ImageController extends AbstractController
      * @param ImagesRepository $imrepo
      * @return Response
      */
-    public function deleteImage(EntityManagerInterface $entityManager,int $id, int $image_id,ImageManager $manager,ImagesRepository $imrepo, Parameters $parameters) :Response
+    public function deleteImage(EntityManagerInterface $entityManager, int $id, int $image_id, ImageManager $manager, ImagesRepository $imrepo, Parameters $parameters) :Response
     {
         $figure = $entityManager->getRepository(Figures::class)->find($id);
         $image = $entityManager->getRepository(Images::class)->find($image_id);
-        // if there are more than one image
+        // If there are more than one image.
         if ($imrepo->countImages($id)[1] > 1) {
             $figure->removeImage($image);
             $entityManager->remove($image);
@@ -94,14 +96,14 @@ class ImageController extends AbstractController
                 $manager->delete('figures_directory',$image->getImageName());
             }
             $this->addFlash('success', "Suppression réussit 😊");
-            return $this->redirectToRoute('figuresdetails', [
-                'slug' => $figure->getSlug()]);
+            return $this->redirectToRoute('figuresdetails', ['slug' => $figure->getSlug()]);
         }
+
         $this->addFlash('danger', "Cette image ne peut pas être supprimé car c'est la seule pour ce trick");
             return $this->redirectToRoute('figuresdetails', [
                 'slug' => $figure->getSlug()]);
 
-        }
+    }
 
 
     #[Route('/modification-image/{id}/{image_id}',name:'edit_image')]
@@ -116,7 +118,7 @@ class ImageController extends AbstractController
      * @param ImageManager $upload
      * @return Response
      */
-    public function editImage(Request $request, EntityManagerInterface $entityManager,int $id, int $image_id, ImageManager $upload, Parameters $parameters) :Response
+    public function editImage(Request $request, EntityManagerInterface $entityManager, int $id, int $image_id, ImageManager $upload, Parameters $parameters) :Response
     {
         $figure = $entityManager->getRepository(Figures::class)->find($id);
         $form = $this->createForm(ImageForm::class, $figure);
@@ -145,9 +147,7 @@ class ImageController extends AbstractController
                 return $this->redirectToRoute('figuresdetails',['slug' =>$figure->getSlug()]);
             }
         }
-        return $this->render('edition/image_form.html.twig', [
-            'image_form' => $form, 'figure' =>  $figure, 'img_id' => $image_id]);
-
+        return $this->render('edition/image_form.html.twig', ['image_form' => $form, 'figure' =>  $figure, 'img_id' => $image_id]);
     }
 
 

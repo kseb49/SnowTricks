@@ -16,18 +16,20 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class VideosRepository extends ServiceEntityRepository
 {
+
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Videos::class);
     }
 
 
-     /**
-     * Get all the videos of a trick
-     *
-     * @param integer $id
-     * @return array
-     */
+    /**
+    * Get all the videos of a trick
+    *
+    * @param integer $id The trick id
+    * @return array
+    */
     public function findAllVideos(int $id): array
     {
         $entityManager = $this->getEntityManager();

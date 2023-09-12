@@ -24,7 +24,8 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 #[Route('/figures',name:'figures')]
 class FigureController extends AbstractController 
 {
-   
+
+
     #[Route('/{slug}', name:'details')]
     /**
      * Page of a single trick
@@ -146,14 +147,14 @@ class FigureController extends AbstractController
             $this->addFlash('danger', "Cette figure n'existe pas");
             return $this->redirectToRoute('home');
         }
-        // Delete the images files linked
-        foreach($imrepo->findAllImages($id) as $value) {
+        // Delete the images files linked.
+        foreach ($imrepo->findAllImages($id) as $value) {
             if($value['image_name'] !== $parameters::DEFAULT_IMG) {
                 $manager->delete('figures_directory',$value['image_name']);
                 $imrepo->removeImages($value['image_name']);
             }
         };
-        // Delete the videos
+        // Delete the videos.
         foreach ($virepo->findAllVideos($id) as $value) {
             $virepo->removeVideos($value['src']);
         }

@@ -25,7 +25,7 @@ class Parameters
     const RESET= 'reset';
 
     /**
-     * Set of variables for the needed in Emails
+     * Set of variables needed for sending Emails
      *
      * @var array
      */
@@ -39,14 +39,17 @@ class Parameters
             "sujet" => "Réinitialisation de votre mot de passe",
             "route" => "password_reset",
             "template" => "emails/confirm.html.twig"
-        ] 
+        ]
     ];
 
 
     public function getMailParameters(string $confirm) :array
     {
-        if (array_key_exists($confirm, $this->mail)) {
+        if (array_key_exists($confirm, $this->mail) === true) {
             return $this->mail[$confirm];
         }
+
     }
+
+
 }
