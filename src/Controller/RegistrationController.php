@@ -2,26 +2,31 @@
 
 namespace App\Controller;
 
+use DateTime;
 use App\Entity\Users;
+use App\Service\SendEmail;
+use App\Service\Parameters;
+use App\Service\ImageManager;
 use App\Form\RegistrationFormType;
 use App\Security\UsersAuthenticator;
-use App\Service\ImageUploader;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
-use Symfony\Component\String\Slugger\SluggerInterface;
+
 
 class RegistrationController extends AbstractController //https://symfony.com/doc/current/forms.html#processing-forms
 {
-    #[Route('/inscription', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, UserAuthenticatorInterface $userAuthenticator, UsersAuthenticator $authenticator, EntityManagerInterface $entityManager, ImageUploader $fileUploader): Response
-    {
 
+
+    #[Route('/inscription', name: 'app_register')]
+    public function register(Parameters $parameters, Request $request, UserPasswordHasherInterface $userPasswordHasher, UserAuthenticatorInterface $userAuthenticator, UsersAuthenticator $authenticator, EntityManagerInterface $entityManager, ImageManager $fileUploader, SendEmail $mail): Response
+    {
         $user = new Users();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
@@ -49,17 +54,71 @@ class RegistrationController extends AbstractController //https://symfony.com/do
             );
             $user->setEmail($form->get('email')->getData());
             $user->setName($form->get('name')->getData());
+            $token = hash('md5',uniqid(true));
+            $user->setToken($token);
+            $user->setSendLink(new DateTime());
             $entityManager->persist($user);
             $entityManager->flush();
+            try {
+                $mail->sendEmail(to: $user->getEmail(), subject : $parameters->getMailParameters($parameters::CONFIRM)['sujet'], template: $parameters->getMailParameters($parameters::CONFIRM)['template'], context:['mail' => $user->getEmail(), 'token' => $token, 'route' => $parameters->getMailParameters($parameters::CONFIRM)['route']]);
+
+            } catch (TransportExceptionInterface $e) {
+                $this->addFlash('warning', $e);
+                return $this->redirectToRoute('home');
+            }
+            $this->addFlash('success', 'Vous avez 24 heures pour confirmez votre email');
             return $userAuthenticator->authenticateUser(
                 $user,
                 $authenticator,
                 $request
             );
-            // do anything else you need here, like send an email
         }
         return $this->render('registration/register.html.twig', [
             'registrationForm' => $form->createView()
         ]);
     }
+
+    #[Route('/confirmation', name: 'account_confirmation')]
+    public function confirm(Request $request, EntityManagerInterface $entityManager, Parameters $parameters, SendEmail $mail) :Response
+    {
+        if ($user = $entityManager->getRepository(Users::class)->findOneBy(['email' => $request->query->get('mail')])) {
+            if ($user->getConfirmationDate() === null) {
+                $limit = $user->getsendLink();
+                $now = new DateTime(date('Y-m-d H:i:s'));
+                $diff = $limit->diff($now);
+                // The link must be less than 24hrs.
+                if ($diff->format("%D") < 1 && $request->query->get('token') === $user->getToken()) {
+                    $user->setConfirmationDate(new DateTime());
+                    $user->setSendLink(null);
+                    $user->setToken(null);
+                    $entityManager->persist($user);
+                    $entityManager->flush();
+                    $this->addFlash('success', 'Votre compte est confirmé');
+                    return $this->redirectToRoute('home');
+                }
+                try {
+                    $token = hash('md5',uniqid(true));
+                    $user->setToken($token);
+                    $user->setSendLink(new DateTime());
+                    $mail->sendEmail(to: $user->getEmail(), subject : $parameters->getMailParameters($parameters::CONFIRM)['sujet'], template: $parameters->getMailParameters($parameters::CONFIRM)['template'], context:['mail' => $user->getEmail(), 'token' => $token, 'route' => $parameters->getMailParameters($parameters::CONFIRM)['route']]);
+                    $entityManager->persist($user);
+                    $entityManager->flush();
+     
+                } catch(TransportExceptionInterface $e) {
+                    $this->addFlash('warning', $e);
+                    return $this->redirectToRoute('home');
+                }
+                $this->addFlash('danger', 'Ce lien n\'est pas valable. Un nouveau vous a été envoyé à votre adresse mail');
+                return $this->redirectToRoute('home');
+            }
+            $this->addFlash('warning', 'Votre compte est dèjà confirmé');
+            return $this->redirectToRoute('home');
+        }
+        // The user mail doesn't exist in the DB.
+        $this->addFlash('warning', "Ce lien n'est pas valable");
+        return $this->redirectToRoute('home');
+
+    }
+
+
 }

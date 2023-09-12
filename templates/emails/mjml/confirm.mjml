@@ -1,0 +1,27 @@
+<mjml>
+  <mj-head>
+    <mj-attributes>
+      <mj-class name="mjclass" color="#2e86de" font-size="20px" font-style="underline" />
+      <mj-class name="comment" color="#41729F" font-size="15px" />
+      <mj-class name="author" color="#2c3e50" font-size="18px" />
+    </mj-attributes>
+    <mj-title>Snow tricks</mj-title>
+  </mj-head>
+  <mj-body>
+    <mj-section>
+      <mj-column>
+        <mj-text mj-class="mjclass" align="center">Cliquez sur le lien ci dessous pour confirmer votre compte SNOW TRICKS</mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section>
+      <mj-column>
+        <mj-button background-color="#54a0ff" border-radius="10px" href="http://snow-tricks.test/">Confirmer mon compte<br>email@email.com</mj-button>
+      </mj-column>
+    </mj-section>
+    <mj-section>
+      <mj-column>
+        <mj-text mj-class="comment">⏰Ce lien n'est valable que 24 hrs</mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

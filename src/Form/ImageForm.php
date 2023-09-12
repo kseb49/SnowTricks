@@ -19,10 +19,10 @@ class ImageForm extends AbstractType
         $builder
         ->add('images', FileType::class,[
             'mapped' => false,
-            'required' => false,
+            'required' => true,
             'constraints' => [
                 new File([
-                    'maxSize' => '5000k',
+                    'maxSize' => '10000k',
                     'mimeTypes' => [
                         'image/jpeg',
                         'image/gif',

@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UsersRepository;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Validator\Constraints\PasswordStrength;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
@@ -25,6 +25,12 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 180, unique: true)]
     #[Assert\Email]
     #[Assert\NotBlank]
+    #[Assert\Length(
+        min: 10,
+        max: 180,
+        minMessage: 'Votre adresse {{ value }}, est trop courte, min = {{ limit }} caractères',
+        maxMessage: 'Votre adresse est trop longue',
+    )]
     private ?string $email = null;
 
     #[ORM\Column]
@@ -34,23 +40,44 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
-    // #[Assert\PasswordStrength(["message" => "Mot de passe trop faible"])]
     #[Assert\NotBlank(['message' => 'Mots de passe vide'])]
     #[Assert\Length(
         min: 6,
         minMessage: 'Votre mot de passe doit faire {{ limit }} caractères minimum'
     )]
+    #[Assert\Type('string')]
     private ?string $password = null;
 
     #[ORM\Column(length: 100, unique: true)]
     #[Assert\NotBlank]
     #[Assert\Type('string')]
+    #[Assert\Length(
+        min: 3,
+        max: 100,
+        minMessage: '{{ value }} est trop court. Votre pseudo doit faire {{ limit }} caractères minimum'
+    )]
     private ?string $name = null;
 
     #[ORM\Column(length: 100,options:['default' => "snowboarder-310459.png"])]
     #[Assert\Type('string')]
     #[Assert\NotBlank]
+    #[Assert\Length(
+        min: 5,
+        max: 100,
+        minMessage: 'Le nom {{ value }} pour votre photo est trop court. {{ limit }} caractères minimum',
+        maxMessage: 'Le nom {{ value }} pour votre photo est trop long. {{ limit }} caractères maximum'
+    )]
     private ?string $photo = "snowboarder-310459.png";
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $confirmationDate = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $sendLink = null;
+
+    #[ORM\Column]
+    #[Assert\Type('string')]
+    private ?string $token = null;
 
     #[ORM\OneToMany(targetEntity:Figures::class, mappedBy:'users_id')]
     private $figures;
@@ -155,6 +182,45 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPhoto(?string $photo = "snowboarder-310459.png"): static
     {
         $this->photo = $photo;
+
+        return $this;
+    }
+
+
+    public function getConfirmationDate(): ?\DateTimeInterface
+    {
+        return $this->confirmationDate;
+    }
+
+    public function setConfirmationDate(?\DateTimeInterface $confirmationDate): static
+    {
+        $this->confirmationDate = $confirmationDate;
+
+        return $this;
+    }
+
+
+    public function getSendLink(): ?\DateTimeInterface
+    {
+        return $this->sendLink;
+    }
+
+    public function setSendLink(?\DateTimeInterface $sendLink): static
+    {
+        $this->sendLink = $sendLink;
+
+        return $this;
+    }
+
+
+    public function getToken(): ?string
+    {
+        return $this->token;
+    }
+
+    public function setToken(?string $token): static
+    {
+        $this->token = $token;
 
         return $this;
     }
