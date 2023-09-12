@@ -79,7 +79,7 @@ class RegistrationController extends AbstractController //https://symfony.com/do
     #[Route('/confirmation', name: 'account_confirmation')]
     public function confirm(Request $request, EntityManagerInterface $entityManager, Parameters $parameters, SendEmail $mail) :Response
     {
-        if (!$user = $entityManager->getRepository(Users::class)->findOneBy(['email' => $request->query->get('mail')])) {
+        if ($user = $entityManager->getRepository(Users::class)->findOneBy(['email' => $request->query->get('mail')])) {
             if ($user->getConfirmationDate() == null) {
                 $limit = $user->getsendLink();
                 $now = new DateTime(date('Y-m-d H:i:s'));
@@ -112,6 +112,11 @@ class RegistrationController extends AbstractController //https://symfony.com/do
              $this->addFlash('warning', 'Votre compte est dèjà confirmé');
              return $this->redirectToRoute('home');
         }
-        
-}
+        // The user mail doesn't exist in the DB
+        $this->addFlash('warning', "Ce lien n'est pas valable");
+        return $this->redirectToRoute('home');
+
+    }
+
+
 }
