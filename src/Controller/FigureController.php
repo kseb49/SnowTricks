@@ -6,13 +6,14 @@ use DateTime;
 use App\Entity\Images;
 use App\Entity\Videos;
 use App\Entity\Figures;
-use App\Form\AddMessagesForm;
+use App\Entity\Messages;
 use App\Form\FigureForm;
+use App\Service\Parameters;
 use App\Form\EditFigureForm;
+use App\Service\ImageManager;
 use App\Repository\ImagesRepository;
 use App\Repository\VideosRepository;
-use App\Service\ImageManager;
-use App\Service\Parameters;
+use App\Repository\MessagesRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,6 +22,7 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+
 
 #[Route('/figures',name:'figures')]
 class FigureController extends AbstractController 
@@ -34,12 +36,13 @@ class FigureController extends AbstractController
      * @param Figures $figures 
      * @return Response
      */
-    public function details(Figures $figures, Parameters $parameters) :Response
+    public function details(Figures $figures, Parameters $parameters, MessagesRepository $message) :Response
     {
         if (!$figures) {
             $this->addFlash('danger', "Cette figure n'existe pas");
             return $this->redirectToRoute('home');
         }
+
         return $this->render('details.html.twig', [
             'figures' => $figures, 'default_image' => $parameters::DEFAULT_IMG]);
     }

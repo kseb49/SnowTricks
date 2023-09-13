@@ -35,8 +35,8 @@ class Messages
     #[ORM\JoinColumn(nullable: false)]
     private ?figures $figures = null;
 
-    #[ORM\ManyToOne(inversedBy: 'messages')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(inversedBy: 'messages', targetEntity:Users::class)]
+    #[ORM\JoinColumn(nullable: false, name:'users_id')]
     private ?users $users = null;
 
 

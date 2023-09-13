@@ -24,13 +24,13 @@ class MessagesRepository extends ServiceEntityRepository
 //    /**
 //     * @return Messages[] Returns an array of Messages objects
 //     */
-//    public function findByExampleField($value): array
+//    public function findBySlug($slug): array
 //    {
 //        return $this->createQueryBuilder('m')
-//            ->andWhere('m.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('m.id', 'ASC')
-//            ->setMaxResults(10)
+//            ->andWhere('m.figures = :val')
+//            ->setParameter('val', $slug)
+//            ->orderBy('m.message_date', 'DESC')
+//         //    ->setMaxResults(10)
 //            ->getQuery()
 //            ->getResult()
 //        ;

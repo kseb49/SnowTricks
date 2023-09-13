@@ -62,25 +62,19 @@
                 {% if app.user %}
                     <div class="col" id="mess_form">
                         {{ render(controller('App\\Controller\\MessagesController::addMessage', { 'id': figures.id })) }}
-                        {# {% include 'edition/add_comment.html.twig' %} #}
                     </div>
                 {% endif %}
                     <div class="col">
-                        {% for message in figures.messages %}
+                        {% for message in figures.messages | sort ((a,b) => b.MessageDate <=> a.MessageDate) %}
                             <div class="card mb-3">
                                 <div class="row m-1">
                                     <div class="col">
-                                        <img class="card-img-top message" src={{asset('images/avatars/')}}{{app.user.photo}} alt="Card image cap">
+                                        <img class="card-img-top message" src={{asset('images/avatars/')}}{{message.users.photo}} alt="Card image cap">
                                     </div>
-                                    {# <div class="col">
-                                    <h5 class="card-title">Card title</h5>
-                                        {# <p class="mt-2">@{{app.user.name}} dis :</p> #}
-                                    {# </div> #}
                                 </div>
                                 <div class="card-body">
-                                    <h5 class="card-title">@{{app.user.name}}</h5>
+                                    <h5 class="card-title">@{{message.users.name}}</h5>
                                     <p class="card-text">{{message.content}}</p>
-                                    {# <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p> #}
                                     <div class="row m-1">
                                         <div class="col">
                                             <p class="card-text"><small class="text-muted">Le {{message.MessageDate | date("d/m/y à H:i")}}</small></p>

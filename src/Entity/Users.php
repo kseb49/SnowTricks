@@ -237,25 +237,25 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->messages;
     }
 
-    public function addMessage(Messages $message): static
-    {
-        if (!$this->messages->contains($message)) {
-            $this->messages->add($message);
-            $message->setUsers($this);
-        }
+    // public function addMessage(Messages $message): static
+    // {
+    //     if (!$this->messages->contains($message)) {
+    //         $this->messages->add($message);
+    //         $message->setUsers($this);
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function removeMessage(Messages $message): static
-    {
-        if ($this->messages->removeElement($message)) {
-            // set the owning side to null (unless already changed)
-            if ($message->getUsers() === $this) {
-                $message->setUsers(null);
-            }
-        }
+    // public function removeMessage(Messages $message): static
+    // {
+    //     if ($this->messages->removeElement($message)) {
+    //         // set the owning side to null (unless already changed)
+    //         if ($message->getUsers() === $this) {
+    //             $message->setUsers(null);
+    //         }
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 }
