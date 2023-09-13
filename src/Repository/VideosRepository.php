@@ -24,6 +24,19 @@ class VideosRepository extends ServiceEntityRepository
     }
 
 
+    public function countVideos(int $id): array
+    {
+        $entityManager = $this->getEntityManager();
+        $query = $entityManager->createQuery(
+        'SELECT COUNT(v.id)
+        FROM App\Entity\Figures f
+        INNER JOIN f.videos v
+        WHERE f.id = :id'
+        )->setParameter('id', $id);
+        return $query->getOneOrNullResult();
+
+    }
+
     /**
     * Get all the videos of a trick
     *

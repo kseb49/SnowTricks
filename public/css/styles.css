@@ -616,6 +616,12 @@ progress {
   height: auto;
   margin-bottom: 2rem;
  }
+ /* .big{
+  height: 100%;
+  max-width: 100%;
+  margin: 10rem;
+  padding: 10rem;
+ } */
 
 .img-thumbnail {
   padding: 0.25rem;

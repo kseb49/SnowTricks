@@ -6,7 +6,6 @@ use DateTime;
 use App\Entity\Images;
 use App\Entity\Videos;
 use App\Entity\Figures;
-use App\Entity\Messages;
 use App\Form\FigureForm;
 use App\Service\Parameters;
 use App\Form\EditFigureForm;
@@ -84,6 +83,14 @@ class FigureController extends AbstractController
                 $picture->setImageName($parameters::DEFAULT_IMG);
                 $figure->addImage($picture);
             }
+                $videos = $form->get('videos')->getData();
+                if ($videos) {
+                    foreach ($videos as $value) {
+                       $embed = new Videos;
+                       $embed->setSrc($value->getSrc());
+                       $figure->addVideos($embed);
+                    }
+                }
                 $figure->setName($form->get('name')->getData());
                 $figure->setSlug(strtolower($slugger->slug($form->get('name')->getData())));
                 $figure->setDescription($form->get('description')->getData());
@@ -91,11 +98,6 @@ class FigureController extends AbstractController
                 $figure->setUsersId($this->getUser());
                 $figure->setGroupsId($form->get('groups_id')->getData());
                 $videos = $form->get('videos')->getData();
-                if($videos){
-                    $videos = new Videos;
-                    $videos->setSrc($form->get('videos')->getData());
-                    $figure->addVideos($videos);
-                }
                 $entityManager->persist($figure);
                 $entityManager->flush();
                 $this->addFlash('success', "La figure est en ligne 😊");

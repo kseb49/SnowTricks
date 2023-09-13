@@ -5,13 +5,12 @@
 {% block body %}
 <div class="container">
  <h1>Modification d'une vidéo </h1>
-    {{ form_start(figure_form) }}
-    {{form_errors(figure_form)}}
-    {{ form_row(figure_form.name)}}
-    {{ form_row(figure_form.description)}}
-    {{ form_row(figure_form.groups_id)}}
+    {{ form_start(form) }}
+    {{form_errors(form)}}
+   
+    {{ form_row(form.src)}}
  
     <button type="submit" class="btn btn-primary">Créer</button>
-    {{ form_end(figure_form) }}
+    {{ form_end(form) }}
 </div>
 {% endblock %}
