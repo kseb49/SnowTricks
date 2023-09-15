@@ -6,9 +6,11 @@ use DateTime;
 use App\Entity\Images;
 use App\Entity\Videos;
 use App\Entity\Figures;
+use App\Entity\Messages;
 use App\Form\FigureForm;
 use App\Service\Parameters;
 use App\Form\EditFigureForm;
+use App\Form\AddMessagesForm;
 use App\Service\ImageManager;
 use App\Repository\ImagesRepository;
 use App\Repository\VideosRepository;
@@ -35,15 +37,27 @@ class FigureController extends AbstractController
      * @param Figures $figures 
      * @return Response
      */
-    public function details(Figures $figures, Parameters $parameters, MessagesRepository $message) :Response
+    public function details(Request $request, Figures $figures, EntityManagerInterface $entityManager, Parameters $parameters, MessagesRepository $message) :Response
     {
         if (!$figures) {
             $this->addFlash('danger', "Cette figure n'existe pas");
             return $this->redirectToRoute('home');
         }
-
+        $message = new Messages();
+        $form = $this->createForm(AddMessagesForm::class, $message);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $message->setContent($form->get('content')->getData());
+            $message->setMessageDate();
+            $message->setUsers($this->getUser());
+            $figures->addMessage($message);
+            $entityManager->persist($figures);
+            $entityManager->flush();
+            $this->addFlash('success', "Votre commentaire est en ligne 😊");
+            return $this->redirectToRoute('figuresdetails', ['slug' => $figures->getSlug()]);
+        }
         return $this->render('details.html.twig', [
-            'figures' => $figures, 'default_image' => $parameters::DEFAULT_IMG]);
+            'figures' => $figures, 'default_image' => $parameters::DEFAULT_IMG, 'message_form' => $form]);
     }
 
 

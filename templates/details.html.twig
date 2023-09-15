@@ -94,7 +94,8 @@
                 {# Commentaires #}
                 {% if app.user %}
                     <div class="col" id="mess_form">
-                        {{ render(controller('App\\Controller\\MessagesController::addMessage', { 'id': figures.id })) }}
+                        {# {{ render(controller('App\\Controller\\MessagesController::addMessage', { 'id': figures.id })) }} #}
+                        {% include 'edition/add_comment.html.twig' %}
                     </div>
                 {% endif %}
                 <div class="col">
