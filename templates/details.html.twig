@@ -1,17 +1,18 @@
 {% extends 'base.html.twig' %}
 {% block body %}
     <div class="container"> 
-    {% include 'utils/deletemodal.html.twig' with {name : figures.name, path : 'figuresdelete', id : figures.id} %}
+        {% include 'utils/deletemodal.html.twig' with {name : figures.name, path : 'figuresdelete', id : figures.id} %}
         <h1 class="text-center m-5">{{ figures.name }}</h1>
         <p class="text-center">{{figures.GroupsID.GroupName}}</p>
-          <p>
+        <p>
           Ajouté le {{figures.CreationDate |date("d/m/y")}} par @{{figures.UsersId.name}}<br>
             {% if figures.UpdateDate %}
             Dèrnière mise à jour le {{figures.UpdateDate | date("d/m/y")}}
             {% endif %}
-            </p>
-    {% for image in figures.images %}
-        {% include 'utils/deletemodal.html.twig' with {name : image.ImageName, path :"delete_image", subject : 'image', key : image.Id, id : figures.id} %}
+        </p>
+        {# images #}
+        {% for image in figures.images %}
+            {% include 'utils/deletemodal.html.twig' with {name : image.ImageName, path :"delete_image", subject : 'image', key : image.Id, id : figures.id} %}
             {% if loop.first %}
                 <div class="row">
                     <div class="col">
@@ -22,41 +23,73 @@
                                     {% include 'utils/button.html.twig' with {id : figures.id, display : true, file: image.Id, path : 'edit_image', type:'image'} %}
                                 {% endif %}
                             {% endif %}
-                        <img src={{asset('images/figures/')}}{{image.ImageName}} alt="" class="img-fluid">
+                        <img src={{asset('images/figures/')}}{{image.ImageName}} alt="" class="img-fluid big">
                     </div>
                 </div>
                 <div class="row">
-            {% else %}
-                <div class="col">
-                    {% if app.user and app.user.id == figures.UsersId.id %}
-                        {% include 'utils/button.html.twig' with {id : figures.id, display : true, file: image.Id, path : 'edit_image',type:'image',path_delete : "delete_image"} %}
-                    {% endif %}
-                    <img src={{asset('images/figures/')}}{{image.ImageName}} alt="" class="img-thumbnail">
-                </div>
-            {% endif %}
-    {% endfor %}
-
-            </div>
-        {% for video in figures.videos %}
-            {% include 'utils/deletemodal.html.twig' with {name : figures.name, path :"figuresvideo_delete", subject : 'video', key : video.Id, id:figures.id} %}
-
-            {% if loop.first %}
-                <div class="embed-responsive embed-responsive-16by9">
-            {% endif %}
-            {% if app.user and app.user.id == figures.UsersId.id %}
-                {% include 'utils/button.html.twig' with {id : figures.id, display : true, file: video.Id, path : 'edit_video',type:'video',path_delete : "figuresvideo_delete"} %}
-            {% endif %}
-                <iframe class="embed-responsive-item" src={{video.src}} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"allowfullscreen></iframe>
-                {% if loop.last %}
-                     </div>
+                {% else %}
+                    <div class="col">
+                        {% if app.user and app.user.id == figures.UsersId.id %}
+                            {% include 'utils/button.html.twig' with {id : figures.id, display : true, file: image.Id, path : 'edit_image',type:'image',path_delete : "delete_image"} %}
+                        {% endif %}
+                        <img src={{asset('images/figures/')}}{{image.ImageName}} alt="" class="img-thumbnail">
+                    </div>
                 {% endif %}
         {% endfor %}
-           
-        <p class="text-justify p-2 desc">{{ figures.description}}<br>
-        {% if app.user and app.user.id == figures.UsersId.id %}
-            <a  href={{path('figuresedit',{'id' : figures.id})}} type="button" class="btn btn-info btn-sm m-1">✍️ Modifier</a></p>
-        {% endif %}
-            <div class="container">
+                </div>
+        {# Videos #}
+        {% for videos in figures.videos | batch(3) %}
+            <div class="row">
+                {% for key, video in videos %}
+                    {% include 'utils/deletemodal.html.twig' with {name : figures.name, path :"delete_video", subject : 'video', key : video.Id, id:figures.Id} %}
+                    {% if key == 4 or key == 5 %}
+                        <div class="col-4">
+                    {% else %}
+                        <div class="col">
+                    {% endif %}
+                        <div class="embed-responsive embed-responsive-16by9">
+                        {% if app.user and app.user.id == figures.UsersId.id %}
+                            {% include 'utils/button.html.twig' with {id : figures.id, display : true, file: video.Id, path : 'edit_video',type:'video'} %}
+                        {% endif %}
+                        <iframe class="embed-responsive-item" src={{video.src}} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"allowfullscreen></iframe>
+                        {# {% if loop.last %} #}
+                            </div>
+                        {# {% endif %} #}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+        {# description #}
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <p class="text-justify p-2 desc">{{ figures.description}}<br>
+                    {% if app.user and app.user.id == figures.UsersId.id %}
+                        <a  href={{path('figuresedit',{'id' : figures.id})}} type="button" class="btn btn-info btn-sm m-1">✍️ Modifier</a></p>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row m-3 p-3 border bg-light">
+                {% if app.user and app.user.id == figures.UsersId.id %}
+                    <div class="col-sm-4 text-center">
+                        {# <div class="m-2"> #}
+                            <button type="button" class="btn btn-danger m-1 btn-sm" data-toggle="modal" data-target="#deleteModal">🗑️ Supprimer la figure</a>
+                        {# </div> #}
+                    </div>
+                    <div class="col-sm-4 text-center">
+                        {# <div class="m-2"> #}
+                            <a href = {{path('add_image',{trick_id : figures.id})}} type="button" class="btn btn-success m-1 btn-sm">Ajouter une image</a>
+                        {# </div> #}
+                    </div>
+                    <div class="col-sm-4 text-center">
+                        {# <div class="m-2"> #}
+                            <a href ={{path('add_video',{id : figures.id})}} type="button" class="btn btn-success m-1 btn-sm">Ajouter une vidéo</a>
+                        {# </div> #}
+                    </div>
+                {% endif %}
+            </div>
+               
+            
                 <div class="row">
                 {# Commentaires #}
                 {% if app.user %}
@@ -64,40 +97,42 @@
                         {{ render(controller('App\\Controller\\MessagesController::addMessage', { 'id': figures.id })) }}
                     </div>
                 {% endif %}
-                    <div class="col">
-                        {% for message in figures.messages | sort ((a,b) => b.MessageDate <=> a.MessageDate) %}
-                            <div class="card mb-3">
+                <div class="col">
+                    {% for message in figures.messages | sort ((a,b) => b.MessageDate <=> a.MessageDate) %}
+                        <div class="card mb-3">
+                            <div class="row m-1">
+                                <div class="col">
+                                    <img class="card-img-top message" src={{asset('images/avatars/')}}{{message.users.photo}} alt="Card image cap">
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">@{{message.users.name}}</h5>
+                                <p class="card-text">{{message.content}}</p>
                                 <div class="row m-1">
                                     <div class="col">
-                                        <img class="card-img-top message" src={{asset('images/avatars/')}}{{message.users.photo}} alt="Card image cap">
+                                        <p class="card-text"><small class="text-muted">Le {{message.MessageDate | date("d/m/y à H:i")}}</small></p>
                                     </div>
                                 </div>
-                                <div class="card-body">
-                                    <h5 class="card-title">@{{message.users.name}}</h5>
-                                    <p class="card-text">{{message.content}}</p>
-                                    <div class="row m-1">
-                                        <div class="col">
-                                            <p class="card-text"><small class="text-muted">Le {{message.MessageDate | date("d/m/y à H:i")}}</small></p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {# fin commentaires #}
-                    {% if app.user and app.user.id == figures.UsersId.id %}
-                        <div class="col">
-                            <div class="m-2">
-                                <button type="button" class="btn btn-danger m-1 btn-sm" data-toggle="modal" data-target="#deleteModal">🗑️ Supprimer la figure</a>
-                            </div>
-                            <div class="m-2">
-                                <a href = {{path('add_image',{trick_id : figures.id})}} type="button" class="btn btn-success m-1 btn-sm">Ajouter une image</a>
-                            </div>
-                            <div class="m-2">
-                                <a href = type="button" class="btn btn-success m-1 btn-sm">Ajouter une vidéo</a>
                             </div>
                         </div>
+                    {% endfor %}
+                </div>
+                {# fin commentaires #}
+                
+                </div>
+            {# {% if app.user and app.user.id == figures.UsersId.id %}
+                <div class="col">
+                    <div class="m-2">
+                        <button type="button" class="btn btn-danger m-1 btn-sm" data-toggle="modal" data-target="#deleteModal">🗑️ Supprimer la figure</a>
                     </div>
-                    {% endif %}
-    </div>
+                    <div class="m-2">
+                        <a href = {{path('add_image',{trick_id : figures.id})}} type="button" class="btn btn-success m-1 btn-sm">Ajouter une image</a>
+                    </div>
+                    <div class="m-2">
+                        <a href ={{path('add_video',{id : figures.id})}} type="button" class="btn btn-success m-1 btn-sm">Ajouter une vidéo</a>
+                    </div>
+                </div>
+            </div>
+            {% endif %} #}
+        </div>
 {% endblock %}

@@ -3,18 +3,21 @@
 namespace App\Form;
 
 use App\Entity\Groups;
+use App\Entity\Videos;
 use App\Entity\Figures;
+use App\Form\VideoForm;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\All;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
-use Symfony\Component\Validator\Constraints\All;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 class FigureForm extends AbstractType 
 {
@@ -30,7 +33,7 @@ class FigureForm extends AbstractType
             'choice_label' => 'group_name',
             'label' => 'A quel groupe appartient ce trick?',
             'required' => true])
-        ->add('videos', UrlType::class,['mapped' => false,'label' => 'Liens vers des vidéos you tube', 'required' => false])
+        ->add('videos', CollectionType::class,['mapped'=>false, 'entry_type'=>VideoForm::class, 'allow_add' => true,'by_reference' => false, 'allow_delete' => true, 'entry_options' => ['label' => false]])
         ->add('slug', HiddenType::class,['mapped' => false])
         ->add('images', FileType::class,[
             'mapped' => false,

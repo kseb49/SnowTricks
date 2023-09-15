@@ -38,6 +38,8 @@ class MessagesController extends AbstractController
         }
 
             return $this->render('edition/add_comment.html.twig',['message_form' => $form, 'figure' => $id]);
+            // return $this->render('details.html.twig', [
+            //     'figures' => $figure, 'default_image' => $parameters::DEFAULT_IMG]);
 
     }
 

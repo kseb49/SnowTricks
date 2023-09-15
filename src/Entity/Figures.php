@@ -80,7 +80,7 @@ class Figures
     }
 
 
-    public function removeVideos(Images $videos): static
+    public function removeVideos(Videos $videos): static
     {
         $this->videos->removeElement($videos);
 

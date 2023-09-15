@@ -1,15 +1,16 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Ajouter des videos{% endblock %}
+{% block title %}Ajouter des videos pour {{figure.name}}{% endblock %}
 
 {% block body %}
     <div class="container">
-        <h1>Ajouter des videos</h1><br>
-            {{ form_start(add_video_form) }}
-                {{ form_errors(add_video_form) }}
-                {{ form_row(add_video_form.videos)}}
-                {# <button type="button" class="btn btn-primary" id="addVideo">Ajouter une autre video</button> #}
-                <button type="submit" class="btn btn-primary">Ajouter</button>
-            {{ form_end(add_video_form) }}
+        <h1>Ajouter des videos pour "{{figure.name}}"</h1><br>
+        {{ form_start(form) }}
+            {{ form_errors(form) }}
+            <button type="button" class="add_item_link btn btn-secondary" data-collection-holder-class="videos">Cliquer pour ajouter</button>
+            <div class='videos mb-3' data-prototype="{{ form_widget(form.videos.vars.prototype)|e('html_attr') }}"  data-index="{{ form.videos|length > 0 ? form.tags|last.vars.name + 1 : 0 }}">
+            </div>
+            <button type="submit" class="btn btn-primary mt-5">Valider</button>
+        {{ form_end(form) }}
     </div>
 {% endblock %}

@@ -10,7 +10,14 @@
         {{ form_row(figure_form.description)}}
         {{ form_row(figure_form.groups_id)}}
         {{ form_row(figure_form.images)}}
-        {{ form_row(figure_form.videos)}}
+    <div class='videos mb-3' data-prototype="{{ form_widget(figure_form.videos.vars.prototype)|e('html_attr') }}"  data-index="{{ figure_form.videos|length > 0 ? form.tags|last.vars.name + 1 : 0 }}">
+        {# {% for video in figure_form.videos %}
+            {{ form_row(video.src) }}
+        {% endfor %} #}
+        <button type="button" class="add_item_link btn btn-secondary" data-collection-holder-class="videos">Ajouter une vidéo</button>
+        {# {{ form_row(figure_form.videos)}} #}
+    </div>
+
     {# {{ form_row(figure_form.slug)}} #}
         <button type="submit" class="btn btn-primary">Créer</button>
     {{ form_end(figure_form) }}
