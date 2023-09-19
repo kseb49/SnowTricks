@@ -30,6 +30,11 @@ class Parameters
     const MAX_IMAGES = ['max_reach' => 'images'];
 
     /**
+     * The maximum images error message to display
+     */
+    const EXPIRED = ['expired_link' => 'message'];
+
+    /**
      * The confirm key of the mail array
      */
     const CONFIRM = 'confirm';
@@ -73,7 +78,10 @@ class Parameters
         "max_reach" => [
             "image" => "Le nombre maximum d'images est atteint pour cette figure",
             "videos" => "Le nombre maximum de vidéos est atteint pour cette figure"
-     ]
+        ],
+        "expired_link" => [
+            "message" => "Ce lien est expiré un nouveau vous a été adressé sur votre boîte mail"
+            ]
     ];
 
 
@@ -100,6 +108,7 @@ class Parameters
         return self::DEFAULT;
 
     }
+
 
 
 }

@@ -133,10 +133,11 @@ class RegistrationController extends AbstractController //https://symfony.com/do
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
            if ($user = $entityManager->getRepository(Users::class)->findOneBy(['name' => $form->get('name')->getData()])) {
-               if ($user->getConfirmationDate() !== null) {
+               if ($user->getConfirmationDate() !== null && $user->getsendLink() === null) {
                    try {
                         $token = hash('md5',uniqid(true));
                         $user->setToken($token);
+                        $user->setSendLink(new DateTime());
                         $entityManager->persist($user);
                         $entityManager->flush();
                         $mail->sendEmail(to: $user->getEmail(), subject : $parameters->getMailParameters($parameters::RESET)['sujet'], template: $parameters->getMailParameters($parameters::RESET)['template'], context:['mail' => $user->getEmail(), 'token' => $token, 'route' => $parameters->getMailParameters($parameters::RESET)['route']]);
@@ -156,29 +157,49 @@ class RegistrationController extends AbstractController //https://symfony.com/do
     }
 
     #[Route('confirm-reset', 'password-reset')]
-    public function confirmReset(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $userPasswordHasher) {
+    public function confirmReset(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $userPasswordHasher, SendEmail $mail, Parameters $parameters)
+    {
         if ($user = $entityManager->getRepository(Users::class)->findOneBy(['email' => $request->query->get('mail')])) {
-            if ($request->query->get('token') === $user->getToken()) {
-                $form = $this->createForm(PasswordForm::class);
-                $form->handleRequest($request);
-                if ($form->isSubmitted() && $form->isValid()) {
-                    $user->setPassword(
-                        $userPasswordHasher->hashPassword(
-                            $user,
-                            $form->get('password')->getData()
-                        )
-                    );
-                    $user->setToken(null);
-                    $entityManager->persist($user);
-                    $entityManager->flush();
-                    $this->addFlash('success', 'Votre nouveau mot de passe est opérationnel');
-                    return $this->redirectToRoute('app_login');
+            $limit = $user->getsendLink();
+            $now = new DateTime(date('Y-m-d H:i:s'));
+            $diff = $limit->diff($now);
+            // The link must be less than 24hrs.
+            if ($diff->format("%D") < 1) {
+                if ($request->query->get('token') === $user->getToken()) {
+                    $form = $this->createForm(PasswordForm::class);
+                    $form->handleRequest($request);
+                    if ($form->isSubmitted() && $form->isValid()) {
+                        $user->setPassword(
+                            $userPasswordHasher->hashPassword(
+                                $user,
+                                $form->get('password')->getData()
+                            )
+                        );
+                        $user->setToken(null);
+                        $user->setSendLink(null);
+                        $entityManager->persist($user);
+                        $entityManager->flush();
+                        $this->addFlash('success', 'Votre nouveau mot de passe est opérationnel');
+                        return $this->redirectToRoute('app_login');
+                    }
+                    return $this->render('security/new_password.html.twig', ['form' => $form]);
                 }
-
-            return $this->render('security/new_password.html.twig', ['form' => $form]);
+                $this->addFlash('danger', "Ce lien n'est pas valable");
+                return $this->redirectToRoute('app_login');
+            }
+            $token = hash('md5',uniqid(true));
+            $user->setToken($token);
+            $user->setSendLink(new DateTime());
+            $entityManager->persist($user);
+            $entityManager->flush();
+            $mail->sendEmail(to: $user->getEmail(), subject : $parameters->getMailParameters($parameters::RESET)['sujet'], template: $parameters->getMailParameters($parameters::RESET)['template'], context:['mail' => $user->getEmail(), 'token' => $token, 'route' => $parameters->getMailParameters($parameters::RESET)['route']]);
+            $this->addFlash('success',$parameters->getErrors($parameters::EXPIRED));
+            return $this->redirectToRoute('home');
         }
+        // The user is unknown
         $this->addFlash('danger', "Ce lien n'est pas valable");
         return $this->redirectToRoute('app_login');
+
     }
-    }
+
 }
