@@ -4,11 +4,12 @@ namespace App\Controller;
 
 use DateTime;
 use App\Entity\Users;
+use App\Form\ResetForm;
+use App\Form\PasswordForm;
 use App\Service\SendEmail;
 use App\Service\Parameters;
 use App\Service\ImageManager;
 use App\Form\RegistrationFormType;
-use App\Form\ResetForm;
 use App\Security\UsersAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -79,7 +80,7 @@ class RegistrationController extends AbstractController //https://symfony.com/do
         ]);
     }
 
-    #[Route('/confirmation', name: 'account_confirmation')]
+    #[Route('/confirmation', name: 'account-confirmation')]
     public function confirm(Request $request, EntityManagerInterface $entityManager, Parameters $parameters, SendEmail $mail) :Response
     {
         if ($user = $entityManager->getRepository(Users::class)->findOneBy(['email' => $request->query->get('mail')])) {
@@ -122,7 +123,7 @@ class RegistrationController extends AbstractController //https://symfony.com/do
     }
 
     #[Route('reset-password', 'reset')]
-    public function reset(Request $request, EntityManagerInterface $entityManager, SendEmail $mail) :Response
+    public function reset(Request $request, EntityManagerInterface $entityManager, SendEmail $mail,Parameters $parameters) :Response
     {
         if($this->getUser() !== null){
             $this->addFlash('danger', "Vous ne pouvez pas accéder à cette page si vous êtes connecté");
@@ -131,11 +132,53 @@ class RegistrationController extends AbstractController //https://symfony.com/do
         $form = $this->createForm(ResetForm::class);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-           if ($find = $entityManager->getRepository(Users::class)->findOneBy(['email' => $form->get('email')->getData()])) {
-                
+           if ($user = $entityManager->getRepository(Users::class)->findOneBy(['name' => $form->get('name')->getData()])) {
+               if ($user->getConfirmationDate() !== null) {
+                   try {
+                        $token = hash('md5',uniqid(true));
+                        $user->setToken($token);
+                        $entityManager->persist($user);
+                        $entityManager->flush();
+                        $mail->sendEmail(to: $user->getEmail(), subject : $parameters->getMailParameters($parameters::RESET)['sujet'], template: $parameters->getMailParameters($parameters::RESET)['template'], context:['mail' => $user->getEmail(), 'token' => $token, 'route' => $parameters->getMailParameters($parameters::RESET)['route']]);
+                        $this->addFlash('success',$parameters->getMailParameters($parameters::RESET)['message']);
+                        return $this->redirectToRoute('home');
+                    } catch (TransportExceptionInterface $e) {
+                        $this->addFlash('warning', $e);
+                        return $this->redirectToRoute('reset');
+                    }
+                }
            }
+            $this->addFlash('danger', "Erreur");
+            return $this->redirectToRoute('app_login');
         }
 
         return $this->render('security/reset.html.twig', ['form' => $form]);
-}
+    }
+
+    #[Route('confirm-reset', 'password-reset')]
+    public function confirmReset(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $userPasswordHasher) {
+        if ($user = $entityManager->getRepository(Users::class)->findOneBy(['email' => $request->query->get('mail')])) {
+            if ($request->query->get('token') === $user->getToken()) {
+                $form = $this->createForm(PasswordForm::class);
+                $form->handleRequest($request);
+                if ($form->isSubmitted() && $form->isValid()) {
+                    $user->setPassword(
+                        $userPasswordHasher->hashPassword(
+                            $user,
+                            $form->get('password')->getData()
+                        )
+                    );
+                    $user->setToken(null);
+                    $entityManager->persist($user);
+                    $entityManager->flush();
+                    $this->addFlash('success', 'Votre nouveau mot de passe est opérationnel');
+                    return $this->redirectToRoute('app_login');
+                }
+
+            return $this->render('security/new_password.html.twig', ['form' => $form]);
+        }
+        $this->addFlash('danger', "Ce lien n'est pas valable");
+        return $this->redirectToRoute('app_login');
+    }
+    }
 }
