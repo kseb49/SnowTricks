@@ -8,6 +8,7 @@ use App\Service\SendEmail;
 use App\Service\Parameters;
 use App\Service\ImageManager;
 use App\Form\RegistrationFormType;
+use App\Form\ResetForm;
 use App\Security\UsersAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -120,5 +121,21 @@ class RegistrationController extends AbstractController //https://symfony.com/do
 
     }
 
+    #[Route('reset-password', 'reset')]
+    public function reset(Request $request, EntityManagerInterface $entityManager, SendEmail $mail) :Response
+    {
+        if($this->getUser() !== null){
+            $this->addFlash('danger', "Vous ne pouvez pas accéder à cette page si vous êtes connecté");
+            return $this->redirectToRoute('home');
+        }
+        $form = $this->createForm(ResetForm::class);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+           if ($find = $entityManager->getRepository(Users::class)->findOneBy(['email' => $form->get('email')->getData()])) {
+                
+           }
+        }
 
+        return $this->render('security/reset.html.twig', ['form' => $form]);
+}
 }
