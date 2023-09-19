@@ -37,8 +37,9 @@ class FigureController extends AbstractController
      * @param Figures $figures 
      * @return Response
      */
-    public function details(Request $request, Figures $figures, EntityManagerInterface $entityManager, Parameters $parameters, MessagesRepository $message) :Response
+    public function details(Request $request, Figures $figures, EntityManagerInterface $entityManager, Parameters $parameters, MessagesRepository $message, MessagesController $comment) :Response
     {
+
         if (!$figures) {
             $this->addFlash('danger', "Cette figure n'existe pas");
             return $this->redirectToRoute('home');
@@ -47,6 +48,7 @@ class FigureController extends AbstractController
         $form = $this->createForm(AddMessagesForm::class, $message);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            $this->denyAccessUnlessGranted('ROLE_USER');
             $message->setContent($form->get('content')->getData());
             $message->setMessageDate();
             $message->setUsers($this->getUser());
@@ -56,8 +58,9 @@ class FigureController extends AbstractController
             $this->addFlash('success', "Votre commentaire est en ligne 😊");
             return $this->redirectToRoute('figuresdetails', ['slug' => $figures->getSlug()]);
         }
-        return $this->render('details.html.twig', [
-            'figures' => $figures, 'default_image' => $parameters::DEFAULT_IMG, 'message_form' => $form]);
+
+        return $this->render('details.html.twig', ['figures' => $figures, 'default_image' => $parameters::DEFAULT_IMG, 'message_form' => $form]);
+
     }
 
 
@@ -144,7 +147,7 @@ class FigureController extends AbstractController
             $entityManager->persist($figure);
             $entityManager->flush();
             $this->addFlash('success','modifé avec succès');
-            return $this->redirectToRoute('home');
+            return $this->redirectToRoute('figuresdetails', ['slug' => $figure->getSlug()]);
         }
         // $this->addFlash('danger','erreur');
         return $this->render('edition/edit_figure.html.twig', [

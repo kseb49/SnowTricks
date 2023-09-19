@@ -29,8 +29,8 @@ class VideosController extends AbstractController
                 $videos = $form->get('videos')->getData();
                 if ($videos) {
                     foreach ($videos as $value) {
-                        if ($videoRepo->countVideos($id)[1] >= $parameters::MAX) {
-                            $this->addFlash('warning',"Le nombre maximum de vidéos est atteint");
+                        if ($videoRepo->countVideos($id)[1] >= $parameters::VIDEOS_MAX) {
+                            $this->addFlash('warning',$parameters->getErrors($parameters::MAX_VIDEOS));
                             return $this->redirectToRoute('figuresdetails',["slug" => $figure->getSlug()]);
                         }
                             $embed = new Videos;
@@ -80,6 +80,7 @@ class VideosController extends AbstractController
             $this->addFlash('danger', "Cette vidéo n'existe pas");
             return $this->redirectToRoute('home');
         }
+
         $figure->removeVideos($videos);
         $entityManager->remove($videos);
         $entityManager->persist($figure);

@@ -46,8 +46,8 @@ class ImageController extends AbstractController
                 foreach ($images as $value) {
                     try {
                         // The maximum number of images allowed.
-                        if ($imrepo->countImages($trick_id)[1] >= $parameters::MAX) {
-                            $this->addFlash('warning',"Le nombre maximum d'images est atteint");
+                        if ($imrepo->countImages($trick_id)[1] >= $parameters::IMAGES_MAX) {
+                            $this->addFlash('warning',$parameters->getErrors($parameters::MAX_IMAGES));
                             return $this->redirectToRoute('figuresdetails',["slug" => $figure->getSlug()]);
                         }
 

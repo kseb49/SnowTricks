@@ -27,8 +27,8 @@
                     </div>
                 </div>
                 <div class="row">
-                {% else %}
-                    <div class="col">
+            {% else %}
+                    <div class="col-4">
                         {% if app.user and app.user.id == figures.UsersId.id %}
                             {% include 'utils/button.html.twig' with {id : figures.id, display : true, file: image.Id, path : 'edit_image',type:'image',path_delete : "delete_image"} %}
                         {% endif %}
@@ -41,7 +41,7 @@
         {% for videos in figures.videos | batch(3) %}
             <div class="row">
                 {% for key, video in videos %}
-                    {% include 'utils/deletemodal.html.twig' with {name : figures.name, path :"delete_video", subject : 'video', key : video.Id, id:figures.Id} %}
+                    {% include 'utils/deletemodal.html.twig' with {name : video.src, path :"delete_video", subject : 'video', key : video.Id, id:figures.Id} %}
                     {% if key == 4 or key == 5 %}
                         <div class="col-4">
                     {% else %}
@@ -49,7 +49,7 @@
                     {% endif %}
                         <div class="embed-responsive embed-responsive-16by9">
                         {% if app.user and app.user.id == figures.UsersId.id %}
-                            {% include 'utils/button.html.twig' with {id : figures.id, display : true, file: video.Id, path : 'edit_video',type:'video'} %}
+                            {% include 'utils/button.html.twig' with {id : figures.id, display : true, file: video.Id, path : 'edit_video', type:'video'} %}
                         {% endif %}
                         <iframe class="embed-responsive-item" src={{video.src}} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"allowfullscreen></iframe>
                         {# {% if loop.last %} #}
@@ -69,8 +69,8 @@
                     {% endif %}
                 </div>
             </div>
-            <div class="row m-3 p-3 border bg-light">
                 {% if app.user and app.user.id == figures.UsersId.id %}
+            <div class="row m-3 p-3 border bg-light">
                     <div class="col-sm-4 text-center">
                         {# <div class="m-2"> #}
                             <button type="button" class="btn btn-danger m-1 btn-sm" data-toggle="modal" data-target="#deleteModal">🗑️ Supprimer la figure</a>
@@ -86,18 +86,19 @@
                             <a href ={{path('add_video',{id : figures.id})}} type="button" class="btn btn-success m-1 btn-sm">Ajouter une vidéo</a>
                         {# </div> #}
                     </div>
-                {% endif %}
             </div>
+                {% endif %}
                
             
                 <div class="row">
                 {# Commentaires #}
-                {% if app.user %}
                     <div class="col" id="mess_form">
-                        {# {{ render(controller('App\\Controller\\MessagesController::addMessage', { 'id': figures.id })) }} #}
-                        {% include 'edition/add_comment.html.twig' %}
+                        {% if app.user %}
+                                {% include 'edition/add_comment.html.twig' with {connect : true} %}
+                        {% else %}
+                            {% include 'edition/add_comment.html.twig' with {connect : false} %}
+                        {% endif %}
                     </div>
-                {% endif %}
                 <div class="col">
                     {% for message in figures.messages | sort ((a,b) => b.MessageDate <=> a.MessageDate) %}
                         <div class="card mb-3">
