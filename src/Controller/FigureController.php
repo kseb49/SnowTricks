@@ -34,7 +34,12 @@ class FigureController extends AbstractController
     /**
      * Page of a single trick
      *
-     * @param Figures $figures 
+     * @param Request $request
+     * @param Figures $figures
+     * @param EntityManagerInterface $entityManager
+     * @param Parameters $parameters
+     * @param MessagesRepository $message
+     * @param MessagesController $comment
      * @return Response
      */
     public function details(Request $request, Figures $figures, EntityManagerInterface $entityManager, Parameters $parameters, MessagesRepository $message, MessagesController $comment) :Response

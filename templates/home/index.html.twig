@@ -30,7 +30,8 @@
                                     {% endfor %}
                                 {% endfor %}
                                 {% if app.user and app.user.id == figure.UsersId.id %}
-                                    <button type="button" class="btn btn-danger m-1 btn-sm" data-toggle="modal" data-target="#deleteModal{{key}}">🗑️ Supprimer</button><a type="button" class="btn btn-info btn-sm">✍️ Modifier</a>
+                                    <button type="button" class="btn btn-danger m-1 btn-sm" data-toggle="modal" data-target="#deleteModal{{key}}">🗑️ Supprimer</button>
+                                    <a type="button" href={{path('figuresdetails', {slug : figure.slug})}} class="btn btn-info btn-sm">✍️ Modifier</a>
                                 {% endif %}
                             </div>
                             <div class="card-footer text-muted">

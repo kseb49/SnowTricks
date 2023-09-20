@@ -25,7 +25,6 @@ use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 class RegistrationController extends AbstractController //https://symfony.com/doc/current/forms.html#processing-forms
 {
 
-
     #[Route('/inscription', name: 'app_register')]
     public function register(Parameters $parameters, Request $request, UserPasswordHasherInterface $userPasswordHasher, UserAuthenticatorInterface $userAuthenticator, UsersAuthenticator $authenticator, EntityManagerInterface $entityManager, ImageManager $fileUploader, SendEmail $mail): Response
     {
@@ -80,6 +79,7 @@ class RegistrationController extends AbstractController //https://symfony.com/do
         ]);
     }
 
+
     #[Route('/confirmation', name: 'account-confirmation')]
     public function confirm(Request $request, EntityManagerInterface $entityManager, Parameters $parameters, SendEmail $mail) :Response
     {
@@ -122,18 +122,19 @@ class RegistrationController extends AbstractController //https://symfony.com/do
 
     }
 
+
     #[Route('reset-password', 'reset')]
     public function reset(Request $request, EntityManagerInterface $entityManager, SendEmail $mail,Parameters $parameters) :Response
     {
         if($this->getUser() !== null){
-            $this->addFlash('danger', "Vous ne pouvez pas accéder à cette page si vous êtes connecté");
+            $this->addFlash('danger', "Déconnectez vous pour accéder à cette page");
             return $this->redirectToRoute('home');
         }
         $form = $this->createForm(ResetForm::class);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
            if ($user = $entityManager->getRepository(Users::class)->findOneBy(['name' => $form->get('name')->getData()])) {
-               if ($user->getConfirmationDate() !== null && $user->getsendLink() === null) {
+               if ($user->getConfirmationDate() !== null && $user->getSendLink() === null) {
                    try {
                         $token = hash('md5',uniqid(true));
                         $user->setToken($token);
@@ -141,7 +142,7 @@ class RegistrationController extends AbstractController //https://symfony.com/do
                         $entityManager->persist($user);
                         $entityManager->flush();
                         $mail->sendEmail(to: $user->getEmail(), subject : $parameters->getMailParameters($parameters::RESET)['sujet'], template: $parameters->getMailParameters($parameters::RESET)['template'], context:['mail' => $user->getEmail(), 'token' => $token, 'route' => $parameters->getMailParameters($parameters::RESET)['route']]);
-                        $this->addFlash('success',$parameters->getMailParameters($parameters::RESET)['message']);
+                        $this->addFlash('success', $parameters->getMailParameters($parameters::RESET)['message']);
                         return $this->redirectToRoute('home');
                     } catch (TransportExceptionInterface $e) {
                         $this->addFlash('warning', $e);
@@ -156,11 +157,12 @@ class RegistrationController extends AbstractController //https://symfony.com/do
         return $this->render('security/reset.html.twig', ['form' => $form]);
     }
 
+
     #[Route('confirm-reset', 'password-reset')]
     public function confirmReset(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $userPasswordHasher, SendEmail $mail, Parameters $parameters)
     {
         if ($user = $entityManager->getRepository(Users::class)->findOneBy(['email' => $request->query->get('mail')])) {
-            $limit = $user->getsendLink();
+            $limit = $user->getSendLink();
             $now = new DateTime(date('Y-m-d H:i:s'));
             $diff = $limit->diff($now);
             // The link must be less than 24hrs.
@@ -180,7 +182,7 @@ class RegistrationController extends AbstractController //https://symfony.com/do
                         $entityManager->persist($user);
                         $entityManager->flush();
                         $this->addFlash('success', 'Votre nouveau mot de passe est opérationnel');
-                        return $this->redirectToRoute('app_login');
+                        return $this->redirectToRoute('home');
                     }
                     return $this->render('security/new_password.html.twig', ['form' => $form]);
                 }
@@ -193,7 +195,7 @@ class RegistrationController extends AbstractController //https://symfony.com/do
             $entityManager->persist($user);
             $entityManager->flush();
             $mail->sendEmail(to: $user->getEmail(), subject : $parameters->getMailParameters($parameters::RESET)['sujet'], template: $parameters->getMailParameters($parameters::RESET)['template'], context:['mail' => $user->getEmail(), 'token' => $token, 'route' => $parameters->getMailParameters($parameters::RESET)['route']]);
-            $this->addFlash('success',$parameters->getErrors($parameters::EXPIRED));
+            $this->addFlash('success',$parameters->getMailParameters($parameters::RESET)['message']);
             return $this->redirectToRoute('home');
         }
         // The user is unknown
@@ -201,5 +203,6 @@ class RegistrationController extends AbstractController //https://symfony.com/do
         return $this->redirectToRoute('app_login');
 
     }
+
 
 }
