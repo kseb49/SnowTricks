@@ -1,0 +1,22 @@
+<mjml>
+  <mj-head>
+    <mj-attributes>
+      <mj-class name="mjclass" color="#2e86de" font-size="20px" font-style="underline" />
+      <mj-class name="comment" color="#41729F" font-size="15px" />
+      <mj-class name="author" color="#2c3e50" font-size="18px" />
+    </mj-attributes>
+    <mj-title>Snow tricks</mj-title>
+  </mj-head>
+  <mj-body>
+    <mj-section>
+      <mj-column>
+        <mj-text mj-class="mjclass" align="center">Cliquez sur le lien ci dessous pour créer un nouveau mot de passe pour votre compte SNOW TRICKS</mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section>
+      <mj-column>
+        <mj-button background-color="#54a0ff" border-radius="10px" href="http://snow-tricks.test/">Créer un nouveau mot de passe</mj-button>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

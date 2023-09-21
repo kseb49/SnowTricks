@@ -30,6 +30,11 @@ class Parameters
     const MAX_IMAGES = ['max_reach' => 'images'];
 
     /**
+     * The maximum images error message to display
+     */
+    const EXPIRED = ['expired_link' => 'message'];
+
+    /**
      * The confirm key of the mail array
      */
     const CONFIRM = 'confirm';
@@ -52,13 +57,15 @@ class Parameters
     private array $mail = [
         "confirm" => [
             "sujet" => "Confirmer votre compte",
-            "route" => "account_confirmation",
-            "template" => "emails/confirm.html.twig"
+            "route" => "account-confirmation",
+            "template" => "emails/confirm.html.twig",
+            "message" => "Un mail vous a été envoyé"
         ],
         "reset" => [
             "sujet" => "Réinitialisation de votre mot de passe",
-            "route" => "password_reset",
-            "template" => "emails/confirm.html.twig"
+            "route" => "password-reset",
+            "template" => "emails/reset.html.twig",
+            "message" => "Un mail vous a été envoyé"
         ]
     ];
 
@@ -71,7 +78,10 @@ class Parameters
         "max_reach" => [
             "image" => "Le nombre maximum d'images est atteint pour cette figure",
             "videos" => "Le nombre maximum de vidéos est atteint pour cette figure"
-     ]
+        ],
+        "expired_link" => [
+            "message" => "Ce lien est expiré un nouveau vous a été adressé sur votre boîte mail"
+            ]
     ];
 
 
@@ -98,6 +108,7 @@ class Parameters
         return self::DEFAULT;
 
     }
+
 
 
 }
