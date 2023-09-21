@@ -69,13 +69,13 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     )]
     private ?string $photo = "snowboarder-310459.png";
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable:true)]
     private ?\DateTimeInterface $confirmationDate = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable:true)]
     private ?\DateTimeInterface $sendLink = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable:true)]
     #[Assert\Type('string')]
     private ?string $token = null;
 

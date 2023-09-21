@@ -43,8 +43,8 @@ class FiguresRepository extends ServiceEntityRepository
         $entityManager = $this->getEntityManager();
         $query = $entityManager->createQuery('
         SELECT f,SUBSTRING(f.description,1,50) descr, u, g from App\Entity\Figures f
-         join f.users_id u 
-         join f.groups_id g 
+         join f.users_id u
+         join f.groups_id g
          ORDER BY f.creation_date DESC');
         $query->getResult();
         // dd($query->getResult());

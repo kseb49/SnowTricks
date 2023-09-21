@@ -114,7 +114,6 @@ class FigureController extends AbstractController
                 $figure->setCreationDate();
                 $figure->setUsersId($this->getUser());
                 $figure->setGroupsId($form->get('groups_id')->getData());
-                $videos = $form->get('videos')->getData();
                 $entityManager->persist($figure);
                 $entityManager->flush();
                 $this->addFlash('success', "La figure est en ligne 😊");
