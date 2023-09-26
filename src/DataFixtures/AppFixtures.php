@@ -33,6 +33,7 @@ class AppFixtures extends Fixture
             ->setPhoto()
             ->setConfirmationDate($faker->dateTime())
             ->setSendLink(null)
+            ->setRoles(['ROLE_USER'])
             ->setToken(null);
             $manager->persist($user);
         }

@@ -66,7 +66,7 @@ class FigureController extends AbstractController
 
 
     #[Route('/creation-figure', name:'create', priority: 1)]
-    #[IsGranted('ROLE_USER', message:"Connectez vous pour créer une figure")]
+    #[IsGranted('ROLE_USER', message:"Veuillez confirmer votre compte")]
     /**
      * Create a trick
      *
@@ -129,7 +129,7 @@ class FigureController extends AbstractController
 
 
     #[Route('/modification/{id}',name:'edit')]
-    #[IsGranted('ROLE_USER', message:"Connectez vous pour modifier une figure")]
+    #[IsGranted('ROLE_USER', message:"Veuillez confirmer votre compte")]
     /**
      * Edit a trick - All the text parts and the related group
      *
@@ -156,7 +156,7 @@ class FigureController extends AbstractController
 
 
     #[Route('/suppression/{id}', name:'delete')]
-    #[IsGranted('ROLE_USER', message:"Connectez vous pour supprimer une figure")]
+    #[IsGranted('ROLE_USER', message:"Veuillez confirmer votre compte")]
     /**
      * Delete a trick
      *
@@ -188,6 +188,4 @@ class FigureController extends AbstractController
     }
 
 
-        #[Route('/suppression-video/{id}/{video_id}',name:'video_delete')]
-        public function deleteVideo(){}
-    }
+}

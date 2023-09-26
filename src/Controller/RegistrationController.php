@@ -93,6 +93,7 @@ class RegistrationController extends AbstractController //https://symfony.com/do
                     $user->setConfirmationDate(new DateTime());
                     $user->setSendLink(null);
                     $user->setToken(null);
+                    $user->setRoles(['ROLE_USER']);
                     $entityManager->persist($user);
                     $entityManager->flush();
                     $this->addFlash('success', $parameters->getMessages('feedback', ['user' => 'confirm']));

@@ -68,6 +68,9 @@ class Parameters
             "expired" => "Ce lien n\'est pas valable. Un nouveau vous a été envoyé à votre adresse mail",
             "invalid" => "Ce lien n'est pas valable"
         ],
+        "videos" => [
+            "used" => "Cette vidéo est déjà utilisée dans cette figure"
+        ],
         "unknown" => [
             "message" => "Cette figure n'existe pas"
             ]
@@ -94,6 +97,7 @@ class Parameters
         ],
         "success" => [
             "image" => "L'image est en ligne",
+            "videos" => "La vidéo est en ligne",
             "figure" => "La figure est en ligne",
             "comment" => "Votre commentaire est en ligne 😊",
             "password" => "Votre nouveau mot de passe est opérationnel"

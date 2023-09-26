@@ -23,7 +23,7 @@ class ImageController extends AbstractController
 
 
     #[Route('/ajout-image/{trick_id}', name:'add_image')]
-    #[IsGranted('ROLE_USER', message:"Connectez vous pour ajouter une image")]
+    #[IsGranted('ROLE_USER', message:"Veuillez confirmer votre compte")]
     /**
      * Add an image to a trick
      *
@@ -71,7 +71,7 @@ class ImageController extends AbstractController
 
 
     #[Route('/suppression-image/{id}/{image_id}', name:'delete_image')]
-    #[IsGranted('ROLE_USER', message:"Connectez vous pour supprimer une image")]
+    #[IsGranted('ROLE_USER', message:"Veuillez confirmer votre compte")]
     /**
      * Delete the selected image
      *
@@ -107,7 +107,7 @@ class ImageController extends AbstractController
 
 
     #[Route('/modification-image/{id}/{image_id}',name:'edit_image')]
-    #[IsGranted('ROLE_USER', message:"Connectez vous pour supprimer une image")]
+    #[IsGranted('ROLE_USER', message:"Veuillez confirmer votre compte")]
     /**
      * Edit an image
      *
