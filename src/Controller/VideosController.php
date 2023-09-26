@@ -39,7 +39,7 @@ class VideosController extends AbstractController
                 if ($videos) {
                     foreach ($videos as $value) {
                         // The maximum number of videos allowed.
-                        if ($videoRepo->countVideos($id)[1] >= $parameters::VIDEOS_MAX) {
+                        if ($videoRepo->countVideos($id)[1] >= $_ENV['VIDEOS_MAX']) {
                             $this->addFlash('warning',$parameters->getErrors($parameters::MAX_VIDEOS));
                             return $this->redirectToRoute('figuresdetails',["slug" => $figure->getSlug()]);
                         }
@@ -59,7 +59,7 @@ class VideosController extends AbstractController
                     }
 
                     $this->addFlash('success', "La vidéo est en ligne 😊");
-                    return $this->redirectToRoute('home');
+                    return $this->redirectToRoute('figuresdetails',["slug" => $figure->getSlug()]);
 
                 }
         }

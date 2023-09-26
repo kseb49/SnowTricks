@@ -24,12 +24,12 @@ class AppFixtures extends Fixture
     {
         $faker = Factory::create('fr_FR');
         $groups = ["grabs, rails, spins, butters"];
-        // Create 10 users.
+        // Create 10 users.All have the same password
         for ($users = 0; $users < 10; $users++) { 
             $user = new Users();
             $user->setName($faker->userName())
             ->setEmail($faker->safeEmail())
-            ->setPassword($this->passwordHasher->hashPassword($user, $faker->password()))
+            ->setPassword($this->passwordHasher->hashPassword($user, $_ENV['FIXTURES_PASSWORD']))
             ->setPhoto()
             ->setConfirmationDate($faker->dateTime())
             ->setSendLink(null)

@@ -46,7 +46,7 @@ class ImageController extends AbstractController
                 foreach ($images as $value) {
                     try {
                         // The maximum number of images allowed.
-                        if ($imrepo->countImages($trick_id)[1] >= $parameters::IMAGES_MAX) {
+                        if ($imrepo->countImages($trick_id)[1] >= $_ENV['IMAGES_MAX']) {
                             $this->addFlash('warning',$parameters->getErrors($parameters::MAX_IMAGES));
                             return $this->redirectToRoute('figuresdetails',["slug" => $figure->getSlug()]);
                         }
@@ -92,7 +92,7 @@ class ImageController extends AbstractController
             $entityManager->remove($image);
             $entityManager->persist($figure);
             $entityManager->flush();
-            if ($image->getImageName() !== $parameters::DEFAULT_IMG) {
+            if ($image->getImageName() !== $_ENV['FIGURE_IMG']) {
                 $manager->delete('figures_directory',$image->getImageName());
             }
             $this->addFlash('success', "Suppression réussit 😊");
@@ -135,7 +135,7 @@ class ImageController extends AbstractController
                     $figure->removeImage($eximage);
                     $entityManager->remove($eximage);
                     // Delete the file too, unless the file is the default one
-                    if ($eximage->getImageName() !== $parameters::DEFAULT_IMG) {
+                    if ($eximage->getImageName() !== $_ENV['FIGURE_IMG']) {
                         $upload->delete('figures_directory',$eximage->getImageName());
                     }
                     $entityManager->persist($figure);

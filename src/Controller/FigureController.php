@@ -26,9 +26,8 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 
 #[Route('/figures',name:'figures')]
-class FigureController extends AbstractController 
+class FigureController extends AbstractController
 {
-
 
     #[Route('/{slug}', name:'details')]
     /**
@@ -44,7 +43,6 @@ class FigureController extends AbstractController
      */
     public function details(Request $request, Figures $figures, EntityManagerInterface $entityManager, Parameters $parameters, MessagesRepository $message, MessagesController $comment) :Response
     {
-
         if (!$figures) {
             $this->addFlash('danger', "Cette figure n'existe pas");
             return $this->redirectToRoute('home');
@@ -64,7 +62,7 @@ class FigureController extends AbstractController
             return $this->redirectToRoute('figuresdetails', ['slug' => $figures->getSlug()]);
         }
 
-        return $this->render('details.html.twig', ['figures' => $figures, 'default_image' => $parameters::DEFAULT_IMG, 'message_form' => $form]);
+        return $this->render('details.html.twig', ['figures' => $figures, 'default_image' => $_ENV['FIGURE_IMG'], 'message_form' => $form]);
 
     }
 
@@ -102,7 +100,7 @@ class FigureController extends AbstractController
             else {
                 //set the default image
                 $picture = new Images;
-                $picture->setImageName($parameters::DEFAULT_IMG);
+                $picture->setImageName($_ENV['FIGURE_IMG']);
                 $figure->addImage($picture);
             }
                 $videos = $form->get('videos')->getData();
@@ -176,7 +174,7 @@ class FigureController extends AbstractController
         }
         // Delete the images files linked.
         foreach ($imrepo->findAllImages($id) as $value) {
-            if($value['image_name'] !== $parameters::DEFAULT_IMG) {
+            if($value['image_name'] !== $_ENV['FIGURE_IMG']) {
                 $manager->delete('figures_directory',$value['image_name']);
                 $imrepo->removeImages($value['image_name']);
             }
