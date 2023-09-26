@@ -95,7 +95,7 @@ class RegistrationController extends AbstractController //https://symfony.com/do
                     $user->setToken(null);
                     $entityManager->persist($user);
                     $entityManager->flush();
-                    $this->addFlash('success', 'Votre compte est confirmé');
+                    $this->addFlash('success', $parameters->getMessages('feedback', ['user' => 'confirm']));
                     return $this->redirectToRoute('home');
                 }
                 try {
@@ -110,14 +110,14 @@ class RegistrationController extends AbstractController //https://symfony.com/do
                     $this->addFlash('warning', $e);
                     return $this->redirectToRoute('home');
                 }
-                $this->addFlash('danger', 'Ce lien n\'est pas valable. Un nouveau vous a été envoyé à votre adresse mail');
+                $this->addFlash('danger', $parameters->getMessages('errors', ['link' => 'expired']));
                 return $this->redirectToRoute('home');
             }
-            $this->addFlash('warning', 'Votre compte est dèjà confirmé');
+            $this->addFlash('warning', $parameters->getMessages('feedback', ['user' => 'ever']));
             return $this->redirectToRoute('home');
         }
         // The user mail doesn't exist in the DB.
-        $this->addFlash('warning', "Ce lien n'est pas valable");
+        $this->addFlash('warning', $parameters->getMessages('errors', ['link' => 'invalid']));
         return $this->redirectToRoute('home');
 
     }
@@ -181,12 +181,12 @@ class RegistrationController extends AbstractController //https://symfony.com/do
                         $user->setSendLink(null);
                         $entityManager->persist($user);
                         $entityManager->flush();
-                        $this->addFlash('success', 'Votre nouveau mot de passe est opérationnel');
+                        $this->addFlash('success', $parameters->getMessages('feedback', ['success' => 'password']));
                         return $this->redirectToRoute('home');
                     }
                     return $this->render('security/new_password.html.twig', ['form' => $form]);
                 }
-                $this->addFlash('danger', "Ce lien n'est pas valable");
+                $this->addFlash('danger', $parameters->getMessages('errors', ['link' => 'invalid']));
                 return $this->redirectToRoute('app_login');
             }
             $token = hash('md5',uniqid(true));
@@ -199,7 +199,7 @@ class RegistrationController extends AbstractController //https://symfony.com/do
             return $this->redirectToRoute('home');
         }
         // The user is unknown
-        $this->addFlash('danger', "Ce lien n'est pas valable");
+        $this->addFlash('danger', $parameters->getMessages('errors', ['link' => 'invalid']));
         return $this->redirectToRoute('app_login');
 
     }

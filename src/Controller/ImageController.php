@@ -47,7 +47,7 @@ class ImageController extends AbstractController
                     try {
                         // The maximum number of images allowed.
                         if ($imrepo->countImages($trick_id)[1] >= $_ENV['IMAGES_MAX']) {
-                            $this->addFlash('warning',$parameters->getErrors($parameters::MAX_IMAGES));
+                            $this->addFlash('warning',$parameters->getMessages('errors',$parameters->max_images));
                             return $this->redirectToRoute('figuresdetails',["slug" => $figure->getSlug()]);
                         }
 
@@ -61,7 +61,7 @@ class ImageController extends AbstractController
                     $entityManager->persist($figure);
                     $entityManager->flush();
                 }
-                $this->addFlash('success',"L'image est en ligne");
+                $this->addFlash('success',$parameters->getMessages('feedback',['success' => 'images']));
                 return $this->redirectToRoute('figuresdetails',["slug" => $figure->getSlug()]);
             }
         }
@@ -95,11 +95,11 @@ class ImageController extends AbstractController
             if ($image->getImageName() !== $_ENV['FIGURE_IMG']) {
                 $manager->delete('figures_directory',$image->getImageName());
             }
-            $this->addFlash('success', "Suppression réussit 😊");
+            $this->addFlash('success', $parameters->getMessages('feedback',['delete' => 'message']));
             return $this->redirectToRoute('figuresdetails', ['slug' => $figure->getSlug()]);
         }
 
-        $this->addFlash('danger', "Cette image ne peut pas être supprimé car c'est la seule pour ce trick");
+        $this->addFlash('danger', $parameters->getMessages('feedback',['only' => 'image']));
             return $this->redirectToRoute('figuresdetails', [
                 'slug' => $figure->getSlug()]);
 
@@ -143,7 +143,7 @@ class ImageController extends AbstractController
                 } catch (FileException $e) {
                     return $this->redirectToRoute('figuresdetails', ["error" => $e, "slug" => $figure->getSlug()]);
                 }
-                $this->addFlash('success', "L'image a été correctemnt modifiée 😊");
+                $this->addFlash('success',$parameters->getMessages('feedback',['edit' => 'message']));
                 return $this->redirectToRoute('figuresdetails',['slug' =>$figure->getSlug()]);
             }
         }

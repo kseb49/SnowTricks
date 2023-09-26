@@ -5,29 +5,14 @@ namespace App\Service;
 class Parameters
 {
     /**
-     * The default figure image 
-     */
-    const DEFAULT_IMG = "snow_board.jpeg";
-
-    /**
-     * The maximum of images allowed
-     */
-    const IMAGES_MAX = 5;
-
-    /**
-     * The maximum of videos allowed
-     */
-    const VIDEOS_MAX = 5;
-
-    /**
      * The maximum videos error message to display
      */
-    const MAX_VIDEOS = ['max_reach' => 'videos'];
+    public array $max_videos = ['max_reach' => 'videos'];
 
     /**
      * The maximum images error message to display
      */
-    const MAX_IMAGES = ['max_reach' => 'images'];
+    public array $max_images = ['max_reach' => 'images'];
 
     /**
      * The maximum images error message to display
@@ -79,8 +64,39 @@ class Parameters
             "image" => "Le nombre maximum d'images est atteint pour cette figure",
             "videos" => "Le nombre maximum de vidéos est atteint pour cette figure"
         ],
-        "expired_link" => [
-            "message" => "Ce lien est expiré un nouveau vous a été adressé sur votre boîte mail"
+        "link" => [
+            "expired" => "Ce lien n\'est pas valable. Un nouveau vous a été envoyé à votre adresse mail",
+            "invalid" => "Ce lien n'est pas valable"
+        ],
+        "unknown" => [
+            "message" => "Cette figure n'existe pas"
+            ]
+    ];
+
+    /**
+     * Set of Feedback messages
+     *
+     * @var array
+     */
+    private array $feedback= [
+        "delete" => [
+            "message" => "Suppression réussit 😊"
+        ],
+        "edit" => [
+            "message" =>  "Modifé avec succès 😊"
+        ],
+        "only" => [
+            "image" => "Cette image ne peut pas être supprimé car c'est la seule pour ce trick"
+        ],
+        "user" => [
+            "confirm" => 'Votre compte est confirmé',
+            "ever" => 'Votre compte est déjà confirmé'
+        ],
+        "success" => [
+            "image" => "L'image est en ligne",
+            "figure" => "La figure est en ligne",
+            "comment" => "Votre commentaire est en ligne 😊",
+            "password" => "Votre nouveau mot de passe est opérationnel"
             ]
     ];
 
@@ -94,13 +110,13 @@ class Parameters
     }
 
 
-    public function getErrors(?array $max = null) :string
+    public function getMessages(string $subject, ?array $max = null) :string
     {
         if($max !== null) {
             foreach ($max as $key => $value) {
-                if (array_key_exists($key, $this->errors)) {
-                    if (array_key_exists($value, $this->errors[$key])) {
-                        return $this->errors[$key][$value];
+                if (array_key_exists($key, $this->$subject)) {
+                    if (array_key_exists($value, $this->$subject[$key])) {
+                        return $this->$subject[$key][$value];
                     }
                 }
             }

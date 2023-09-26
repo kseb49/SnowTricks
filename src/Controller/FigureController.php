@@ -30,21 +30,19 @@ class FigureController extends AbstractController
 {
 
     #[Route('/{slug}', name:'details')]
-    /**
-     * Page of a single trick
-     *
-     * @param Request $request
-     * @param Figures $figures
-     * @param EntityManagerInterface $entityManager
-     * @param Parameters $parameters
-     * @param MessagesRepository $message
-     * @param MessagesController $comment
-     * @return Response
-     */
-    public function details(Request $request, Figures $figures, EntityManagerInterface $entityManager, Parameters $parameters, MessagesRepository $message, MessagesController $comment) :Response
+   /**
+    * Page of a single trick
+    *
+    * @param Request $request
+    * @param Figures $figures
+    * @param EntityManagerInterface $entityManager
+    * @param MessagesRepository $message
+    * @return Response
+    */
+    public function details(Request $request, Figures $figures, EntityManagerInterface $entityManager, MessagesRepository $message, Parameters $parameters) :Response
     {
         if (!$figures) {
-            $this->addFlash('danger', "Cette figure n'existe pas");
+            $this->addFlash('danger', $parameters->getMessages('errors', ['unknown' => 'message']));
             return $this->redirectToRoute('home');
         }
         $message = new Messages();
@@ -58,7 +56,7 @@ class FigureController extends AbstractController
             $figures->addMessage($message);
             $entityManager->persist($figures);
             $entityManager->flush();
-            $this->addFlash('success', "Votre commentaire est en ligne 😊");
+            $this->addFlash('success', $parameters->getMessages('feedback', ['success' => 'comment']));
             return $this->redirectToRoute('figuresdetails', ['slug' => $figures->getSlug()]);
         }
 
@@ -119,7 +117,7 @@ class FigureController extends AbstractController
                 $figure->setGroupsId($form->get('groups_id')->getData());
                 $entityManager->persist($figure);
                 $entityManager->flush();
-                $this->addFlash('success', "La figure est en ligne 😊");
+                $this->addFlash('success', $parameters->getMessages('feedback', ['success' => 'figure']));
                 return $this->redirectToRoute('home');
 
             }
@@ -138,7 +136,7 @@ class FigureController extends AbstractController
      * @param Figures $figures
      * @return Response
      */
-    public function edit(Request $request, EntityManagerInterface $entityManager, int|string $id,Figures $figure, SluggerInterface $slugger ) :Response
+    public function edit(Request $request, EntityManagerInterface $entityManager, int|string $id,Figures $figure, SluggerInterface $slugger, Parameters $parameters) :Response
     {
         $figure = $entityManager->getRepository(Figures::class)->find($id);
         $form = $this->createForm(EditFigureForm::class, $figure);
@@ -148,7 +146,7 @@ class FigureController extends AbstractController
             $figure->setSlug(strtolower($slugger->slug($form->get('name')->getData())));
             $entityManager->persist($figure);
             $entityManager->flush();
-            $this->addFlash('success','modifé avec succès');
+            $this->addFlash('success',$parameters->getMessages('feedback', ['success' => 'edit']));
             return $this->redirectToRoute('figuresdetails', ['slug' => $figure->getSlug()]);
         }
         // $this->addFlash('danger','erreur');
@@ -169,7 +167,7 @@ class FigureController extends AbstractController
     public function delete(Figures $figures, EntityManagerInterface $entityManager,ImagesRepository $imrepo, VideosRepository $virepo, ImageManager $manager,int $id, Parameters $parameters) :Response
     {
         if (!$figures) {
-            $this->addFlash('danger', "Cette figure n'existe pas");
+            $this->addFlash('danger', $parameters->getMessages('errors', ['unknown' => 'message']));
             return $this->redirectToRoute('home');
         }
         // Delete the images files linked.
@@ -185,7 +183,7 @@ class FigureController extends AbstractController
         }
         $entityManager->remove($figures);
         $entityManager->flush();
-        $this->addFlash('success', "Suppression réussit 😊");
+        $this->addFlash('success', $parameters->getMessages('feedback', ['delete' => 'message']));
         return $this->redirectToRoute('home');
     }
 
