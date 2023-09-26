@@ -34,4 +34,19 @@
   .forEach(btn => {
       btn.addEventListener("click", addFormToCollection)
   });
-// })
+
+
+  const height = document.querySelector('.subnav').clientHeight;
+  const add = document.querySelector('.navbar').clientHeight;
+  const arrow = document.querySelector('.arrow')
+  const total = height+add
+  arrow.addEventListener('click', (e) => {
+    e.preventDefault();
+    this.show(total)
+  })
+  function show(_height){
+    window.scroll({
+      top: _height,
+      behavior: "smooth",
+    });
+  }

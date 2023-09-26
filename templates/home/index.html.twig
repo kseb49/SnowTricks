@@ -1,12 +1,11 @@
 {% extends 'base.html.twig' %}
 {% block body %}
-    <div class="subnav container-fluid">
-        <div class="row">
-            <div class="col-sm">
-                <p>Découvrez un monde de créativité glacée<br>Explorez notre site dédié aux snow tricks et plongez dans l'univers sensationnel des figures sur neige !</p>
-            </div>
-        </div>
+<div class="subnav container-fluid">
+    <div class="slogan">
+        <p class="motto">The Snow Tricks Bible</p>
+        <a class="arrow" href="#"><i class="bi bi-caret-down-fill"></i></a>
     </div>
+</div>
     <div class="container pt-4">
         {% for figures in result | batch(3)%}
             <div class="row">
