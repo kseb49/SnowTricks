@@ -22,31 +22,44 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 
 
-class RegistrationController extends AbstractController //https://symfony.com/doc/current/forms.html#processing-forms
+class RegistrationController extends AbstractController
 {
 
     #[Route('/inscription', name: 'app_register')]
+    /**
+     * Register an user
+     *
+     * @param Parameters $parameters
+     * @param Request $request
+     * @param UserPasswordHasherInterface $userPasswordHasher
+     * @param UserAuthenticatorInterface $userAuthenticator
+     * @param UsersAuthenticator $authenticator
+     * @param EntityManagerInterface $entityManager
+     * @param ImageManager $fileUploader
+     * @param SendEmail $mail
+     * @return Response
+     */
     public function register(Parameters $parameters, Request $request, UserPasswordHasherInterface $userPasswordHasher, UserAuthenticatorInterface $userAuthenticator, UsersAuthenticator $authenticator, EntityManagerInterface $entityManager, ImageManager $fileUploader, SendEmail $mail): Response
     {
         $user = new Users();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() === true && $form->isValid() === true) {
             $photo = $form->get('photo')->getData();
             if ($photo) {
                 try {
                     $photo_name = $fileUploader->upload($photo,'avatars_directory');
 
                 } catch (FileException $e) {
-                    return $this->redirectToRoute('app_register',["error" => $e]);
+                    return $this->redirectToRoute('app_register', ["error" => $e]);
 
                 }
-                $user->setPhoto($photo_name);
 
-            }
-            else {
+                $user->setPhoto($photo_name);
+            } else {
                 $user->setPhoto();
             }
+
             $user->setPassword(
                 $userPasswordHasher->hashPassword(
                     $user,
@@ -62,7 +75,6 @@ class RegistrationController extends AbstractController //https://symfony.com/do
             $entityManager->flush();
             try {
                 $mail->sendEmail(to: $user->getEmail(), subject : $parameters->getMailParameters($parameters::CONFIRM)['sujet'], template: $parameters->getMailParameters($parameters::CONFIRM)['template'], context:['mail' => $user->getEmail(), 'token' => $token, 'route' => $parameters->getMailParameters($parameters::CONFIRM)['route']]);
-
             } catch (TransportExceptionInterface $e) {
                 $this->addFlash('warning', $e);
                 return $this->redirectToRoute('home');
@@ -78,6 +90,7 @@ class RegistrationController extends AbstractController //https://symfony.com/do
             'registrationForm' => $form->createView()
         ]);
     }
+            
 
 
     #[Route('/confirmation', name: 'account-confirmation')]
@@ -99,6 +112,7 @@ class RegistrationController extends AbstractController //https://symfony.com/do
                     $this->addFlash('success', $parameters->getMessages('feedback', ['user' => 'confirm']));
                     return $this->redirectToRoute('home');
                 }
+
                 try {
                     $token = hash('md5',uniqid(true));
                     $user->setToken($token);
@@ -106,18 +120,20 @@ class RegistrationController extends AbstractController //https://symfony.com/do
                     $mail->sendEmail(to: $user->getEmail(), subject : $parameters->getMailParameters($parameters::CONFIRM)['sujet'], template: $parameters->getMailParameters($parameters::CONFIRM)['template'], context:['mail' => $user->getEmail(), 'token' => $token, 'route' => $parameters->getMailParameters($parameters::CONFIRM)['route']]);
                     $entityManager->persist($user);
                     $entityManager->flush();
-     
                 } catch(TransportExceptionInterface $e) {
                     $this->addFlash('warning', $e);
                     return $this->redirectToRoute('home');
                 }
+
                 $this->addFlash('danger', $parameters->getMessages('errors', ['link' => 'expired']));
                 return $this->redirectToRoute('home');
             }
+
             $this->addFlash('warning', $parameters->getMessages('feedback', ['user' => 'ever']));
             return $this->redirectToRoute('home');
         }
-        // The user mail doesn't exist in the DB.
+
+        //The user mail doesn't exist in the DB.
         $this->addFlash('warning', $parameters->getMessages('errors', ['link' => 'invalid']));
         return $this->redirectToRoute('home');
 
@@ -125,12 +141,13 @@ class RegistrationController extends AbstractController //https://symfony.com/do
 
 
     #[Route('reset-password', 'reset')]
-    public function reset(Request $request, EntityManagerInterface $entityManager, SendEmail $mail,Parameters $parameters) :Response
+    public function reset(Request $request, EntityManagerInterface $entityManager, SendEmail $mail, Parameters $parameters) :Response
     {
-        if($this->getUser() !== null){
+        if ($this->getUser() !== null) {
             $this->addFlash('danger', "Déconnectez vous pour accéder à cette page");
             return $this->redirectToRoute('home');
         }
+
         $form = $this->createForm(ResetForm::class);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

@@ -31,39 +31,42 @@ class VideosController extends AbstractController
      * @param Parameters $parameters
      * @return Response
      */
-    public function addVideo(Request $request, EntityManagerInterface $entityManager, int $id,VideosRepository $videoRepo, Parameters $parameters) :Response
+    public function addVideo(Request $request, EntityManagerInterface $entityManager, int $id, VideosRepository $videoRepo, Parameters $parameters) :Response
     {
         $figure = $entityManager->getRepository(Figures::class)->find($id);
         $form = $this->createForm(AddVideoForm::class, $figure);
         $form->handleRequest($request);
         if ($form->isSubmitted() === true && $form->isValid() === true) {
-                $videos = $form->get('videos')->getData();
-                if ($videos) {
-                    foreach ($videos as $value) {
-                        // The maximum number of videos allowed.
-                        if ($videoRepo->countVideos($id)[1] >= $_ENV['VIDEOS_MAX']) {
-                            $this->addFlash('warning', $parameters->getMessages('error', ['max_reach' => 'videos']));
-                            return $this->redirectToRoute('figuresdetails', ["slug" => $figure->getSlug()]);
-                        }
-                        if (count($figure->getVideos()) > 0) {
-                            foreach ($figure->getVideos() as $src) {
-                                if($src->getSrc() === $value->getSrc()) {
-                                    $this->addFlash('danger', $parameters->getMessages('error', ['videos' => 'used']));
-                                    return $this->redirectToRoute('figuresdetails', ["slug" => $figure->getSlug()]);
-                                }
-                            }
-                        }
-                        $embed = new Videos;
-                        $embed->setSrc($value->getSrc());
-                        $figure->addVideos($embed);
-                        $entityManager->persist($figure);
-                        $entityManager->flush();
+            $videos = $form->get('videos')->getData();
+            if ($videos) {
+                foreach ($videos as $value) {
+                    // The maximum number of videos allowed.
+                    if ($videoRepo->countVideos($id)[1] >= $parameters::MAX_VIDEOS) {
+                        $this->addFlash('warning', $parameters->getMessages('error', ['max_reach' => 'videos']));
+                        return $this->redirectToRoute('figuresdetails', ["slug" => $figure->getSlug()]);
                     }
 
-                    $this->addFlash('success', $parameters->getMessages('feedback', ['success' => 'videos']));
-                    return $this->redirectToRoute('figuresdetails', ["slug" => $figure->getSlug()]);
+                    if (count($figure->getVideos()) > 0) {
+                        foreach ($figure->getVideos() as $src) {
+                            if ($src->getSrc() === $value->getSrc()) {
+                                $this->addFlash('danger', $parameters->getMessages('error', ['videos' => 'used']));
+                                return $this->redirectToRoute('figuresdetails', ["slug" => $figure->getSlug()]);
+                            }
 
+                        }
+                    }
+
+                    $embed = new Videos;
+                    $embed->setSrc($value->getSrc());
+                    $figure->addVideos($embed);
+                    $entityManager->persist($figure);
+                    $entityManager->flush();
                 }
+
+                $this->addFlash('success', $parameters->getMessages('feedback', ['success' => 'videos']));
+                return $this->redirectToRoute('figuresdetails', ["slug" => $figure->getSlug()]);
+
+            }
         }
 
         return $this->render('edition/add_video_form.html.twig', ['form' => $form, 'figure' => $figure]);
@@ -91,12 +94,14 @@ class VideosController extends AbstractController
         if ($form->isSubmitted() === true && $form->isValid() === true) {
             if (count($figure->getVideos()) > 0) {
                 foreach ($figure->getVideos() as $src) {
-                    if($src->getSrc() === $form->get('src')->getData() && $src->getId() !== $video->getId()) {
+                    if ($src->getSrc() === $form->get('src')->getData() && $src->getId() !== $video->getId()) {
                         $this->addFlash('danger', $parameters->getMessages('error', ['videos' => 'used']));
                         return $this->redirectToRoute('figuresdetails', ["slug" => $figure->getSlug()]);
                     }
+
                 }
             }
+
             $video->setSrc($form->get('src')->getData());
             $entityManager->persist($video);
             $entityManager->flush();

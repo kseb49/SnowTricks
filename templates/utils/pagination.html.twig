@@ -1,0 +1,20 @@
+{#Link of pagination#}
+    {% for message in messages %}
+        {% if loop.first %}
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                {% if previous >= 0 %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ path('figuresdetails', { offset: previous, slug : message.figures.slug }) }}#comments">Précédent</a>
+                    </li>
+                {% endif %}
+                {% if next < messages|length %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ path('figuresdetails', { offset: next, slug : message.figures.slug }) }}#comments">Suivant</a>
+                    </li>
+                {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    {% endfor %}
+{####################}

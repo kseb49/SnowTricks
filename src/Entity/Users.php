@@ -17,6 +17,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 #[UniqueEntity(fields: ['name'], message: 'There is already an account with this name')]
 class Users implements UserInterface, PasswordAuthenticatedUserInterface
 {
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -84,34 +85,40 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToMany(mappedBy: 'users', targetEntity: Messages::class, orphanRemoval: true)]
     private Collection $messages;
-    
+
     public function __construct()
     {
         $this->figures = new ArrayCollection();
         $this->messages = new ArrayCollection();
     }
 
+
     public function getFigures() :Collection
     {
         return $this->figures;
     }
+
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
+
     public function getEmail(): ?string
     {
         return $this->email;
     }
+
 
     public function setEmail(string $email): static
     {
         $this->email = $email;
 
         return $this;
+
     }
+
 
     /**
      * A visual identifier that represents this user.
@@ -129,18 +136,22 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
+        // Every user has ROLE_PENDING as a default role
         $roles[] = 'ROLE_PENDING';
 
         return array_unique($roles);
+
     }
+
 
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
 
         return $this;
+
     }
+
 
     /**
      * @see PasswordAuthenticatedUserInterface
@@ -148,14 +159,17 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     public function getPassword(): string
     {
         return $this->password;
+
     }
+
 
     public function setPassword(string $password): static
     {
         $this->password = $password;
-
         return $this;
+
     }
+
 
     /**
      * @see UserInterface
@@ -166,68 +180,80 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
+
     public function getName(): ?string
     {
         return $this->name;
+
     }
+
 
     public function setName(string $name): static
     {
         $this->name = $name;
-
         return $this;
+
     }
 
     public function getPhoto(): ?string
     {
         return $this->photo;
+
     }
 
-    public function setPhoto(?string $photo = "snowboarder-310459.png"): static
+
+    public function setPhoto(?string $photo= "snowboarder-310459.png"): static
     {
         $this->photo = $photo;
-
         return $this;
+
     }
 
 
     public function getConfirmationDate(): ?\DateTimeInterface
     {
         return $this->confirmationDate;
+
     }
+
 
     public function setConfirmationDate(?\DateTimeInterface $confirmationDate): static
     {
         $this->confirmationDate = $confirmationDate;
-
         return $this;
+
     }
 
 
     public function getSendLink(): ?\DateTimeInterface
     {
         return $this->sendLink;
+
     }
+
 
     public function setSendLink(?\DateTimeInterface $sendLink): static
     {
         $this->sendLink = $sendLink;
-
         return $this;
+
     }
 
 
     public function getToken(): ?string
     {
         return $this->token;
+
     }
+
 
     public function setToken(?string $token): static
     {
         $this->token = $token;
-
         return $this;
+
     }
+
 
     /**
      * @return Collection<int, Messages>
@@ -235,27 +261,8 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     public function getMessages(): Collection
     {
         return $this->messages;
+
     }
 
-    // public function addMessage(Messages $message): static
-    // {
-    //     if (!$this->messages->contains($message)) {
-    //         $this->messages->add($message);
-    //         $message->setUsers($this);
-    //     }
 
-    //     return $this;
-    // }
-
-    // public function removeMessage(Messages $message): static
-    // {
-    //     if ($this->messages->removeElement($message)) {
-    //         // set the owning side to null (unless already changed)
-    //         if ($message->getUsers() === $this) {
-    //             $message->setUsers(null);
-    //         }
-    //     }
-
-    //     return $this;
-    // }
 }

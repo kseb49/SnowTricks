@@ -4,36 +4,55 @@ namespace App\Service;
 
 class Parameters
 {
-    /**
-     * The maximum videos error message to display
-     */
-    public array $max_videos = ['max_reach' => 'videos'];
 
     /**
-     * The maximum images error message to display
+     * The default trick image
+     * @var string
      */
-    public array $max_images = ['max_reach' => 'images'];
+    const DEFAULT_IMAGE = "snow_board.jpeg";
 
     /**
-     * The maximum images error message to display
+     * The user password used in fixtures
+     * @var string
      */
-    const EXPIRED = ['expired_link' => 'message'];
+    const DEFAULT_PASSWORD = "123456";
 
     /**
-     * The confirm key of the mail array
+     * The maximum of images allowed
+     * @var int
      */
-    const CONFIRM = 'confirm';
+    const MAX_IMAGES = 5;
+
+    /**
+     * The maximum of videos allowed
+     * @var int
+     */
+    const MAX_VIDEOS = 5;
+
+    /**
+     * The from adress for the email
+     * @var string
+     */
+    const FROM = 'Sébastien <snowtricks@example.com>';
+
+    /**
+     * The default error message
+     * @var string
+     */
+    const DEFAULT = "Erreur inconnue";
 
     /**
      * The reset key
+     * @var string
      */
-    const RESET= 'reset';
+    const RESET = "reset";
 
     /**
-     * The reset key
+     * The confirm key
+     * @var string
      */
-    const DEFAULT= 'Erreur inconnue';
-
+    const CONFIRM = "confirm";
+   
     /**
      * Set of variables needed for sending Emails
      *
@@ -116,19 +135,21 @@ class Parameters
 
     public function getMessages(string $subject, ?array $max = null) :string
     {
-        if($max !== null) {
+        if ($max !== null) {
             foreach ($max as $key => $value) {
                 if (array_key_exists($key, $this->$subject)) {
                     if (array_key_exists($value, $this->$subject[$key])) {
                         return $this->$subject[$key][$value];
                     }
+
                 }
+
             }
         }
+
         return self::DEFAULT;
 
     }
-
 
 
 }

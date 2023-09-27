@@ -10,7 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 
 
-class ResetForm extends AbstractType 
+class ResetForm extends AbstractType
 {
 
 
@@ -25,15 +25,6 @@ class ResetForm extends AbstractType
         ]);
 
     }
-
-
-    // public function configureOptions(OptionsResolver $resolver): void
-    // {
-    //     $resolver->setDefaults([
-    //         'data_class' => Users::class,
-    //     ]);
-
-    // }
 
 
 }

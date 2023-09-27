@@ -15,6 +15,8 @@ use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 
 class RegistrationFormType extends AbstractType
 {
+
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -42,8 +44,8 @@ class RegistrationFormType extends AbstractType
                 'first_options'  => ['label' => 'Mot de passe'],
                 'second_options' => ['label' => 'Répétez votre mot de passe'],
                 'attr' => ['autocomplete' => 'new-password'],
-            ])
-        ;
+            ]);
+
     }
 
 

@@ -10,12 +10,13 @@
             Dèrnière mise à jour le {{figures.UpdateDate | date("d/m/y")}}
             {% endif %}
         </p>
+        <div class="container"><button class="btn-sm btn hide" id="hide">Afficher les medias</button></div>
         {# images #}
         {% for image in figures.images %}
             {% include 'utils/deletemodal.html.twig' with {name : image.ImageName, path :"delete_image", subject : 'image', key : image.Id, id : figures.id} %}
             {% if loop.first %}
                 <div class="row">
-                    <div class="col">
+                    <div class="col premiere d-none d-sm-block" style="background-image :url({{asset('images/figures/')}}{{image.ImageName}});">
                             {% if app.user and app.user.id == figures.UsersId.id %}
                                 {% if image.ImageName == default_image %}
                                     {% include 'utils/button.html.twig' with {id : figures.id, file: image.Id, path : 'edit_image', type:'image'} %}
@@ -23,7 +24,7 @@
                                     {% include 'utils/button.html.twig' with {id : figures.id, display : true, file: image.Id, path : 'edit_image', type:'image'} %}
                                 {% endif %}
                             {% endif %}
-                        <img src={{asset('images/figures/')}}{{image.ImageName}} alt="" class="img-fluid big">
+                        {# <img src={{asset('images/figures/')}}{{image.ImageName}} alt="" class="img-fluid big d-none d-sm-block"> #}
                     </div>
                 </div>
                 <div class="row">
@@ -32,7 +33,7 @@
                         {% if app.user and app.user.id == figures.UsersId.id %}
                             {% include 'utils/button.html.twig' with {id : figures.id, display : true, file: image.Id, path : 'edit_image',type:'image',path_delete : "delete_image"} %}
                         {% endif %}
-                        <img src={{asset('images/figures/')}}{{image.ImageName}} alt="" class="img-thumbnail">
+                        <img src={{asset('images/figures/')}}{{image.ImageName}} alt="" class="img-thumbnail d-none d-sm-block">
                     </div>
                 {% endif %}
         {% endfor %}
@@ -51,7 +52,7 @@
                         {% if app.user and app.user.id == figures.UsersId.id %}
                             {% include 'utils/button.html.twig' with {id : figures.id, display : true, file: video.Id, path : 'edit_video', type:'video'} %}
                         {% endif %}
-                        <iframe class="embed-responsive-item" src={{video.src}} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"allowfullscreen></iframe>
+                        <iframe class="embed-responsive-item d-none d-sm-block" src={{video.src}} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"allowfullscreen></iframe>
                         {# {% if loop.last %} #}
                             </div>
                         {# {% endif %} #}
@@ -90,7 +91,7 @@
                 {% endif %}
                
             
-                <div class="row">
+                <div class="row m-1 p-2">
                 {# Commentaires #}
                     <div class="col" id="mess_form">
                         {% if app.user %}
@@ -99,9 +100,11 @@
                             {% include 'edition/add_comment.html.twig' with {connect : false} %}
                         {% endif %}
                     </div>
+                </div>
+                  <div class="row m-1 p-2">
                 <div class="col">
-                    {% for message in figures.messages | sort ((a,b) => b.MessageDate <=> a.MessageDate) %}
-                        <div class="card mb-3">
+                    {% for message in messages %}
+                        <div class="card mb-3" id="comments">
                             <div class="row m-1">
                                 <div class="col">
                                     <img class="card-img-top message" src={{asset('images/avatars/')}}{{message.users.photo}} alt="Card image cap">
@@ -118,6 +121,26 @@
                             </div>
                         </div>
                     {% endfor %}
+                    {#Link of pagination#}
+                        {% for message in messages %}
+                            {% if loop.first %}
+                                <nav>
+                                    <ul class="pagination justify-content-center">
+                                    {% if previous >= 0 %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="{{ path('figuresdetails', { offset: previous, slug : message.figures.slug }) }}#comments">Précédent</a>
+                                        </li>
+                                    {% endif %}
+                                    {% if next < messages|length %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="{{ path('figuresdetails', { offset: next, slug : message.figures.slug }) }}#comments">Suivant</a>
+                                        </li>
+                                    {% endif %}
+                                    </ul>
+                                </nav>
+                            {% endif %}
+                        {% endfor %}
+                    {####################}
                 </div>
                 {# fin commentaires #}
                 

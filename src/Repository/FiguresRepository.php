@@ -3,8 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Figures;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\Tools\Pagination\Paginator;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @extends ServiceEntityRepository<Figures>
@@ -16,10 +17,17 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class FiguresRepository extends ServiceEntityRepository
 {
+    /**
+     * @var int Number of messages requested
+     */
+    public const PAGINATOR_PER_PAGE = 6;
+
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Figures::class);
     }
+
 
     public function findForHome()
     {
@@ -59,20 +67,23 @@ class FiguresRepository extends ServiceEntityRepository
     }
 
 
-    // public function findImages(int $id): array
-    // {
-    //     $entityManager = $this->getEntityManager();
-    //     $query = $entityManager->createQuery(
-    //     'SELECT COUNT(i.id)
-    //     FROM App\Entity\Figures f
-    //     INNER JOIN f.images i
-    //     WHERE f.id = :id'
-    //     )->setParameter('id', $id);
-    //     return $query->getOneOrNullResult();
+    /**
+    * Get messages according to the offset
+    *
+    * @param integer $offset
+    * @return Paginator
+    */
+   public function findPaginated(int $offset): Paginator
+   {
+       $query =  $this->createQueryBuilder('f')
+           ->orderBy('f.creation_date','DESC')
+           ->setMaxResults(self::PAGINATOR_PER_PAGE)
+           ->setFirstResult($offset)
+           ->getQuery()
+       ;
+       return new Paginator($query);
 
-    // }
-
-
+   }
 //    /**
 //     * @return Figures[] Returns an array of Figures objects
 //     */

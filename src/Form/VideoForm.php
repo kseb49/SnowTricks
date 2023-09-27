@@ -12,14 +12,17 @@ use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 
 
-class VideoForm extends AbstractType 
+class VideoForm extends AbstractType
 {
+
+
     public function buildForm(FormBuilderInterface $builder, array $options) :void
     {
         $builder
         ->add('src', UrlType::class,['label' => 'Liens vers des vidéos you tube']);
 
     }
+
 
     public function configureOptions(OptionsResolver $resolver): void
     {
@@ -28,4 +31,6 @@ class VideoForm extends AbstractType
         ]);
 
     }
+
+
 }

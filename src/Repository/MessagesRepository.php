@@ -2,9 +2,11 @@
 
 namespace App\Repository;
 
+use App\Entity\Figures;
 use App\Entity\Messages;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\Tools\Pagination\Paginator;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @extends ServiceEntityRepository<Messages>
@@ -16,33 +18,36 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class MessagesRepository extends ServiceEntityRepository
 {
+    /**
+     * @var int Number of messages requested
+     */
+    public const PAGINATOR_PER_PAGE = 5;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Messages::class);
     }
 
-//    /**
-//     * @return Messages[] Returns an array of Messages objects
-//     */
-//    public function findBySlug($slug): array
-//    {
-//        return $this->createQueryBuilder('m')
-//            ->andWhere('m.figures = :val')
-//            ->setParameter('val', $slug)
-//            ->orderBy('m.message_date', 'DESC')
-//         //    ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+   /**
+    * Get messages according to the offset
+    *
+    * @param Figures $figures
+    * @param integer $offset
+    * @return Paginator
+    */
+   public function findPaginated(Figures $figures, int $offset): Paginator
+   {
+       $query =  $this->createQueryBuilder('m')
+           ->andWhere('m.figures = :val')
+           ->setParameter('val', $figures)
+           ->orderBy('m.message_date','DESC')
+           ->setMaxResults(self::PAGINATOR_PER_PAGE)
+           ->setFirstResult($offset)
+           ->getQuery()
+       ;
+       return new Paginator($query);
 
-//    public function findOneBySomeField($value): ?Messages
-//    {
-//        return $this->createQueryBuilder('m')
-//            ->andWhere('m.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+   }
+
+
 }

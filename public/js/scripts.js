@@ -1,23 +1,6 @@
-/*!
-* Start Bootstrap - Bare v5.0.9 (https://startbootstrap.com/template/bare)
-* Copyright 2013-2023 Start Bootstrap
-* Licensed under MIT (https://github.com/StartBootstrap/startbootstrap-bare/blob/master/LICENSE)
-*/
-// This file is intentionally blank
-// Use this file to add JavaScript to your project
-
-// const button = document.querySelector('#addVideo')
-// console.log(document.querySelector(".btn .btn-primary"))
-// button.addEventListener('click',(e)=> {
-  //  const form = document.querySelector('.add_item_link')
-  // form.addEventListener('click',(e)=>{
-  //   e.preventDefault()
-  // })
-
-  const addFormToCollection = (e) => {
+const addFormToCollection = (e) => {
     const collectionHolder = document.querySelector('.' + e.currentTarget.dataset.collectionHolderClass);
     const item = document.createElement('p');
-  
     item.innerHTML = collectionHolder
       .dataset
       .prototype
@@ -25,17 +8,18 @@
         /__name__/g,
         collectionHolder.dataset.index
       );
-  
     collectionHolder.appendChild(item);
-  
     collectionHolder.dataset.index++;
   };
-    document.querySelectorAll('.add_item_link')
+
+  document.querySelectorAll('.add_item_link')
   .forEach(btn => {
       btn.addEventListener("click", addFormToCollection)
   });
 
-
+  /**
+   * Get down to the tricks by clicking the arrow
+   */
   const height = document.querySelector('.subnav').clientHeight;
   const add = document.querySelector('.navbar').clientHeight;
   const arrow = document.querySelector('.arrow')
@@ -49,4 +33,40 @@
       top: _height,
       behavior: "smooth",
     });
+  }
+
+
+  const width = window.innerWidth
+  const targets = document.querySelectorAll('.d-none')
+  const button = document.querySelector('.hide')
+  const classes = ['d-none', "d-sm-block"]
+  responsive(classes)
+  window.addEventListener('resize', (e)=>{
+    responsive(classes)
+  })
+  function responsive (classes) {
+    if (width <= 575) {
+      if (button.classList.value.search(/hide/g) != -1) {
+        button.classList.remove('hide')
+      }
+      button.addEventListener('click', (e) => {
+        targets.forEach((target) => {
+          if (target.classList.value.search(/d-none/g) != -1) {
+            target.classList.remove(...classes)
+          }
+        })
+      })
+    }
+    else{
+      if (button.classList.value.search(/hide/g) == -1) {
+          button.classList.add('hide')
+      }
+      button.addEventListener('click', (e) => {
+        targets.forEach((target) => {
+          if (target.classList.value.search(/d-none/g) == -1) {
+            target.classList.add(...classes)
+          }
+        })
+      })
+    }
   }

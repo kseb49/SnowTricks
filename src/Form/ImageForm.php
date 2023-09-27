@@ -10,7 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 
 
-class ImageForm extends AbstractType 
+class ImageForm extends AbstractType
 {
 
 
@@ -27,7 +27,7 @@ class ImageForm extends AbstractType
                         'image/jpeg',
                         'image/gif',
                         'image/png',
-                        'image/webp'
+                        'image/webp',
                     ],
                     'mimeTypesMessage' => 'Please upload a valid image {{types}}'
                 ])

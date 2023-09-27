@@ -18,7 +18,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 
-class ImageController extends AbstractController 
+class ImageController extends AbstractController
 {
 
 
@@ -46,8 +46,8 @@ class ImageController extends AbstractController
                 foreach ($images as $value) {
                     try {
                         // The maximum number of images allowed.
-                        if ($imrepo->countImages($trick_id)[1] >= $_ENV['IMAGES_MAX']) {
-                            $this->addFlash('warning',$parameters->getMessages('errors',$parameters->max_images));
+                        if ($imrepo->countImages($trick_id)[1] >= $parameters::MAX_IMAGES) {
+                            $this->addFlash('warning',$parameters->getMessages('errors', ['max_rech' => 'images']));
                             return $this->redirectToRoute('figuresdetails',["slug" => $figure->getSlug()]);
                         }
 
@@ -61,9 +61,10 @@ class ImageController extends AbstractController
                     $entityManager->persist($figure);
                     $entityManager->flush();
                 }
-                $this->addFlash('success',$parameters->getMessages('feedback',['success' => 'images']));
+                $this->addFlash('success',$parameters->getMessages('feedback',['success' => 'image']));
                 return $this->redirectToRoute('figuresdetails',["slug" => $figure->getSlug()]);
             }
+
         }
         return $this->render('edition/add_image_form.html.twig', ['add_image_form' => $form, 'figure' => $figure]);
 
@@ -92,7 +93,7 @@ class ImageController extends AbstractController
             $entityManager->remove($image);
             $entityManager->persist($figure);
             $entityManager->flush();
-            if ($image->getImageName() !== $_ENV['FIGURE_IMG']) {
+            if ($image->getImageName() !== $parameters::DEFAULT_IMAGE) {
                 $manager->delete('figures_directory',$image->getImageName());
             }
             $this->addFlash('success', $parameters->getMessages('feedback',['delete' => 'message']));
@@ -100,8 +101,9 @@ class ImageController extends AbstractController
         }
 
         $this->addFlash('danger', $parameters->getMessages('feedback',['only' => 'image']));
-            return $this->redirectToRoute('figuresdetails', [
-                'slug' => $figure->getSlug()]);
+        return $this->redirectToRoute(
+            'figuresdetails',
+            ['slug' => $figure->getSlug()]);
 
     }
 
@@ -123,7 +125,7 @@ class ImageController extends AbstractController
         $figure = $entityManager->getRepository(Figures::class)->find($id);
         $form = $this->createForm(ImageForm::class, $figure);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() === true && $form->isValid() === true) {
             $image = $form->get('images')->getData();
             if ($image) {
                 try {
@@ -134,8 +136,8 @@ class ImageController extends AbstractController
                     $eximage = $entityManager->getRepository(Images::class)->find($image_id);
                     $figure->removeImage($eximage);
                     $entityManager->remove($eximage);
-                    // Delete the file too, unless the file is the default one
-                    if ($eximage->getImageName() !== $_ENV['FIGURE_IMG']) {
+                    // Delete the file too, unless the file is the default one.
+                    if ($eximage->getImageName() !== $parameters::DEFAULT_IMAGE) {
                         $upload->delete('figures_directory',$eximage->getImageName());
                     }
                     $entityManager->persist($figure);
@@ -144,7 +146,7 @@ class ImageController extends AbstractController
                     return $this->redirectToRoute('figuresdetails', ["error" => $e, "slug" => $figure->getSlug()]);
                 }
                 $this->addFlash('success',$parameters->getMessages('feedback',['edit' => 'message']));
-                return $this->redirectToRoute('figuresdetails',['slug' =>$figure->getSlug()]);
+                return $this->redirectToRoute('figuresdetails',['slug' => $figure->getSlug()]);
             }
         }
         return $this->render('edition/image_form.html.twig', ['image_form' => $form, 'figure' =>  $figure, 'img_id' => $image_id]);
