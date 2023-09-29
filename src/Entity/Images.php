@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ImagesRepository;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ImagesRepository::class)]
@@ -14,6 +15,8 @@ class Images
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
+    #[Assert\NotBlank]
+    #[Assert\Type('string')]
     private ?string $image_name = null;
 
     public function getId(): ?int

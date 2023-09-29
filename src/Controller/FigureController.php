@@ -29,6 +29,9 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 class FigureController extends AbstractController
 {
 
+    public function __construct(public Parameters $parameters){}
+
+
     #[Route('/{slug}', name:'details')]
     /**
     * Page of a single trick
@@ -39,13 +42,13 @@ class FigureController extends AbstractController
     * @param MessagesRepository $messageRepository MessageRepository
     * @return Response
     */
-    public function details(Request $request, Figures $figures, EntityManagerInterface $entityManager, MessagesRepository $messagesRepository, Parameters $parameters) :Response
+    public function details(Request $request, Figures $figures, EntityManagerInterface $entityManager, MessagesRepository $messagesRepository) :Response
     {
         if (!$figures) {
-            $this->addFlash('danger', $parameters->getMessages('errors', ['unknown' => 'message']));
+            $this->addFlash('danger', $this->parameters->getMessages('errors', ['unknown' => 'message']));
             return $this->redirectToRoute('home');
         }
-
+        // Comment form.
         $message = new Messages();
         $form = $this->createForm(AddMessagesForm::class, $message);
         $form->handleRequest($request);
@@ -57,14 +60,13 @@ class FigureController extends AbstractController
             $figures->addMessage($message);
             $entityManager->persist($figures);
             $entityManager->flush();
-            $this->addFlash('success', $parameters->getMessages('feedback', ['success' => 'comment']));
+            $this->addFlash('success', $this->parameters->getMessages('feedback', ['success' => 'comment']));
             return $this->redirectToRoute('figuresdetails', ['slug' => $figures->getSlug()]);
         }
 
         $offset = max(0, $request->query->getInt('offset', 0));
-        // All the comments of the trick
         $paginator = $messagesRepository->findPaginated($figures, $offset);
-        return $this->render('details.html.twig', ['figures' => $figures, 'default_image' => $parameters::DEFAULT_IMAGE, 'message_form' => $form, 'messages' => $paginator, 'previous' => $offset - MessagesRepository::PAGINATOR_PER_PAGE, 'next' => min(count($paginator), $offset + MessagesRepository::PAGINATOR_PER_PAGE)]);
+        return $this->render('details.html.twig', ['figures' => $figures, 'default_image' => $this->parameters::DEFAULT_IMAGE, 'message_form' => $form, 'messages' => $paginator, 'previous' => $offset - MessagesRepository::PAGINATOR_PER_PAGE, 'next' => min(count($paginator), $offset + MessagesRepository::PAGINATOR_PER_PAGE)]);
 
     }
 
@@ -80,7 +82,7 @@ class FigureController extends AbstractController
      * @param SluggerInterface $slugger
      * @return Response
      */
-    public function create(Request $request, EntityManagerInterface $entityManager, ImageManager $upload, SluggerInterface $slugger, Parameters $parameters) :Response
+    public function create(Request $request, EntityManagerInterface $entityManager, ImageManager $upload, SluggerInterface $slugger) :Response
     {
         $figure = new Figures();
         $form = $this->createForm(FigureForm::class, $figure);
@@ -101,7 +103,7 @@ class FigureController extends AbstractController
             } else {
                 // set the default image.
                 $picture = new Images;
-                $picture->setImageName($parameters::DEFAULT_IMAGE);
+                $picture->setImageName($this->parameters::DEFAULT_IMAGE);
                 $figure->addImage($picture);
             }
             $videos = $form->get('videos')->getData();
@@ -120,7 +122,7 @@ class FigureController extends AbstractController
             $figure->setGroupsId($form->get('groups_id')->getData());
             $entityManager->persist($figure);
             $entityManager->flush();
-            $this->addFlash('success', $parameters->getMessages('feedback', ['success' => 'figure']));
+            $this->addFlash('success', $this->parameters->getMessages('feedback', ['success' => 'figure']));
             return $this->redirectToRoute('home');
         }
 
@@ -139,7 +141,7 @@ class FigureController extends AbstractController
      * @param Figures $figures
      * @return Response
      */
-    public function edit(Request $request, EntityManagerInterface $entityManager, int|string $id, Figures $figure, SluggerInterface $slugger, Parameters $parameters) :Response
+    public function edit(Request $request, EntityManagerInterface $entityManager, int|string $id, Figures $figure, SluggerInterface $slugger) :Response
     {
         $figure = $entityManager->getRepository(Figures::class)->find($id);
         $form = $this->createForm(EditFigureForm::class, $figure);
@@ -149,10 +151,9 @@ class FigureController extends AbstractController
             $figure->setSlug(strtolower($slugger->slug($form->get('name')->getData())));
             $entityManager->persist($figure);
             $entityManager->flush();
-            $this->addFlash('success',$parameters->getMessages('feedback', ['edit' => 'message']));
+            $this->addFlash('success',$this->parameters->getMessages('feedback', ['edit' => 'message']));
             return $this->redirectToRoute('figuresdetails', ['slug' => $figure->getSlug()]);
         }
-        // $this->addFlash('danger','erreur');
         return $this->render(
             'edition/edit_figure.html.twig',
             ['figure_form' => $form]);
@@ -169,27 +170,29 @@ class FigureController extends AbstractController
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function delete(Figures $figures, EntityManagerInterface $entityManager,ImagesRepository $imrepo, VideosRepository $virepo, ImageManager $manager,int $id, Parameters $parameters) :Response
+    public function delete(Figures $figures, EntityManagerInterface $entityManager, ImageManager $manager, Request $request) :Response
     {
         if (!$figures) {
-            $this->addFlash('danger', $parameters->getMessages('errors', ['unknown' => 'message']));
+            $this->addFlash('danger', $this->parameters->getMessages('errors', ['unknown' => 'message']));
             return $this->redirectToRoute('home');
         }
-        // Delete the images files linked.
-        foreach ($imrepo->findAllImages($id) as $value) {
-            if ($value['image_name'] !== $parameters::DEFAULT_IMAGE) {
-                $manager->delete('figures_directory',$value['image_name']);
-                $imrepo->removeImages($value['image_name']);
+        $submittedToken = $request->request->get('token');
+        if ($this->isCsrfTokenValid('delete-item', $submittedToken)) {
+            //Delete the file
+            foreach ($figures->getImages() as $value) {
+                if ($value->getImageName() !== $this->parameters::DEFAULT_IMAGE) {
+                    $manager->delete('figures_directory',$value->getImageName());
+                }
             }
-        };
-        // Delete the videos.
-        foreach ($virepo->findAllVideos($id) as $value) {
-            $virepo->removeVideos($value['src']);
+
+            $entityManager->remove($figures);
+            $entityManager->flush();
+            $this->addFlash('success', $this->parameters->getMessages('feedback', ['delete' => 'message']));
+            return $this->redirectToRoute('home');
         }
-        $entityManager->remove($figures);
-        $entityManager->flush();
-        $this->addFlash('success', $parameters->getMessages('feedback', ['delete' => 'message']));
-        return $this->redirectToRoute('home');
+
+        $this->addFlash('warning', $this->parameters->getMessages('errors', ['authenticate' => 'access']));
+        return $this->redirectToRoute('figuresdetails', ['slug' => $figures->getSlug()]);
 
     }
 

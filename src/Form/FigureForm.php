@@ -42,7 +42,7 @@ class FigureForm extends AbstractType
             'constraints' => [
                 new All([
                     new File([
-                        'maxSize' => '5000k',
+                        'maxSize' => '10000k',
                         'mimeTypes' => [
                             'image/jpeg',
                             'image/gif',
