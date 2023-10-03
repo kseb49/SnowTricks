@@ -67,7 +67,7 @@ class FigureController extends AbstractController
 
         $offset = max(0, $request->query->getInt('offset', 0));
         $paginator = $messagesRepository->findPaginated($figures, $offset);
-        return $this->render('details.html.twig', ['figures' => $figures, 'default_image' => $this->parameters::DEFAULT_IMAGE, 'message_form' => $form, 'messages' => $paginator, 'previous' => $offset - MessagesRepository::PAGINATOR_PER_PAGE, 'next' => min(count($paginator), $offset + MessagesRepository::PAGINATOR_PER_PAGE)]);
+        return $this->render('details.html.twig', ['figures' => $figures, 'message_form' => $form, 'messages' => $paginator, 'previous' => $offset - MessagesRepository::PAGINATOR_PER_PAGE, 'next' => min(count($paginator), $offset + MessagesRepository::PAGINATOR_PER_PAGE)]);
 
     }
 
