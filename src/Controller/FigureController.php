@@ -12,8 +12,7 @@ use App\Service\Parameters;
 use App\Form\EditFigureForm;
 use App\Form\AddMessagesForm;
 use App\Service\ImageManager;
-use App\Repository\ImagesRepository;
-use App\Repository\VideosRepository;
+use App\Controller\Trait\CheckTrait;
 use App\Repository\MessagesRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,6 +28,8 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 class FigureController extends AbstractController
 {
 
+    use CheckTrait;
+    
     public function __construct(public Parameters $parameters){}
 
 
@@ -91,14 +92,17 @@ class FigureController extends AbstractController
             $image = $form->get('images')->getData();
             if ($image) {
                 foreach ($image as $value) {
+                    if (count($figure->getImages()) > $this->parameters::MAX_VIDEOS -1) {
+                        break;
+                    }
                     try {
                         $images_name = $upload->upload($value,'figures_directory');
-                        $picture = new Images;
-                        $picture->setImageName($images_name);
-                        $figure->addImage($picture);
                     } catch (FileException $e) {
-                        return $this->redirectToRoute('creation',["error" => $e]);
+                        return $this->redirectToRoute('creation', ["error" => $e]);
                     }
+                    $picture = new Images;
+                    $picture->setImageName($images_name);
+                    $figure->addImage($picture);
                 }
             } else {
                 // set the default image.
@@ -109,9 +113,14 @@ class FigureController extends AbstractController
             $videos = $form->get('videos')->getData();
             if ($videos) {
                 foreach ($videos as $value) {
-                    $embed = new Videos;
-                    $embed->setSrc($value->getSrc());
-                    $figure->addVideos($embed);
+                    if (count($figure->getVideos()) > $this->parameters::MAX_VIDEOS -1) {
+                        break;
+                    }
+                    if ($this->check($figure->getVideos(), $value->getSrc(), 'src') !== true) {
+                        $embed = new Videos;
+                        $embed->setSrc($value->getSrc());
+                        $figure->addVideos($embed);
+                    }
                 }
             }
             $figure->setName($form->get('name')->getData());

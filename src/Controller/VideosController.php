@@ -2,12 +2,12 @@
 
 namespace App\Controller;
 
+use App\Controller\Trait\CheckTrait;
 use App\Entity\Videos;
 use App\Entity\Figures;
 use App\Form\VideoForm;
 use App\Form\AddVideoForm;
 use App\Service\Parameters;
-use App\Repository\VideosRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,6 +17,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class VideosController extends AbstractController
 {
+
+    use CheckTrait;
+
 
     public function __construct(public Parameters $parameters){}
     #[Route('/ajout-video/{id}', name:'add_video')]
@@ -51,17 +54,15 @@ class VideosController extends AbstractController
                         $this->addFlash('warning', $this->parameters->getMessages('errors', ['max_reach' => 'videos']));
                         return $this->redirectToRoute('figuresdetails', ["slug" => $figure->getSlug()]);
                     }
+
                     //Avoid duplicate videos.
                     if ($numberOfVideos > 0) {
-                        foreach ($figure->getVideos() as $src) {
-                            if ($src->getSrc() === $value->getSrc()) {
-                                $this->addFlash('danger', $this->parameters->getMessages('errors', ['videos' => 'used']));
-                                return $this->redirectToRoute('figuresdetails', ["slug" => $figure->getSlug()]);
-                            }
-
+                        if ($this->check($figure->getVideos(), $value->getSrc(), 'src') === true) {
+                            $this->addFlash('danger', $this->parameters->getMessages('errors', ['videos' => 'used']));
+                            return $this->redirectToRoute('figuresdetails', ["slug" => $figure->getSlug()]);
                         }
-                    }
 
+                    }
                     $embed = new Videos;
                     $embed->setSrc($value->getSrc());
                     $figure->addVideos($embed);

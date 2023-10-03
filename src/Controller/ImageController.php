@@ -8,7 +8,6 @@ use App\Form\ImageForm;
 use App\Form\AddImageForm;
 use App\Service\ImageManager;
 use App\Service\Parameters;
-use App\Repository\ImagesRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

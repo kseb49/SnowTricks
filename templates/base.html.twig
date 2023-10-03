@@ -26,7 +26,7 @@
         {% block nav %}
         <nav class="navbar navbar-expand-lg bg-dark menu">
             <div class="container">
-                <a class="navbar-brand" href="#">
+                <a class="navbar-brand" href={{path('home')}}>
                 {% if app.user %}
                     <img src="{{asset('images/avatars/')}}{{app.user.photo}}" width="30" height="30" alt="">
                 {% endif %}
