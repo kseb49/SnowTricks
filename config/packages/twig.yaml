@@ -5,5 +5,3 @@ twig:
 when@test:
     twig:
         strict_variables: true
-    globals:
-        default_image: 'snow_board.jpeg'

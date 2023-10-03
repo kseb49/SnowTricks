@@ -27,13 +27,13 @@ class Figures
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank]
     private ?string $description = null;
-    
+
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $creation_date = null;
-    
+
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $update_date = null;
-    
+
     #[ORM\Column(length: 100)]
     private ?string $slug = null;
 
@@ -45,13 +45,13 @@ class Figures
     #[ORM\JoinColumn(name:'groups_id',nullable: false)]
     private ?Groups $groups_id = null;
 
-    #[ORM\ManyToMany(targetEntity:Videos::class, cascade:["persist"])]
+    #[ORM\ManyToMany(targetEntity:Videos::class, cascade:["persist","remove"])]
     private Collection $videos;
 
-    #[ORM\ManyToMany(targetEntity: Images::class, cascade:["persist"])]
+    #[ORM\ManyToMany(targetEntity: Images::class, cascade:["persist","remove"])]
     private Collection $images;
 
-    #[ORM\OneToMany(mappedBy: 'figures', targetEntity: Messages::class, orphanRemoval: true, cascade:["persist"])]
+    #[ORM\OneToMany(mappedBy: 'figures', targetEntity: Messages::class, orphanRemoval: true, cascade:["persist","remove"])]
     private Collection $messages;
 
 

@@ -12,7 +12,7 @@
         {% block stylesheets %}
             <link href={{ asset('css/styles.css') }} rel="stylesheet" />
         {% endblock %}
-        <title>{% block title %}Snow Tricks{% endblock %}</title>
+        <title>{% block title %}Snow Tricks - Chase Snow, Chase Thrills{% endblock %}</title>
         {% block javascripts %}
             {# <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script> #}
             <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
@@ -26,7 +26,7 @@
         {% block nav %}
         <nav class="navbar navbar-expand-lg bg-dark menu">
             <div class="container">
-                <a class="navbar-brand" href="#">
+                <a class="navbar-brand" href={{path('home')}}>
                 {% if app.user %}
                     <img src="{{asset('images/avatars/')}}{{app.user.photo}}" width="30" height="30" alt="">
                 {% endif %}

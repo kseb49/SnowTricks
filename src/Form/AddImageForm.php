@@ -48,9 +48,9 @@ class AddImageForm extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Figures::class,
-            'csrf_protection' => true,
-            'csrf_field_name' => 'token',
-            'csrf_token_id'   => 'figure'
+            // 'csrf_protection' => true,
+            // 'csrf_field_name' => 'token',
+            // 'csrf_token_id'   => 'figure'
         ]);
 
     }

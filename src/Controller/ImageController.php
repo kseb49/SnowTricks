@@ -8,7 +8,6 @@ use App\Form\ImageForm;
 use App\Form\AddImageForm;
 use App\Service\ImageManager;
 use App\Service\Parameters;
-use App\Repository\ImagesRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,6 +20,8 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 class ImageController extends AbstractController
 {
 
+    public function __construct(public Parameters $parameters){}
+
 
     #[Route('/ajout-image/{trick_id}', name:'add_image')]
     #[IsGranted('ROLE_USER', message:"Veuillez confirmer votre compte")]
@@ -32,10 +33,9 @@ class ImageController extends AbstractController
      * @param integer $trick_id
      * @param ImageManager $manager
      * @param ImagesRepository $imrepo
-     * @param Parameters $parameters The variables needed in the app
      * @return Response
      */
-    public function addImage(EntityManagerInterface $entityManager, Request $request, int $trick_id, ImageManager $manager, ImagesRepository $imrepo, Parameters $parameters) :Response
+    public function addImage(EntityManagerInterface $entityManager, Request $request, int $trick_id, ImageManager $manager) :Response
     {
         $figure = $entityManager->getRepository(Figures::class)->find($trick_id);
         $form = $this->createForm(AddImageForm::class, $figure);
@@ -44,28 +44,34 @@ class ImageController extends AbstractController
             $images = $form->get('images')->getData();
             if ($images) {
                 foreach ($images as $value) {
-                    try {
-                        // The maximum number of images allowed.
-                        if ($imrepo->countImages($trick_id)[1] >= $parameters::MAX_IMAGES) {
-                            $this->addFlash('warning',$parameters->getMessages('errors', ['max_rech' => 'images']));
-                            return $this->redirectToRoute('figuresdetails',["slug" => $figure->getSlug()]);
-                        }
-
-                        $images_name = $manager->upload($value,'figures_directory');
-                        $picture = new Images;
-                        $picture->setImageName($images_name);
-                        $figure->addImage($picture);
-                    } catch (FileException $e) {
-                        return $this->redirectToRoute('home',["error" => $e]);
+                    // The maximum number of images allowed.
+                    if (count($figure->getImages()) >= $this->parameters::MAX_IMAGES) {
+                        $this->addFlash('warning',$this->parameters->getMessages('errors', ['max_reach' => 'image']));
+                        return $this->redirectToRoute('figuresdetails',["slug" => $figure->getSlug()]);
                     }
+                    // Rename and Download the file.
+                    try {
+                        $images_name = $manager->upload($value,'figures_directory');
+                    } catch (FileException $e) {
+                        $this->addFlash('danger',$e);
+                        return $this->redirectToRoute('home');
+                    }
+
+                    $picture = new Images;
+                    $picture->setImageName($images_name);
+                    $figure->addImage($picture);
                     $entityManager->persist($figure);
                     $entityManager->flush();
                 }
-                $this->addFlash('success',$parameters->getMessages('feedback',['success' => 'image']));
+
+                $this->addFlash('success', $this->parameters->getMessages('feedback', ['success' => 'image']));
                 return $this->redirectToRoute('figuresdetails',["slug" => $figure->getSlug()]);
             }
 
+            $this->addFlash('warning', $this->parameters->getMessages('feedback', ['edit' => 'missing']));
+            return $this->render('edition/add_image_form.html.twig', ['add_image_form' => $form, 'figure' => $figure]);
         }
+
         return $this->render('edition/add_image_form.html.twig', ['add_image_form' => $form, 'figure' => $figure]);
 
     }
@@ -83,27 +89,41 @@ class ImageController extends AbstractController
      * @param ImagesRepository $imrepo
      * @return Response
      */
-    public function deleteImage(EntityManagerInterface $entityManager, int $id, int $image_id, ImageManager $manager, ImagesRepository $imrepo, Parameters $parameters) :Response
+    public function deleteImage(Request $request, EntityManagerInterface $entityManager, int $id, int $image_id, ImageManager $manager) :Response
     {
         $figure = $entityManager->getRepository(Figures::class)->find($id);
         $image = $entityManager->getRepository(Images::class)->find($image_id);
-        // If there are more than one image.
-        if ($imrepo->countImages($id)[1] > 1) {
-            $figure->removeImage($image);
-            $entityManager->remove($image);
-            $entityManager->persist($figure);
-            $entityManager->flush();
-            if ($image->getImageName() !== $parameters::DEFAULT_IMAGE) {
-                $manager->delete('figures_directory',$image->getImageName());
+        $submittedToken = $request->request->get('token');
+        if ($this->isCsrfTokenValid('delete-item', $submittedToken)) {
+            // If there are more than one image.
+            if (count($figure->getImages()) > 1) {
+                $figure->removeImage($image);
+                $entityManager->remove($image);
+                $entityManager->persist($figure);
+                $entityManager->flush();
+                // Delete the file unless it is the default one.
+                if ($image->getImageName() !== $this->parameters::DEFAULT_IMAGE) {
+                    try {
+                        $manager->delete('figures_directory', $image->getImageName());
+                    } catch (\Exception $e) {
+                        $this->addFlash('danger',$e);
+                        return $this->redirectToRoute('home');
+                    }
+    
+                }
+    
+                $this->addFlash('success', $this->parameters->getMessages('feedback', ['delete' => 'message']));
+                return $this->redirectToRoute('figuresdetails', ['slug' => $figure->getSlug()]);
             }
-            $this->addFlash('success', $parameters->getMessages('feedback',['delete' => 'message']));
-            return $this->redirectToRoute('figuresdetails', ['slug' => $figure->getSlug()]);
+    
+            $this->addFlash('danger', $this->parameters->getMessages('feedback', ['only' => 'image']));
+            return $this->redirectToRoute(
+                'figuresdetails',
+                ['slug' => $figure->getSlug()]);
         }
 
-        $this->addFlash('danger', $parameters->getMessages('feedback',['only' => 'image']));
-        return $this->redirectToRoute(
-            'figuresdetails',
-            ['slug' => $figure->getSlug()]);
+        $this->addFlash('warning', $this->parameters->getMessages('errors', ['authenticate' => 'access']));
+        return $this->redirectToRoute('figuresdetails', ['slug' => $figure->getSlug()]);
 
     }
 
@@ -120,7 +140,7 @@ class ImageController extends AbstractController
      * @param ImageManager $upload
      * @return Response
      */
-    public function editImage(Request $request, EntityManagerInterface $entityManager, int $id, int $image_id, ImageManager $upload, Parameters $parameters) :Response
+    public function editImage(Request $request, EntityManagerInterface $entityManager, int $id, int $image_id, ImageManager $upload) :Response
     {
         $figure = $entityManager->getRepository(Figures::class)->find($id);
         $form = $this->createForm(ImageForm::class, $figure);
@@ -130,6 +150,11 @@ class ImageController extends AbstractController
             if ($image) {
                 try {
                     $images_name = $upload->upload($image,'figures_directory');
+                } catch (FileException $e) {
+                    $this->addFlash('danger',$e);
+                    return $this->redirectToRoute('figuresdetails', ["slug" => $figure->getSlug()]);
+                }
+
                     $picture = new Images;
                     $picture->setImageName($images_name);
                     $figure->addImage($picture);
@@ -137,18 +162,26 @@ class ImageController extends AbstractController
                     $figure->removeImage($eximage);
                     $entityManager->remove($eximage);
                     // Delete the file too, unless the file is the default one.
-                    if ($eximage->getImageName() !== $parameters::DEFAULT_IMAGE) {
-                        $upload->delete('figures_directory',$eximage->getImageName());
+                    if ($eximage->getImageName() !== $this->parameters::DEFAULT_IMAGE) {
+                        try {
+                            $upload->delete('figures_directory', $eximage->getImageName());
+                        } catch (\Exception $e) {
+                            $this->addFlash('danger',$e);
+                            return $this->redirectToRoute('figuresdetails', ["slug" => $figure->getSlug()]);
+                        }
+
                     }
+
                     $entityManager->persist($figure);
                     $entityManager->flush();
-                } catch (FileException $e) {
-                    return $this->redirectToRoute('figuresdetails', ["error" => $e, "slug" => $figure->getSlug()]);
-                }
-                $this->addFlash('success',$parameters->getMessages('feedback',['edit' => 'message']));
+                $this->addFlash('success',$this->parameters->getMessages('feedback',['edit' => 'message']));
                 return $this->redirectToRoute('figuresdetails',['slug' => $figure->getSlug()]);
             }
+
+            $this->addFlash('warning', $this->parameters->getMessages('feedback', ['edit' => 'missing']));
+            return $this->render('edition/add_image_form.html.twig', ['add_image_form' => $form, 'figure' => $figure]);
         }
+
         return $this->render('edition/image_form.html.twig', ['image_form' => $form, 'figure' =>  $figure, 'img_id' => $image_id]);
     }
 

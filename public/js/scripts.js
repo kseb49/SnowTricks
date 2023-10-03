@@ -1,5 +1,8 @@
 const addFormToCollection = (e) => {
     const collectionHolder = document.querySelector('.' + e.currentTarget.dataset.collectionHolderClass);
+    if( document.querySelectorAll('div.videos > p').length > 4){
+      return
+    }
     const item = document.createElement('p');
     item.innerHTML = collectionHolder
       .dataset
@@ -20,20 +23,20 @@ const addFormToCollection = (e) => {
   /**
    * Get down to the tricks by clicking the arrow
    */
-  const height = document.querySelector('.subnav').clientHeight;
-  const add = document.querySelector('.navbar').clientHeight;
-  const arrow = document.querySelector('.arrow')
-  const total = height+add
-  arrow.addEventListener('click', (e) => {
-    e.preventDefault();
-    this.show(total)
-  })
-  function show(_height){
-    window.scroll({
-      top: _height,
-      behavior: "smooth",
-    });
-  }
+    const height = document.querySelector('.subnav').clientHeight;
+    const add = document.querySelector('.navbar').clientHeight;
+    const arrow = document.querySelector('.arrow')
+    const total = height+add
+    arrow.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.show(total)
+    })
+    function show(_height){
+      window.scroll({
+        top: _height,
+        behavior: "smooth",
+      });
+    }
 
 
   const width = window.innerWidth
