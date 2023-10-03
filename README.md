@@ -19,7 +19,6 @@ Site collaboratif dont l'objectif est de faire connaître le snowboard au grand 
 - Page connexion
 - Page reset mdp
 
-_[*voir en ligne](https://www.gloomaps.com/7sMwylrhb4)_
 
 ## Prè-requis
 
