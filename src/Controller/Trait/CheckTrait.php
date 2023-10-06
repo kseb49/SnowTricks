@@ -13,7 +13,7 @@ trait CheckTrait
      * @param Collection $collection
      * @param string $subject 
      * @param string $param Name of the param
-     * @return bool True on success, false on failure
+     * @return bool true for a match, false otherwise
      */
     private function check(Collection $collection, string $subject, string $param) :bool
     {
@@ -23,5 +23,6 @@ trait CheckTrait
                return true;
             }
         }
+        return false;
     }
 }

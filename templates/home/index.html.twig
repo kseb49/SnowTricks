@@ -6,6 +6,7 @@
         <a class="arrow" href="#"><i class="bi bi-caret-down-fill"></i></a>
     </div>
 </div>
+ <a class="up" href="#"><i class="bi bi-caret-up-fill"></i></a>
     <div class="container pt-4">
      {#Link of pagination#}
                 {% for figures in messages %}
@@ -32,10 +33,10 @@
                 {% for key, figure in figures %}
                     {% include 'utils/deletemodal.html.twig' with {name : figure.name, path : 'figuresdelete', id : figure.id} %}
                     <div class="col-sm m-1">
-                        <div class="card" style="width: 18rem;">
+                        <div class="card">
                             {% for image in figure.images %}
                                 {% if loop.first %}
-                                    <img class="card-img-top" src={{asset('images/figures/')}}{{image.ImageName}} alt="Card image cap">
+                                    <img class="card-img-top" src={{asset('images/figures/')}}{{image.ImageName}}>
                                 {% endif %}
                             {% endfor %}
                             <div class="card-body">

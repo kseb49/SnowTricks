@@ -116,6 +116,8 @@ body {
   background-color: rgb(131, 149, 167,0.45);
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  position: relative;
+  min-height: 100vh;
 }
 
 hr {
@@ -3325,8 +3327,7 @@ textarea.form-control-lg {
 .arrow{
   grid-column: 2 / 3;
   grid-row: 3 / 4;
-  justify-self: end;
-  align-self: end;
+  place-self: end;
   text-decoration: none;
   padding-right: 1rem;
   color: black;
@@ -3336,6 +3337,18 @@ textarea.form-control-lg {
 .arrow:hover{
   color: black;
 }
+.up{
+  position: absolute;
+  right: 4vmin;
+  bottom: 9vmin;
+  text-decoration: none;
+  padding-right: 1rem;
+  color: black;
+  animation: jello-vertical 1s steps(5, end) 1.5s infinite;
+  font-size: 5rem;
+  z-index: 100;
+}
+/* image a la une */
 .premiere{
   background-size: cover;
   background-repeat: no-repeat;
@@ -3344,6 +3357,21 @@ textarea.form-control-lg {
   width: 100%;
   height: 100vh;
   font-size: 2rem;
+  grid-template-columns: 1fr 15fr;
+  grid-template-rows: 1fr 15fr;
+  grid-template-areas:
+  'buttons .'
+  '. .';
+}
+/*images et videos suivantes
+.thumb_container > .control > .buttons[], <img .media .thumb>
+*/
+/*nb de colonnes selon la classe .videos ou .images*/
+.thumb_container{
+  display: grid;
+  margin: 50px 10px;
+  align-items: center;/*aligns along the block (column) axis*/
+  grid-template-columns: repeat(4,1fr);
 }
 .control{
   display: grid;
@@ -3352,39 +3380,16 @@ textarea.form-control-lg {
   grid-template-areas:
   'buttons buttons'
   'media media';
-  height: 10rem;
-  margin: 2rem;
-  align-items: center;
+  /* height: 15vh; */
+  margin: 0 1vmax;
+  /* align-items: center; */
   row-gap: .3rem;
+  width: 40vmin;
 }
 .thumb{
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-clip: border-box;
   width: 100%;
   height: 100%;
-  font-size: 2rem;
-  place-self: center stretch;
-}
-.thumb_container{
-  display: grid;
-  grid-template-columns: repeat(4,1fr);
-  width: 100%;
-  /* border: 1px solid red; */
   margin: auto;
-}
-.mod{
-  grid-area: mod;
-  place-self: center;
-}
-.del{
-  grid-area: del;
-  place-self: center;
-}
-.media{
-  grid-area: media;
-  text-align: center;
 }
 .buttons{
   grid-area: buttons;
@@ -3393,11 +3398,29 @@ textarea.form-control-lg {
   grid-template-columns: 1fr 1fr;
   grid-template-areas:
   'mod del';
-  /* border:1px solid black; */
 }
 .buttons a{
   text-decoration: none;
 }
+.mod{
+  grid-area: mod;
+}
+.del{
+  grid-area: del;
+}
+.mod,.del{
+  align-self: end;
+  justify-self: center;
+}
+.media{
+  grid-area: media;
+  text-align: center;
+}
+.footage iframe{
+ height: 100%;
+ width: 100%;
+}
+
 @keyframes jello-vertical {
   0% {
             transform: scale3d(1, 1, 1);
@@ -3430,7 +3453,25 @@ textarea.form-control-lg {
 .hide {
   display: none;
 }
-
+.display{
+  margin-left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+}
+.main{
+  min-height: 100%;
+  position: relative;
+  padding-bottom: 100px;
+}
+.footer{
+  width: 100%;
+  background-color: #000;
+  color: white;
+  position:absolute;
+  bottom: 0;
+  height: 3rem;
+  text-align: center;
+}
 @media (min-width: 576px) {
   .dropdown-menu-sm-start {
     --bs-position: start;
@@ -3445,6 +3486,18 @@ textarea.form-control-lg {
   .dropdown-menu-sm-end[data-bs-popper] {
     right: 0;
     left: auto;
+  }
+}
+@media screen and (max-width:576px){
+  .thumb_container{
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+  .control{
+    width: auto;
+  }
+  .premiere{
+    width: 90%;
   }
 }
 @media (min-width: 768px) {
@@ -3479,6 +3532,12 @@ textarea.form-control-lg {
   }
   .slogan{
     font-size: 1.5rem;
+  }
+}
+@media screen and (max-width: 1200px)  and (min-width:576px){
+  .thumb_container{
+    grid-template-columns: 1fr 1fr;
+    justify-items: center;
   }
 }
 @media screen and (max-width: 350px) {
@@ -8501,7 +8560,7 @@ textarea.form-control-lg {
     display: inline-block !important;
   }
   .d-sm-block {
-    display: block !important;
+    display: grid !important;
   }
   .d-sm-grid {
     display: grid !important;

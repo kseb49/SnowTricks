@@ -10,86 +10,65 @@
             Dèrnière mise à jour le {{figures.UpdateDate | date("d/m/y")}}
             {% endif %}
         </p>
-        <div class="container"><button class="btn-sm btn hide" id="hide">Afficher les medias</button></div>
+        <div class="container">
+            <button type='button' class="btn btn-primary hide display" id="hide">👀 Afficher les medias 👀</button>
+        </div>
         {# images #}
-        {% for image in figures.images|sort|reverse  %}
+        {% for image in figures.images %}
             {% include 'utils/deletemodal.html.twig' with {name : image.ImageName, path :"delete_image", subject : 'image', key : image.Id, id : figures.id} %}
             {% if loop.index == 2 %}
-                <div class="row thumb_container">
+                <div class="thumb_container images">
             {% endif %}
-                {% if loop.first %}
-                    <div class="row">
-                        <div class="col premiere d-none d-sm-block" style="background-image :url({{asset('images/figures/')}}{{image.ImageName}});">
-                                {% if app.user and app.user.id == figures.UsersId.id %}
-                                    {% if figures.images|length > 1 %}
-                                        {% include 'utils/button.html.twig' with {id : figures.id, display : true, file: image.Id, path : 'edit_image', type:'image'} %}
-                                    {% else %}
-                                        {% include 'utils/button.html.twig' with {id : figures.id, file: image.Id, path : 'edit_image', type:'image'} %}
-                                    {% endif %}
-                                {% endif %}
-                            {# <img src={{asset('images/figures/')}}{{image.ImageName}} alt="" class="img-fluid big d-none d-sm-block"> #}
-                        </div>
-                    </div>
-                {% else %}
-                    {# <div class="image_c"> #}
-                        <div class="control">
-                            {% if app.user and app.user.id == figures.UsersId.id %}
-                                <div class="buttons d-none d-sm-block">
-                                    {% include 'utils/button.html.twig' with {id : figures.id, display : true, file: image.Id, path : 'edit_image',type:'image',path_delete : "delete_image"} %}
+            {#A la une#}
+            {% if loop.first %}
+                <div class="row">
+                    <div class="premiere d-none d-sm-block" style="background-image :url({{asset('images/figures/')}}{{image.ImageName}});">
+                        {% if app.user and app.user.id == figures.UsersId.id %}
+                            {% if figures.images|length > 1 %}
+                                <div class="buttons">
+                                    {% include 'utils/button.html.twig' with {id : figures.id, display : true, file: image.Id, path : 'edit_image', type:'image'} %}
+                                </div>
+                            {% else %}
+                                <div class="buttons">
+                                    {% include 'utils/button.html.twig' with {id : figures.id, file: image.Id, path : 'edit_image', type:'image'} %}
                                 </div>
                             {% endif %}
-                            <div class="media thumb d-none d-sm-block" style="background-image :url({{asset('images/figures/')}}{{image.ImageName}});">
-                                {# <img src={{asset('images/figures/')}}{{image.ImageName}}  class="d-none d-sm-block"> #}
-                            </div>
-                        </div>
-                    {# </div> #}
-                {% endif %}
-                {% if loop.last %}
-                </div>
-                {% endif %}
-        {% endfor %}
-        {# </div> #}
-        {# Videos #}
-        {% for videos in figures.videos | batch(3) %}
-            <div class="row">
-                {% for key, video in videos %}
-                    {% include 'utils/deletemodal.html.twig' with {name : video.src, path :"delete_video", subject : 'video', key : video.Id, id:figures.Id} %}
-                     {% if key == 4 %}
-                        <div class="col-4 control">
-                     {% else %}
-                        <div class=" col-3 control">
-                     {% endif %}
-                        <div class="media d-none d-sm-block">
-                            <div class="embed-responsive embed-responsive-16by9">
-                                    <iframe class="embed-responsive-item" src={{video.src}} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"allowfullscreen></iframe>
-                            </div>
-                        </div>
-                        {% if app.user and app.user.id == figures.UsersId.id %}
-                        <div class="buttons d-none d-sm-block">
-                            {% include 'utils/button.html.twig' with {id : figures.id, display : true, file: video.Id, path : 'edit_video', type:'video'} %}
-                        </div>
                         {% endif %}
+                    {# <img src={{asset('images/figures/')}}{{image.ImageName}} alt="" class="img-fluid big d-none d-sm-block"> #}
                     </div>
-                {% endfor %} 
-                {#{% for key, video in videos %}
-                    {% include 'utils/deletemodal.html.twig' with {name : video.src, path :"delete_video", subject : 'video', key : video.Id, id:figures.Id} %}
-                    {% if key == 4 %}
-                        <div class="col-4 mt-4 footage">
-                    {% else %}
-                        <div class="col-3 mt-4 footage">
-                    {% endif %}
-                            <div class="embed-responsive embed-responsive-16by9">
-                            {% if app.user and app.user.id == figures.UsersId.id %}
-                                {% include 'utils/button.html.twig' with {id : figures.id, display : true, file: video.Id, path : 'edit_video', type:'video'} %}
-                            {% endif %}
-                                <iframe class="embed-responsive-item d-none d-sm-block" src={{video.src}} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"allowfullscreen></iframe>
-                            
-                            </div>
-                            
+                </div>
+            {% else %}
+                <div class="control d-none d-sm-block">
+                    {% if app.user and app.user.id == figures.UsersId.id %}
+                        <div class="buttons">
+                            {% include 'utils/button.html.twig' with {id : figures.id, display : true, file: image.Id, path : 'edit_image',type:'image',path_delete : "delete_image"} %}
                         </div>
-                {% endfor %} #}
+                    {% endif %}
+                        <img src={{asset('images/figures/')}}{{image.ImageName}}  class="media thumb">
+                </div>
+            {% endif %}
+            {% if loop.last %}
+                </div>
+            {% endif %}
+        {% endfor %}
+        {# Videos #}
+        <div class="thumb_container videos">
+        {% for key, video in figures.videos %}
+            {% include 'utils/deletemodal.html.twig' with {name : video.src, path :"delete_video", subject : 'video', key : video.Id, id:figures.Id} %}
+            <div class="control d-none d-sm-block">
+                {# <div class=""> #}
+                    <div class="media footage">
+                        <iframe class="" src={{video.src}} title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                    </div>
+                {# </div> #}
+                {% if app.user and app.user.id == figures.UsersId.id %}
+                    <div class="buttons">
+                        {% include 'utils/button.html.twig' with {id : figures.id, display : true, file: video.Id, path : 'edit_video', type:'video'} %}
+                    </div>
+                {% endif %}
             </div>
         {% endfor %}
+            </div>
         {# description #}
         <div class="container">
             <div class="row">

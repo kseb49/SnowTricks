@@ -107,7 +107,7 @@ class RegistrationController extends AbstractController
     {
         if ($user = $entityManager->getRepository(Users::class)->findOneBy(['email' => $request->query->get('mail')])) {
             // If Account not confirmed.
-            if ($user->getConfirmationDate() === null) {
+            if ($user->getConfirmationDate() === null && $user->getsendLink() !== null) {
                 $limit = $user->getsendLink();
                 $now = new DateTime(date('Y-m-d H:i:s'));
                 $diff = $limit->diff($now);
@@ -212,46 +212,53 @@ class RegistrationController extends AbstractController
     public function confirmReset(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $userPasswordHasher, SendEmail $mail)
     {
         if ($user = $entityManager->getRepository(Users::class)->findOneBy(['email' => $request->query->get('mail')])) {
-            $limit = $user->getSendLink();
-            $now = new DateTime(date('Y-m-d H:i:s'));
-            $diff = $limit->diff($now);
-            // The link must be less than 24hrs.
-            if ($diff->format("%D") < 1) {
-                if ($request->query->get('token') === $user->getToken()) {
-                    $form = $this->createForm(PasswordForm::class);
-                    $form->handleRequest($request);
-                    if ($form->isSubmitted() && $form->isValid()) {
-                        $user->setPassword(
-                            $userPasswordHasher->hashPassword(
-                                $user,
-                                $form->get('password')->getData()
-                            )
-                        );
-                        $user->setToken(null);
-                        $user->setSendLink(null);
-                        $entityManager->persist($user);
-                        $entityManager->flush();
-                        $this->addFlash('success', $this->parameters->getMessages('feedback', ['success' => 'password']));
-                        return $this->redirectToRoute('home');
+            // The account has been confirmed by the user and a link is pending to be processed.
+            if ($user->getSendLink() !== null && $user->getConfirmationDate() !== null) {
+                $limit = $user->getSendLink();
+                $now = new DateTime(date('Y-m-d H:i:s'));
+                $diff = $limit->diff($now);
+                // The link must be less than 24hrs.
+                if ($diff->format("%D") < 1) {
+                    if ($request->query->get('token') === $user->getToken()) {
+                        $form = $this->createForm(PasswordForm::class);
+                        $form->handleRequest($request);
+                        if ($form->isSubmitted() && $form->isValid()) {
+                            $user->setPassword(
+                                $userPasswordHasher->hashPassword(
+                                    $user,
+                                    $form->get('password')->getData()
+                                )
+                            );
+                            $user->setToken(null);
+                            $user->setSendLink(null);
+                            $entityManager->persist($user);
+                            $entityManager->flush();
+                            $this->addFlash('success', $this->parameters->getMessages('feedback', ['success' => 'password']));
+                            return $this->redirectToRoute('home');
+                        }
+                        return $this->render('security/new_password.html.twig', ['form' => $form]);
                     }
-                    return $this->render('security/new_password.html.twig', ['form' => $form]);
+                    $this->addFlash('danger', $this->parameters->getMessages('errors', ['link' => 'invalid']));
+                    return $this->redirectToRoute('app_login');
                 }
-                $this->addFlash('danger', $this->parameters->getMessages('errors', ['link' => 'invalid']));
-                return $this->redirectToRoute('app_login');
-            }
-            $token = hash('md5',uniqid(true));
-            $user->setToken($token);
-            $user->setSendLink(new DateTime());
-            $entityManager->persist($user);
-            $entityManager->flush();
-            try {
-                $mail->sendEmail(to: $user->getEmail(), subject : $this->parameters->getMailParameters($this->parameters::RESET)['sujet'], template: $this->parameters->getMailParameters($this->parameters::RESET)['template'], context:['mail' => $user->getEmail(), 'token' => $token, 'route' => $this->parameters->getMailParameters($this->parameters::RESET)['route']]);
-            } catch (TransportExceptionInterface $e) {
-                $this->addFlash('warning', $e);
-                return $this->redirectToRoute('reset');
+                // Expired link
+                $token = hash('md5',uniqid(true));
+                $user->setToken($token);
+                $user->setSendLink(new DateTime());
+                $entityManager->persist($user);
+                $entityManager->flush();
+                try {
+                    $mail->sendEmail(to: $user->getEmail(), subject : $this->parameters->getMailParameters($this->parameters::RESET)['sujet'], template: $this->parameters->getMailParameters($this->parameters::RESET)['template'], context:['mail' => $user->getEmail(), 'token' => $token, 'route' => $this->parameters->getMailParameters($this->parameters::RESET)['route']]);
+                } catch (TransportExceptionInterface $e) {
+                    $this->addFlash('warning', $e);
+                    return $this->redirectToRoute('reset');
+                }
+
+                $this->addFlash('danger', $this->parameters->getMessages('errors', ['link' => 'expired']));
+                return $this->redirectToRoute('home');
             }
 
-            $this->addFlash('success',$this->parameters->getMailParameters($this->parameters::RESET)['message']);
+            $this->addFlash('danger', $this->parameters->getMessages('errors', ['link' => 'invalid']));
             return $this->redirectToRoute('home');
         }
 

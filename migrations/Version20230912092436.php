@@ -21,7 +21,7 @@ final class Version20230912092436 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE messages ADD figures_id INT NOT NULL');
-        $this->addSql('ALTER TABLE messages ADD CONSTRAINT FK_DB021E965C7F3A37 FOREIGN KEY (figures_id) REFERENCES figures (id)');
+        $this->addSql('ALTER TABLE messages ADD CONSTRAINT FK_DB021E965C7F3A37 FOREIGN KEY (figures_id) REFERENCES figures (id) ON DELETE CASCADE');
         $this->addSql('CREATE INDEX IDX_DB021E965C7F3A37 ON messages (figures_id)');
         $this->addSql('ALTER TABLE messages RENAME INDEX idx_db021e9698333a1e TO IDX_DB021E9667B3B43D');
         $this->addSql('ALTER TABLE users CHANGE confirmation_date confirmation_date DATETIME DEFAULT NULL, CHANGE send_link send_link DATETIME DEFAULT NULL, CHANGE token token VARCHAR(255) DEFAULT NULL');

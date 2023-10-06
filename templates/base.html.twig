@@ -59,14 +59,14 @@
         {# {% if success is defined %} #}
             {% block message %}{% include 'utils/message.html.twig' %}{% endblock %}
             {# {% block modal %}{% include 'layout/modal.html.twig' %} #}
-        {# {% endif %} #}
-        {% block body %}{% endblock %}
+        {# {% endif %} #}<div class="main">
+        {% block body %}{% endblock %}</div>
     </body>
         {% block footer %}
-            {# <footer class="footer">
-                <div class="container">
-                    <span class="text-muted">Place sticky footer content here.</span>
+            
+                <div class="footer">
+                    <p class="text_footer">©️ Copyright  2023</p>
                 </div>
-            </footer> #}
+           
         {% endblock %}
 </html>

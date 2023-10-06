@@ -27,7 +27,7 @@ class Parameters
      * The maximum of videos allowed
      * @var int
      */
-    const MAX_VIDEOS = 5;
+    const MAX_VIDEOS = 4;
     
     /**
      * The from adress for the email

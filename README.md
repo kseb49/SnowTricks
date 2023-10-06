@@ -41,14 +41,15 @@ Installer les dépendances
 
  ```composer install```
 
- Configurer le fichier .env avec vos valeurs:
- ```
-DATABASE_URL="mysql://app:!ChangeMe!@127.0.0.1:3306/app?serverVersion=8.0.32&charset=utf8mb4
+ Configurer un fichier .env.local avec vos valeurs:
+ ```Dotenv
+DATABASE_URL="mysql://app:!ChangeMe!@127.0.0.1:3306/app?serverVersion=8.0.32&charset=utf8mb4"
+
 MAILER_DSN=smtp://user:pass@smtp.example.com:port
 ```
 Pour une mise en production :
 
-```
+```Dotenv
 APP_ENV=prod
 APP_SECRET=!new32characterskey!
 ```
