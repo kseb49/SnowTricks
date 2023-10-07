@@ -3497,7 +3497,7 @@ textarea.form-control-lg {
     width: auto;
   }
   .premiere{
-    width: 90%;
+    width: 90vw;
   }
 }
 @media (min-width: 768px) {
