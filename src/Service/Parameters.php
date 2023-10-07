@@ -10,12 +10,6 @@ class Parameters
      * @var string
      */
     const DEFAULT_IMAGE = "snow_board.jpeg";
-    
-    /**
-     * The user password used in fixtures
-     * @var string
-     */
-    const DEFAULT_PASSWORD = "123456";
 
     /**
      * The maximum of images allowed

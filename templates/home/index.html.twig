@@ -1,32 +1,32 @@
 {% extends 'base.html.twig' %}
 {% block body %}
-<div class="subnav container-fluid">
-    <div class="slogan">
-        <p class="motto">Chase Snow, Chase Thrills</p>
-        <a class="arrow" href="#"><i class="bi bi-caret-down-fill"></i></a>
+    <div class="subnav container-fluid">
+        <div class="slogan">
+            <p class="motto">Chase Snow, Chase Thrills</p>
+            <a class="arrow" href="#"><i class="bi bi-caret-down-fill"></i></a>
+        </div>
     </div>
-</div>
- <a class="up" href="#"><i class="bi bi-caret-up-fill"></i></a>
+    <a class="up" href="#"><i class="bi bi-caret-up-fill"></i></a>
     <div class="container pt-4">
      {#Link of pagination#}
-                {% for figures in messages %}
-                    {% if loop.first %}
-                        <nav>
-                            <ul class="pagination justify-content-center">
-                            {% if previous >= 0 %}
-                                <li class="page-item">
-                                    <a class="page-link" href="{{ path('home', { offset: previous }) }}#comments"><i class="bi bi-caret-left page"></i> Précédent</a>
-                                </li>
-                            {% endif %}
-                            {% if next < messages|length %}
-                                <li class="page-item">
-                                    <a class="page-link" href="{{ path('home', { offset: next }) }}#comments">Suivant <i class="bi bi-caret-right page"></i></a>
-                                </li>
-                            {% endif %}
-                            </ul>
-                        </nav>
+        {% for figures in messages %}
+            {% if loop.first %}
+                <nav>
+                    <ul class="pagination justify-content-center">
+                    {% if previous >= 0 %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ path('home', { offset: previous }) }}#comments"><i class="bi bi-caret-left page"></i> Précédent</a>
+                        </li>
                     {% endif %}
-                {% endfor %}
+                    {% if next < messages|length %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ path('home', { offset: next }) }}#comments">Suivant <i class="bi bi-caret-right page"></i></a>
+                        </li>
+                    {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+        {% endfor %}
     {####################}
         {% for figures in messages | batch(3)%}
             <div class="row grid" id="comments">

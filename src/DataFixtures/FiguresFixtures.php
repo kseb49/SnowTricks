@@ -43,7 +43,9 @@ class FiguresFixtures extends Fixture
             "image_exemple_fixture1.webp",
             "image_exemple_fixture2.jpg",
             "image_exemple_fixture3.jpg",
-            "image_exemple_fixture4.jpeg"
+            "image_exemple_fixture4.jpeg",
+            "image_exemple_fixture5.jpg",
+            "image_exemple_fixture6.jpeg"
             ];
         $videos = [
             "https://www.youtube.com/embed/HDcW6k4M6t0?si=BS3DQmIyp7UTFtqF",
@@ -68,10 +70,10 @@ class FiguresFixtures extends Fixture
                 $figure->setSlug(strtolower($this->slugger->slug($name)));
                 $figure->setCreationDate();
                 $figure->setUsersId($users);
-                $cat = $manager->getRepository(Groups::class)->findBy(['group_name' => $key]);
-                $figure->setGroupsId($cat[0]);
+                $cat = $manager->getRepository(Groups::class)->findOneBy(['group_name' => $key]);
+                $figure->setGroupsId($cat);
                 // Create the images of the trick.
-                for ($numbers = 0; $numbers < $faker->numberBetween(1, 4); $numbers++) {
+                for ($numbers = 0; $numbers < $faker->numberBetween(1, 5); $numbers++) {
                     $picture = new Images;
                     $picture->setImageName($faker->randomElement($photos));
                     $figure->addImage($picture);

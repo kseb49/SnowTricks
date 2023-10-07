@@ -18,7 +18,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 class FiguresRepository extends ServiceEntityRepository
 {
     /**
-     * @var int Number of messages requested
+     * @var int Number of tricks requested
      */
     public const PAGINATOR_PER_PAGE = 6;
 

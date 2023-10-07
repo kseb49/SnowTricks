@@ -24,14 +24,16 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create('fr_FR');
-        $groups = ["grabs, rails, spins, butters"];
-        // Create 10 users.All have the same password
+        $groups = ["grabs", "rails", "spins", "butters"];
+        $images = ["snowboarder-310459.png", "avatar-default.png", "avatar_default_1.png"];
+        // Create 10 confirmed users.All have the same password.
         for ($users = 0; $users < 10; $users++) {
             $user = new Users();
             $user->setName($faker->userName())
             ->setEmail($faker->safeEmail())
-            ->setPassword($this->passwordHasher->hashPassword($user, $this->parameters::DEFAULT_PASSWORD))
-            ->setPhoto()
+            ->setPassword($this->passwordHasher->hashPassword($user, '123456'))
+            ->setPhoto($faker->randomElement($images))
+            ->setRoles(['ROLE_USER'])
             ->setConfirmationDate($faker->dateTime())
             ->setSendLink(null);
             $manager->persist($user);
