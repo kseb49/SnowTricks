@@ -38,6 +38,11 @@ class ImageController extends AbstractController
     public function addImage(EntityManagerInterface $entityManager, Request $request, int $trick_id, ImageManager $manager) :Response
     {
         $figure = $entityManager->getRepository(Figures::class)->find($trick_id);
+        $numberOfImages= count($figure->getImages());
+        if ($numberOfImages >= $this->parameters::MAX_IMAGES) {
+            $this->addFlash('warning', $this->parameters->getMessages('errors', ['max_reach' => 'image']));
+            return $this->redirectToRoute('figuresdetails', ["slug" => $figure->getSlug()]);
+        }
         $form = $this->createForm(AddImageForm::class, $figure);
         $form->handleRequest($request);
         if ($form->isSubmitted() === true  && $form->isValid() === true) {

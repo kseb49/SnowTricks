@@ -3,7 +3,10 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+        <link rel="apple-touch-icon" sizes="180x180" href={{asset('images/favicon_io/apple-touch-icon.png')}}>
+        <link rel="icon" type="image/png" sizes="32x32" href={{asset('images/favicon_io/favicon-32x32.png')}}>
+        <link rel="icon" type="image/png" sizes="16x16" href={{asset('images/favicon_io/favicon-16x16.png')}}>
+        <link rel="manifest" href="/site.webmanifest">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Snowburst+One&display=swap" rel="stylesheet">
@@ -29,6 +32,8 @@
                 <a class="navbar-brand" href={{path('home')}}>
                 {% if app.user %}
                     <img src="{{asset('images/avatars/')}}{{app.user.photo}}" width="30" height="30" alt="">
+                {% else %}
+                    <img src="{{asset('images/favicon_io/favicon-32x32.png')}}">
                 {% endif %}
                     SnowTricks</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
@@ -36,37 +41,25 @@
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                         <li class="nav-item"><a class="nav-link" aria-current="page" href={{ path('home') }}>Home</a></li>
                         {% if app.user %}
-                        <li class="nav-item"><a class="nav-link" href={{ path('figurescreate') }}>Ajouter</a></li>
-                        <li class="nav-item"><a class="nav-link" href={{ path('app_logout') }}>Log out</a></li>
+                            <li class="nav-item"><a class="nav-link" href={{ path('figurescreate') }}>Ajouter</a></li>
+                            <li class="nav-item"><a class="nav-link" href={{ path('app_logout') }}>Log out</a></li>
                         {% else %}
-                        <li class="nav-item"><a class="nav-link" href={{ path('app_login') }}>Log in</a></li>
-                        <li class="nav-item"><a class="nav-link" href={{ path("app_register") }}>Sign up</a></li>
+                            <li class="nav-item"><a class="nav-link" href={{ path('app_login') }}>Log in</a></li>
+                            <li class="nav-item"><a class="nav-link" href={{ path("app_register") }}>Sign up</a></li>
                         {% endif %}
-                        {# <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Dropdown</a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" href="#">Action</a></li>
-                                <li><a class="dropdown-item" href="#">Another action</a></li>
-                                <li><hr class="dropdown-divider" /></li>
-                                <li><a class="dropdown-item" href="#">Something else here</a></li>
-                            </ul>
-                        </li> #}
                     </ul>
                 </div>
             </div>
         </nav>
 {% endblock %}
-        {# {% if success is defined %} #}
             {% block message %}{% include 'utils/message.html.twig' %}{% endblock %}
-            {# {% block modal %}{% include 'layout/modal.html.twig' %} #}
-        {# {% endif %} #}<div class="main">
-        {% block body %}{% endblock %}</div>
+    <div class="main">
+        {% block body %}{% endblock %}
+    </div>
     </body>
         {% block footer %}
-            
-                <div class="footer">
-                    <p class="text_footer">Chase Snow, Chase Thrills</p>
-                </div>
-           
+            <div class="footer">
+                  <p class="text_footer"><img src="{{asset('images/favicon_io/favicon-32x32.png')}}"> Chase Snow, Chase Thrills</p>
+            </div>
         {% endblock %}
 </html>

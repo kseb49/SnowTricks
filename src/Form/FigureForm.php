@@ -10,6 +10,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\All;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -24,15 +25,14 @@ class FigureForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options) :void
     {
         $builder
-        ->add('name',TextType::class,["label" => "Nom de la figure"])
-        ->add('description',TextareaType::class,["label" => "Description"])
+        ->add('name',TextType::class,["label" => "Nom de la figure", 'constraints' => [new Length(['min' => 3, 'max'  => 100])]])
+        ->add('description',TextareaType::class,["label" => "Description", 'constraints' => [new Length(['min' => 50])]])
         ->add('groups_id',EntityType::class,[
             'class' => Groups::class,
             'choice_label' => 'group_name',
             'label' => 'A quel groupe appartient ce trick?',
             'required' => true])
         ->add('videos', CollectionType::class,['mapped' => false, 'entry_type' => VideoForm::class, 'allow_add' => true,'by_reference' => false, 'allow_delete' => true, 'entry_options' => ['label' => false]])
-        ->add('slug', HiddenType::class,['mapped' => false])
         ->add('images', FileType::class,[
             'mapped' => false,
             'help' => 'Une ou plusieurs images pour illustrer la figure',
@@ -49,7 +49,7 @@ class FigureForm extends AbstractType
                             'image/png',
                             'image/webp'
                             ],
-                        'mimeTypesMessage' => 'Please upload a valid image {{types}}'
+                        'mimeTypesMessage' => "Ce type de fichier n'est pas autorisé"
                         ])
                     ])
                 ]
@@ -63,9 +63,9 @@ class FigureForm extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Figures::class,
-            'csrf_protection' => true,
-            'csrf_field_name' => 'token',
-            'csrf_token_id'   => 'figure'
         ]);
+
     }
+
+
 }

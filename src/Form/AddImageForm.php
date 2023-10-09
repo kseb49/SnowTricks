@@ -34,7 +34,7 @@ class AddImageForm extends AbstractType
                             'image/png',
                             'image/webp'
                         ],
-                        'mimeTypesMessage' => 'Please upload a valid image {{types}}'
+                        'mimeTypesMessage' => "Ce type de fichier n'est pas autorisé"
                     ])
                 ])
             ]
@@ -48,9 +48,6 @@ class AddImageForm extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Figures::class,
-            // 'csrf_protection' => true,
-            // 'csrf_field_name' => 'token',
-            // 'csrf_token_id'   => 'figure'
         ]);
 
     }

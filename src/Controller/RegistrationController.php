@@ -103,7 +103,7 @@ class RegistrationController extends AbstractController
      * @return Response
      */
     #[Route('/confirmation', name: 'account-confirmation')]
-    public function confirm(Request $request, EntityManagerInterface $entityManager, SendEmail $mail) :Response
+    public function confirm(Request $request, EntityManagerInterface $entityManager, SendEmail $mail, UserAuthenticatorInterface $userAuthenticator, UsersAuthenticator $authenticator,) :Response
     {
         if ($user = $entityManager->getRepository(Users::class)->findOneBy(['email' => $request->query->get('mail')])) {
             // If Account not confirmed.
@@ -120,7 +120,12 @@ class RegistrationController extends AbstractController
                     $entityManager->persist($user);
                     $entityManager->flush();
                     $this->addFlash('success', $this->parameters->getMessages('feedback', ['user' => 'confirm']));
-                    return $this->redirectToRoute('home');
+                    return $userAuthenticator->authenticateUser(
+                        $user,
+                        $authenticator,
+                        $request
+                    );
+                    // return $this->redirectToRoute('home');
                 }
                 // * Send a new link if not.
                 $token = hash('md5',uniqid(true));

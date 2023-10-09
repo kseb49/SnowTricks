@@ -92,7 +92,7 @@ class FigureController extends AbstractController
             $image = $form->get('images')->getData();
             if ($image) {
                 foreach ($image as $value) {
-                    if (count($figure->getImages()) > $this->parameters::MAX_VIDEOS -1) {
+                    if (count($figure->getImages()) == $this->parameters::MAX_IMAGES) {
                         break;
                     }
                     try {
@@ -113,7 +113,7 @@ class FigureController extends AbstractController
             $videos = $form->get('videos')->getData();
             if ($videos) {
                 foreach ($videos as $value) {
-                    if (count($figure->getVideos()) > $this->parameters::MAX_VIDEOS -1) {
+                    if (count($figure->getVideos()) == $this->parameters::MAX_VIDEOS) {
                         break;
                     }
                     if ($this->check($figure->getVideos(), $value->getSrc(), 'src') !== true) {

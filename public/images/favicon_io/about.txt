@@ -1,0 +1,6 @@
+This favicon was generated using the following font:
+
+- Font Title: Snowburst One
+- Font Author: Copyright (c) 2011-2012, Sorkin Type Co (www.sorkintype.com) with Reserved Font Name 'Snowburst'
+- Font Source: http://fonts.gstatic.com/s/snowburstone/v20/MQpS-WezKdujBsXY3B7I-UT7eZ-UPyacPbo.ttf
+- Font License: SIL Open Font License, 1.1 (http://scripts.sil.org/OFL))

@@ -19,6 +19,7 @@ class AddMessagesForm extends AbstractType
         ->add('content', TextareaType::class,[
             'required' => true,
             'help' => "Commenter cette figure",
+            'label' => false,
         ]);
 
     }
