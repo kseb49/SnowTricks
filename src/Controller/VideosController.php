@@ -21,7 +21,11 @@ class VideosController extends AbstractController
     use CheckTrait;
 
 
-    public function __construct(public Parameters $parameters){}
+    public function __construct(public Parameters $parameters)
+    {
+    }
+
+
     #[Route('/ajout-video/{id}', name:'add_video')]
     #[IsGranted('ROLE_USER', message:"Veuillez confirmer votre compte")]
     /**
@@ -38,8 +42,8 @@ class VideosController extends AbstractController
     {
         $figure = $entityManager->getRepository(Figures::class)->find($id);
         $numberOfVideos = count($figure->getVideos());
-        //Avoid exceeding the maximum number of videos allowed.
-        if ($numberOfVideos >= $this->parameters::MAX_VIDEOS) {
+        // Avoid exceeding the maximum number of videos allowed.
+        if ($numberOfVideos >= $this->getParameter('VIDEOS_MAX')) {
             $this->addFlash('warning', $this->parameters->getMessages('errors', ['max_reach' => 'videos']));
             return $this->redirectToRoute('figuresdetails', ["slug" => $figure->getSlug()]);
         }
@@ -49,14 +53,14 @@ class VideosController extends AbstractController
             $videos = $form->get('videos')->getData();
             if ($videos) {
                 foreach ($videos as $value) {
-                    //The maximum number of videos allowed.
-                    if ($numberOfVideos >= $this->parameters::MAX_VIDEOS) {
+                    // The maximum number of videos allowed.
+                    if (count($figure->getVideos()) >= $this->getParameter('VIDEOS_MAX')) {
                         $this->addFlash('warning', $this->parameters->getMessages('errors', ['max_reach' => 'videos']));
                         return $this->redirectToRoute('figuresdetails', ["slug" => $figure->getSlug()]);
                     }
 
-                    //Avoid duplicate videos.
-                    if ($numberOfVideos > 0) {
+                    // Avoid duplicate videos.
+                    if (count($figure->getVideos()) > 0) {
                         if ($this->check($figure->getVideos(), $value->getSrc(), 'src') === true) {
                             $this->addFlash('danger', $this->parameters->getMessages('errors', ['videos' => 'used']));
                             return $this->redirectToRoute('figuresdetails', ["slug" => $figure->getSlug()]);
@@ -86,10 +90,10 @@ class VideosController extends AbstractController
     /**
      * Edit a video from a trick
      *
-     * @param Request $request
+     * @param Request                $request
      * @param EntityManagerInterface $entityManager
-     * @param integer $id
-     * @param integer $video_id
+     * @param integer                $id The trick id
+     * @param integer                $video_id The video id
      * @return Response
      */
     public function editVideo(Request $request, EntityManagerInterface $entityManager, int $id, int $video_id) :Response
@@ -101,7 +105,7 @@ class VideosController extends AbstractController
         if ($form->isSubmitted() === true && $form->isValid() === true) {
             if (count($figure->getVideos()) > 0) {
                 foreach ($figure->getVideos() as $src) {
-                     //Avoid duplicate
+                     // Avoid duplicate
                     if ($src->getSrc() === $form->get('src')->getData() && $src->getId() !== $video->getId()) {
                         $this->addFlash('danger', $this->parameters->getMessages('errors', ['videos' => 'used']));
                         return $this->redirectToRoute('figuresdetails', ["slug" => $figure->getSlug()]);
@@ -124,6 +128,15 @@ class VideosController extends AbstractController
 
     #[Route('/suppression-video/{id}/{video_id}',name:'delete_video')]
     #[IsGranted('ROLE_USER', message:"Veuillez confirmer votre compte")]
+    /**
+     * Delete a video from a trick
+     *
+     * @param EntityManagerInterface $entityManager
+     * @param integer                $id The trick id
+     * @param integer                $video_id The video id
+     * @param Request                $request
+     * @return Response
+     */
     public function deleteVideo(EntityManagerInterface $entityManager, int $id , int $video_id, Request $request) :Response
     {
         $figure = $entityManager->getRepository(Figures::class)->find($id);

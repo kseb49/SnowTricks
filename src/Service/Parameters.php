@@ -6,30 +6,6 @@ class Parameters
 {
 
     /**
-     * The default trick image
-     * @var string
-     */
-    const DEFAULT_IMAGE = "snow_board.jpeg";
-
-    /**
-     * The maximum of images allowed
-     * @var int
-     */
-    const MAX_IMAGES = 5;
-    
-    /**
-     * The maximum of videos allowed
-     * @var int
-     */
-    const MAX_VIDEOS = 4;
-    
-    /**
-     * The from adress for the email
-     * @var string
-     */
-    const FROM = 'Sébastien <snowtricks@example.com>';
-    
-    /**
      * The default error message
      * @var string
      */
@@ -66,7 +42,7 @@ class Parameters
             "message" => "Un mail vous a été envoyé"
             ]
         ];
-        
+
     /**
      * Set of errors messages
      *
@@ -127,19 +103,24 @@ class Parameters
         ];
 
 
-    
     public function getMailParameters(string $confirm) :array
     {
         if (array_key_exists($confirm, $this->mail) === true) {
             return $this->mail[$confirm];
         }
-        
+
     }
 
-    
-    public function getMessages(string $subject, ?array $max = null) :string
+    /**
+     * Get the correct feedback message
+     *
+     * @param string $subject The kind of message
+     * @param array $max
+     * @return string
+     */
+    public function getMessages(string $subject, array $max) :string
     {
-        if ($max !== null) {
+        if (property_exists($this, $subject)) {
             foreach ($max as $key => $value) {
                 if (array_key_exists($key, $this->$subject)) {
                     if (array_key_exists($value, $this->$subject[$key])) {
@@ -148,7 +129,9 @@ class Parameters
 
                 }
 
+                return self::DEFAULT;
             }
+
         }
 
         return self::DEFAULT;

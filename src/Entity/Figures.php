@@ -45,13 +45,13 @@ class Figures
     #[ORM\JoinColumn(name:'groups_id',nullable: false)]
     private ?Groups $groups_id = null;
 
-    #[ORM\ManyToMany(targetEntity:Videos::class, cascade:["persist","remove"])]
+    #[ORM\ManyToMany(targetEntity:Videos::class, cascade:["persist", "remove"])]
     private Collection $videos;
 
-    #[ORM\ManyToMany(targetEntity: Images::class, cascade:["persist","remove"])]
+    #[ORM\ManyToMany(targetEntity: Images::class, cascade:["persist", "remove"])]
     private Collection $images;
 
-    #[ORM\OneToMany(mappedBy: 'figures', targetEntity: Messages::class, orphanRemoval: true, cascade:["persist","remove"])]
+    #[ORM\OneToMany(mappedBy: 'figures', targetEntity: Messages::class, orphanRemoval: true, cascade:["persist", "remove"])]
     private Collection $messages;
 
 

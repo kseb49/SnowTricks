@@ -24,7 +24,11 @@ use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 
 class RegistrationController extends AbstractController
 {
-    public function __construct(public Parameters $parameters){}
+
+
+    public function __construct(public Parameters $parameters)
+    {
+    }
 
 
     #[Route('/inscription', name: 'app_register')]

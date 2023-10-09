@@ -6,6 +6,9 @@
 parameters:
     avatars_directory: '%kernel.project_dir%/public/images/avatars/'
     figures_directory: '%kernel.project_dir%/public/images/figures/'
+    FIGURE_IMG: '%env(FIGURE_IMG)%'
+    IMAGES_MAX: '%env(IMAGES_MAX)%'
+    VIDEOS_MAX: '%env(VIDEOS_MAX)%'
 services:
     # default configuration for services in *this* file
     _defaults:

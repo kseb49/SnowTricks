@@ -20,7 +20,10 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 class ImageController extends AbstractController
 {
 
-    public function __construct(public Parameters $parameters){}
+
+    public function __construct(public Parameters $parameters)
+    {
+    }
 
 
     #[Route('/ajout-image/{trick_id}', name:'add_image')]
@@ -39,7 +42,7 @@ class ImageController extends AbstractController
     {
         $figure = $entityManager->getRepository(Figures::class)->find($trick_id);
         $numberOfImages= count($figure->getImages());
-        if ($numberOfImages >= $this->parameters::MAX_IMAGES) {
+        if ($numberOfImages >= $this->getParameter('IMAGES_MAX')) {
             $this->addFlash('warning', $this->parameters->getMessages('errors', ['max_reach' => 'image']));
             return $this->redirectToRoute('figuresdetails', ["slug" => $figure->getSlug()]);
         }
@@ -50,7 +53,7 @@ class ImageController extends AbstractController
             if ($images) {
                 foreach ($images as $value) {
                     // The maximum number of images allowed.
-                    if (count($figure->getImages()) >= $this->parameters::MAX_IMAGES) {
+                    if (count($figure->getImages()) >= $this->getParameter('IMAGES_MAX')) {
                         $this->addFlash('warning',$this->parameters->getMessages('errors', ['max_reach' => 'image']));
                         return $this->redirectToRoute('figuresdetails',["slug" => $figure->getSlug()]);
                     }
@@ -107,20 +110,20 @@ class ImageController extends AbstractController
                 $entityManager->persist($figure);
                 $entityManager->flush();
                 // Delete the file unless it is the default one.
-                if ($image->getImageName() !== $this->parameters::DEFAULT_IMAGE) {
+                if ($image->getImageName() !== $this->getParameter('FIGURE_IMG')) {
                     try {
                         $manager->delete('figures_directory', $image->getImageName());
                     } catch (\Exception $e) {
                         $this->addFlash('danger',$e);
                         return $this->redirectToRoute('home');
                     }
-    
+
                 }
-    
+
                 $this->addFlash('success', $this->parameters->getMessages('feedback', ['delete' => 'message']));
                 return $this->redirectToRoute('figuresdetails', ['slug' => $figure->getSlug()]);
             }
-    
+
             $this->addFlash('danger', $this->parameters->getMessages('feedback', ['only' => 'image']));
             return $this->redirectToRoute(
                 'figuresdetails',
@@ -167,7 +170,7 @@ class ImageController extends AbstractController
                     $figure->removeImage($eximage);
                     $entityManager->remove($eximage);
                     // Delete the file too, unless the file is the default one.
-                    if ($eximage->getImageName() !== $this->parameters::DEFAULT_IMAGE) {
+                    if ($eximage->getImageName() !== $this->getParameter('FIGURE_IMG')) {
                         try {
                             $upload->delete('figures_directory', $eximage->getImageName());
                         } catch (\Exception $e) {

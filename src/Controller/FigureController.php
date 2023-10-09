@@ -29,8 +29,11 @@ class FigureController extends AbstractController
 {
 
     use CheckTrait;
-    
-    public function __construct(public Parameters $parameters){}
+
+
+    public function __construct(public Parameters $parameters)
+    {
+    }
 
 
     #[Route('/{slug}', name:'details')]
@@ -92,7 +95,7 @@ class FigureController extends AbstractController
             $image = $form->get('images')->getData();
             if ($image) {
                 foreach ($image as $value) {
-                    if (count($figure->getImages()) == $this->parameters::MAX_IMAGES) {
+                    if (count($figure->getImages()) == $this->getParameter('IMAGES_MAX')) {
                         break;
                     }
                     try {
@@ -107,13 +110,13 @@ class FigureController extends AbstractController
             } else {
                 // set the default image.
                 $picture = new Images;
-                $picture->setImageName($this->parameters::DEFAULT_IMAGE);
+                $picture->setImageName($this->getParameter('FIGURE_IMG'));
                 $figure->addImage($picture);
             }
             $videos = $form->get('videos')->getData();
             if ($videos) {
                 foreach ($videos as $value) {
-                    if (count($figure->getVideos()) == $this->parameters::MAX_VIDEOS) {
+                    if (count($figure->getVideos()) == $this->getParameter('VIDEOS_MAX')) {
                         break;
                     }
                     if ($this->check($figure->getVideos(), $value->getSrc(), 'src') !== true) {
@@ -189,7 +192,7 @@ class FigureController extends AbstractController
         if ($this->isCsrfTokenValid('delete-item', $submittedToken)) {
             //Delete the file
             foreach ($figures->getImages() as $value) {
-                if ($value->getImageName() !== $this->parameters::DEFAULT_IMAGE) {
+                if ($value->getImageName() !== $this->getParameter('FIGURE_IMG')) {
                     $manager->delete('figures_directory',$value->getImageName());
                 }
             }
