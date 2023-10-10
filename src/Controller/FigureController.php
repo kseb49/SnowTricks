@@ -59,7 +59,7 @@ class FigureController extends AbstractController
         $form = $this->createForm(AddMessagesForm::class, $message);
         $form->handleRequest($request);
         if ($form->isSubmitted() === true && $form->isValid() === true) {
-            $this->denyAccessUnlessGranted('ROLE_USER');
+            $this->denyAccessUnlessGranted('ROLE_USER', 'Confirmer votre compte pour commenter');
             $message->setContent($form->get('content')->getData());
             $message->setMessageDate();
             $message->setUsers($this->getUser());
@@ -97,7 +97,7 @@ class FigureController extends AbstractController
             $image = $form->get('images')->getData();
             if ($image) {
                 foreach ($image as $value) {
-                    if (count($figure->getImages()) === $this->getParameter('IMAGES_MAX')) {
+                    if (count($figure->getImages()) >= $this->getParameter('IMAGES_MAX')) {
                         break;
                     }
                     try {
@@ -118,7 +118,7 @@ class FigureController extends AbstractController
             $videos = $form->get('videos')->getData();
             if ($videos) {
                 foreach ($videos as $value) {
-                    if (count($figure->getVideos()) === $this->getParameter('VIDEOS_MAX')) {
+                    if (count($figure->getVideos()) >= $this->getParameter('VIDEOS_MAX')) {
                         break;
                     }
                     if ($this->check($figure->getVideos(), $value->getSrc(), 'src') !== true) {
