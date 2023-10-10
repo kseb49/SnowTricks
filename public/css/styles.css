@@ -3363,6 +3363,14 @@ textarea.form-control-lg {
   'buttons .'
   '. .';
 }
+.neutral_link{
+  text-decoration: none;
+  color: inherit;
+}
+.neutral_link:hover{
+  text-decoration: underline;
+  color: inherit;
+}
 /*images et videos suivantes
 .thumb_container > .control > .buttons[], <img .media .thumb>
 */
