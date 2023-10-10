@@ -18,15 +18,19 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
  */
 class MessagesRepository extends ServiceEntityRepository
 {
+
     /**
      * @var int Number of messages requested
      */
     public const PAGINATOR_PER_PAGE = 5;
 
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Messages::class);
+
     }
+
 
    /**
     * Get messages according to the offset
@@ -35,19 +39,19 @@ class MessagesRepository extends ServiceEntityRepository
     * @param integer $offset
     * @return Paginator
     */
-   public function findPaginated(Figures $figures, int $offset): Paginator
-   {
-       $query =  $this->createQueryBuilder('m')
-           ->andWhere('m.figures = :val')
-           ->setParameter('val', $figures)
-           ->orderBy('m.message_date','DESC')
-           ->setMaxResults(self::PAGINATOR_PER_PAGE)
-           ->setFirstResult($offset)
-           ->getQuery()
-       ;
-       return new Paginator($query);
+    public function findPaginated(Figures $figures, int $offset): Paginator
+    {
+        $query =  $this->createQueryBuilder('m')
+            ->andWhere('m.figures = :val')
+            ->setParameter('val', $figures)
+            ->orderBy('m.message_date','DESC')
+            ->setMaxResults(self::PAGINATOR_PER_PAGE)
+            ->setFirstResult($offset)
+            ->getQuery()
+        ;
+        return new Paginator($query);
 
-   }
+    }
 
 
 }

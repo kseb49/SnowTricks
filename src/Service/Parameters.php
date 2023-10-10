@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Service;
 
@@ -10,19 +10,19 @@ class Parameters
      * @var string
      */
     const DEFAULT = "Erreur inconnue";
-    
+
     /**
      * The reset key
      * @var string
      */
     const RESET = "reset";
-    
+
     /**
      * The confirm key
      * @var string
      */
     const CONFIRM = "confirm";
-    
+
     /**
      * Set of variables needed for sending Emails
      *
@@ -76,13 +76,13 @@ class Parameters
      *
      * @var array
      */
-    private array $feedback= [
+    private array $feedback = [
         "delete" => [
             "message" => "Suppression réussit 😉"
             ],
         "edit" => [
-            "message" =>  "Modifé avec succès 😉",
-            "missing" =>  "Vous n'avez rien envoyé ⚠️",
+            "message" => "Modifé avec succès 😉",
+            "missing" => "Vous n'avez rien envoyé ⚠️",
             ],
         "only" => [
             "image" => "Cette image ne peut pas être supprimé car c'est la seule pour ce trick ⚠️"
@@ -111,6 +111,7 @@ class Parameters
 
     }
 
+
     /**
      * Get the correct feedback message
      *
@@ -122,11 +123,10 @@ class Parameters
     {
         if (property_exists($this, $subject)) {
             foreach ($max as $key => $value) {
-                if (array_key_exists($key, $this->$subject)) {
-                    if (array_key_exists($value, $this->$subject[$key])) {
+                if (array_key_exists($key, $this->$subject) === true) {
+                    if (array_key_exists($value, $this->$subject[$key]) === true) {
                         return $this->$subject[$key][$value];
                     }
-
                 }
 
                 return self::DEFAULT;

@@ -20,40 +20,56 @@ class RegistrationFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('name', TextType::class,["label" => "Nom"])
-            ->add('email',EmailType::class,["label" => "Adresse email"])
-            ->add('photo', FileType::class,[
-                'mapped' => false,
-                'required' => false,
-                'constraints' => [
-                    new File([
-                        'maxSize' => '10000k',
-                        'mimeTypes' => [
-                            'image/jpeg',
-                            'image/gif',
-                            'image/png',
-                            'image/webp',
-                        ],
-                        'mimeTypesMessage' => 'Please upload a valid document',
-                    ])
-                ]
-            ],
+            ->add(
+                'name',
+                TextType::class,
+                ["label" => "Nom"],
             )
-            ->add('password', RepeatedType::class,[
-                'type' => PasswordType::class,
-                'first_options'  => ['label' => 'Mot de passe'],
-                'second_options' => ['label' => 'Répétez votre mot de passe'],
-                'attr' => ['autocomplete' => 'new-password'],
-            ]);
+            ->add(
+                'email',
+                EmailType::class,
+                ["label" => "Adresse email"],
+            )
+            ->add(
+                'photo',
+                FileType::class,
+                [
+                    'mapped' => false,
+                    'required' => false,
+                    'constraints' => [
+                        new File(
+                            [
+                                'maxSize' => '10000k',
+                                'mimeTypes' =>
+                                [
+                                    'image/jpeg',
+                                    'image/gif',
+                                    'image/png',
+                                    'image/webp',
+                                ],
+                                'mimeTypesMessage' => 'Please upload a valid document',
+                            ]
+                        )
+                    ]
+                ]
+            )
+            ->add(
+                'password',
+                RepeatedType::class,
+                [
+                    'type' => PasswordType::class,
+                    'first_options'  => ['label' => 'Mot de passe'],
+                    'second_options' => ['label' => 'Répétez votre mot de passe'],
+                    'attr' => ['autocomplete' => 'new-password'],
+                ]
+            );
 
     }
 
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults([
-            'data_class' => Users::class,
-        ]);
+        $resolver->setDefaults([ 'data_class' => Users::class]);
 
     }
 

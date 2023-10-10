@@ -13,7 +13,12 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class AppFixtures extends Fixture
 {
 
-    public function __construct(private UserPasswordHasherInterface $passwordHasher, private Parameters $parameters){}
+
+    public function __construct(private UserPasswordHasherInterface $passwordHasher, private Parameters $parameters)
+    {
+
+    }
+
 
     /**
      * Create fixtures
@@ -30,14 +35,15 @@ class AppFixtures extends Fixture
         for ($users = 0; $users < 10; $users++) {
             $user = new Users();
             $user->setName($faker->userName())
-            ->setEmail($faker->safeEmail())
-            ->setPassword($this->passwordHasher->hashPassword($user, '123456'))
-            ->setPhoto($faker->randomElement($images))
-            ->setRoles(['ROLE_USER'])
-            ->setConfirmationDate($faker->dateTime())
-            ->setSendLink(null);
+                ->setEmail($faker->safeEmail())
+                ->setPassword($this->passwordHasher->hashPassword($user, '123456'))
+                ->setPhoto($faker->randomElement($images))
+                ->setRoles(['ROLE_USER'])
+                ->setConfirmationDate($faker->dateTime())
+                ->setSendLink(null);
             $manager->persist($user);
         }
+
         // Create groups.
         foreach ($groups as $value) {
             $group = new Groups();
@@ -45,5 +51,8 @@ class AppFixtures extends Fixture
             $manager->persist($group);
         }
         $manager->flush();
+
     }
+
+
 }

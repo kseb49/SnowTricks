@@ -17,12 +17,16 @@ class ResetForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options) :void
     {
         $builder
-        ->add('name', TextType::class,[
-            'mapped' => true,
-            'help' => "Saisissez votre nom d'utilisateur",
-            'required' => true,
-            'label' => "Pseudo de votre compte",
-        ]);
+        ->add(
+            'name',
+            TextType::class,
+            [
+                'mapped' => true,
+                'help' => "Saisissez votre nom d'utilisateur",
+                'required' => true,
+                'label' => "Pseudo de votre compte",
+            ]
+        );
 
     }
 

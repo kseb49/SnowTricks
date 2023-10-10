@@ -12,8 +12,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class SendEmail extends AbstractController
 {
 
+
     public function __construct(private MailerInterface $mailer)
-    {}
+    {
+
+    }
 
 
     /**
@@ -22,7 +25,7 @@ class SendEmail extends AbstractController
      * @param string $to       The recipient adress
      * @param string $subject  The subject
      * @param string $template The template of the email
-     * @param array $context   The variables needed
+     * @param array  $context  The variables needed
      * @return Response
      */
     public function sendEmail(string $to, string $subject, string $template, array $context): void
@@ -30,8 +33,8 @@ class SendEmail extends AbstractController
 
         $mail = (new TemplatedEmail())
             ->to($to)
-            //->replyTo('fabien@example.com')
-            //->priority(Email::PRIORITY_HIGH)
+            // ->replyTo('fabien@example.com')
+            // ->priority(Email::PRIORITY_HIGH)
             ->subject($subject)
             ->htmlTemplate($template)
             ->context($context);
@@ -41,5 +44,3 @@ class SendEmail extends AbstractController
 
 
 }
-
-

@@ -16,16 +16,18 @@ class VideoForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options) :void
     {
         $builder
-        ->add('src', UrlType::class,['label' => 'Liens vers des vidéos you tube']);
+        ->add(
+            'src',
+            UrlType::class,
+            ['label' => 'Liens vers des vidéos you tube']
+        );
 
     }
 
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults([
-            'data_class' => Videos::class,
-        ]);
+        $resolver->setDefaults([ 'data_class' => Videos::class]);
 
     }
 

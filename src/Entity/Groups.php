@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: '`groups`')]
 class Groups
 {
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -17,15 +18,18 @@ class Groups
     #[ORM\Column(length: 100)]
     private ?string $group_name = null;
 
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
+
     public function getGroupName(): ?string
     {
         return $this->group_name;
     }
+
 
     public function setGroupName(string $group_name): static
     {
@@ -33,4 +37,6 @@ class Groups
 
         return $this;
     }
+
+
 }

@@ -16,8 +16,10 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 class FiguresFixtures extends Fixture
 {
 
+
     public function __construct(private SluggerInterface $slugger)
     {
+
     }
 
 
@@ -25,18 +27,30 @@ class FiguresFixtures extends Fixture
     {
         $faker = Factory::create('fr_FR');
         $figures = [
-            "grabs" => [
-                "mute", "sad", "indy", "truck", "driver", "nose grab", "style week"
-            ],
-            "rails" => [
-                "Boardslide", "Lipslide", "Bluntslide"
-            ],
-            "butters" => [
-                'Caballerial Butter', 'Half-Cab Butter', 'Pretzel Butter'
-            ],
-            "spins" => [
-                "1440", '900', '540'
-            ]
+                "grabs" => [
+                    "mute",
+                    "sad",
+                    "indy",
+                    "truck",
+                    "driver",
+                    "nose grab",
+                    "style week",
+                ],
+                "rails" => [
+                    "Boardslide",
+                    "Lipslide",
+                    "Bluntslide",
+                ],
+                "butters" => [
+                    'Caballerial Butter',
+                    'Half-Cab Butter',
+                    'Pretzel Butter',
+                ],
+                "spins" => [
+                    "1440",
+                    '900',
+                    '540',
+                ]
             ];
         $photos = [
             "image_exemple_fixture.png",
@@ -45,7 +59,7 @@ class FiguresFixtures extends Fixture
             "image_exemple_fixture3.jpg",
             "image_exemple_fixture4.jpeg",
             "image_exemple_fixture5.jpg",
-            "image_exemple_fixture6.jpeg"
+            "image_exemple_fixture6.jpeg",
             ];
         $videos = [
             "https://www.youtube.com/embed/HDcW6k4M6t0?si=BS3DQmIyp7UTFtqF",
@@ -60,7 +74,7 @@ class FiguresFixtures extends Fixture
             $ids[] = $value->getId();
         }
 
-        //Create the tricks
+        // Create the tricks.
         foreach ($figures as $key => $value) {
             foreach ($value as $name) {
                 $users = $manager->getRepository(Users::class)->findOneById($faker->randomElement($ids));
@@ -78,14 +92,16 @@ class FiguresFixtures extends Fixture
                     $picture->setImageName($faker->randomElement($photos));
                     $figure->addImage($picture);
                 }
+
                 // Create the videos of the trick.
                 for ($numbers = 0; $numbers < $faker->numberBetween(1, 4); $numbers++) {
                     $embed = new Videos();
                     $embed->setSrc($videos[$numbers]);
                     $figure->addVideos($embed);
                 }
+
                 // Create the comments for the tricks.
-                for ($comment =0; $comment < $faker->numberBetween(10, 45); $comment++) {
+                for ($comment = 0; $comment < $faker->numberBetween(10, 45); $comment++) {
                     $users = $manager->getRepository(Users::class)->findOneById($faker->randomElement($ids));
                     $message = new Messages();
                     $message->setContent($faker->sentence($faker->numberBetween(1,10)));

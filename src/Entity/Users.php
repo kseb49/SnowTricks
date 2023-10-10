@@ -86,6 +86,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'users', targetEntity: Messages::class, orphanRemoval: true)]
     private Collection $messages;
 
+
     public function __construct()
     {
         $this->figures = new ArrayCollection();
@@ -130,13 +131,14 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
         return (string) $this->email;
     }
 
+
     /**
      * @see UserInterface
      */
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // Every user has ROLE_PENDING as a default role
+        // Every user has ROLE_PENDING as a default role.
         $roles[] = 'ROLE_PENDING';
 
         return array_unique($roles);
@@ -176,8 +178,8 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function eraseCredentials(): void
     {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
+        // If you store any temporary, sensitive data on the user, clear it here.
+        // $this->plainPassword = null;.
     }
 
 

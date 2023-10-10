@@ -23,30 +23,31 @@ class VideosController extends AbstractController
 
     public function __construct(public Parameters $parameters)
     {
+
     }
 
 
-    #[Route('/ajout-video/{id}', name:'add_video')]
-    #[IsGranted('ROLE_USER', message:"Veuillez confirmer votre compte")]
     /**
      * Add a video to a trick
      *
-     * @param Request $request
+     * @param Request                $request
      * @param EntityManagerInterface $entityManager
-     * @param integer $id The trick id
-     * @param VideosRepository $videoRepo
-     * @param Parameters $parameters
+     * @param integer                $id The trick id
+     * @param VideosRepository       $videoRepo
+     * @param Parameters             $parameters
      * @return Response
      */
+    #[Route('/ajout-video/{id}', name:'add_video')]
+    #[IsGranted('ROLE_USER', message:"Veuillez confirmer votre compte")]
     public function addVideo(Request $request, EntityManagerInterface $entityManager, int $id) :Response
     {
         $figure = $entityManager->getRepository(Figures::class)->find($id);
-        $numberOfVideos = count($figure->getVideos());
         // Avoid exceeding the maximum number of videos allowed.
-        if ($numberOfVideos >= $this->getParameter('VIDEOS_MAX')) {
+        if (count($figure->getVideos()) >= $this->getParameter('VIDEOS_MAX')) {
             $this->addFlash('warning', $this->parameters->getMessages('errors', ['max_reach' => 'videos']));
             return $this->redirectToRoute('figuresdetails', ["slug" => $figure->getSlug()]);
         }
+
         $form = $this->createForm(AddVideoForm::class, $figure);
         $form->handleRequest($request);
         if ($form->isSubmitted() === true && $form->isValid() === true) {
@@ -65,7 +66,6 @@ class VideosController extends AbstractController
                             $this->addFlash('danger', $this->parameters->getMessages('errors', ['videos' => 'used']));
                             return $this->redirectToRoute('figuresdetails', ["slug" => $figure->getSlug()]);
                         }
-
                     }
                     $embed = new Videos;
                     $embed->setSrc($value->getSrc());
@@ -85,8 +85,6 @@ class VideosController extends AbstractController
     }
 
 
-    #[Route('/modification-video/{id}/{video_id}',name:'edit_video')]
-    #[IsGranted('ROLE_USER', message:"Veuillez confirmer votre compte")]
     /**
      * Edit a video from a trick
      *
@@ -96,6 +94,8 @@ class VideosController extends AbstractController
      * @param integer                $video_id The video id
      * @return Response
      */
+    #[Route('/modification-video/{id}/{video_id}',name:'edit_video')]
+    #[IsGranted('ROLE_USER', message:"Veuillez confirmer votre compte")]
     public function editVideo(Request $request, EntityManagerInterface $entityManager, int $id, int $video_id) :Response
     {
         $figure = $entityManager->getRepository(Figures::class)->find($id);
@@ -137,7 +137,7 @@ class VideosController extends AbstractController
      * @param Request                $request
      * @return Response
      */
-    public function deleteVideo(EntityManagerInterface $entityManager, int $id , int $video_id, Request $request) :Response
+    public function deleteVideo(EntityManagerInterface $entityManager, int $id, int $video_id, Request $request) :Response
     {
         $figure = $entityManager->getRepository(Figures::class)->find($id);
         $videos = $entityManager->getRepository(Videos::class)->find($video_id);

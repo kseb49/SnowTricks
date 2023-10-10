@@ -28,22 +28,23 @@ class RegistrationController extends AbstractController
 
     public function __construct(public Parameters $parameters)
     {
+
     }
 
 
-    #[Route('/inscription', name: 'app_register')]
     /**
      * Register an user
      *
-     * @param Request $request
+     * @param Request                     $request
      * @param UserPasswordHasherInterface $userPasswordHasher
-     * @param UserAuthenticatorInterface $userAuthenticator
-     * @param UsersAuthenticator $authenticator
-     * @param EntityManagerInterface $entityManager
-     * @param ImageManager $fileUploader
-     * @param SendEmail $mail
+     * @param UserAuthenticatorInterface  $userAuthenticator
+     * @param UsersAuthenticator          $authenticator
+     * @param EntityManagerInterface      $entityManager
+     * @param ImageManager                $fileUploader
+     * @param SendEmail                   $mail
      * @return Response
      */
+    #[Route('/inscription', name: 'app_register')]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, UserAuthenticatorInterface $userAuthenticator, UsersAuthenticator $authenticator, EntityManagerInterface $entityManager, ImageManager $fileUploader, SendEmail $mail): Response
     {
         $user = new Users();
@@ -54,10 +55,8 @@ class RegistrationController extends AbstractController
             if ($photo) {
                 try {
                     $photo_name = $fileUploader->upload($photo,'avatars_directory');
-
                 } catch (FileException $e) {
                     return $this->redirectToRoute('app_register', ["error" => $e]);
-
                 }
 
                 $user->setPhoto($photo_name);
@@ -85,6 +84,7 @@ class RegistrationController extends AbstractController
                 $this->addFlash('warning', $e);
                 return $this->redirectToRoute('home');
             }
+
             $this->addFlash('success', 'Vous avez 24 heures pour confirmez votre email');
             return $userAuthenticator->authenticateUser(
                 $user,
@@ -101,9 +101,9 @@ class RegistrationController extends AbstractController
     /**
      * Confirm an account by managing the confirmation email sent
      *
-     * @param Request $request
+     * @param Request                $request
      * @param EntityManagerInterface $entityManager
-     * @param SendEmail $mail
+     * @param SendEmail              $mail
      * @return Response
      */
     #[Route('/confirmation', name: 'account-confirmation')]
@@ -129,7 +129,6 @@ class RegistrationController extends AbstractController
                         $authenticator,
                         $request
                     );
-                    // return $this->redirectToRoute('home');
                 }
                 // * Send a new link if not.
                 $token = hash('md5',uniqid(true));
@@ -137,7 +136,7 @@ class RegistrationController extends AbstractController
                 $user->setSendLink(new DateTime());
                 try {
                     $mail->sendEmail(to: $user->getEmail(), subject : $this->parameters->getMailParameters($this->parameters::CONFIRM)['sujet'], template: $this->parameters->getMailParameters($this->parameters::CONFIRM)['template'], context:['mail' => $user->getEmail(), 'token' => $token, 'route' => $this->parameters->getMailParameters($this->parameters::CONFIRM)['route']]);
-                } catch(TransportExceptionInterface $e) {
+                } catch (TransportExceptionInterface $e) {
                     $this->addFlash('warning', $e);
                     return $this->redirectToRoute('home');
                 }
@@ -152,7 +151,7 @@ class RegistrationController extends AbstractController
             return $this->redirectToRoute('home');
         }
 
-        // The user mail doesn't exist in the DB. Remain unclear
+        // The user mail doesn't exist in the DB. Remain unclear.
         $this->addFlash('warning', $this->parameters->getMessages('errors', ['link' => 'invalid']));
         return $this->redirectToRoute('home');
 
@@ -177,27 +176,27 @@ class RegistrationController extends AbstractController
         $form = $this->createForm(ResetForm::class);
         $form->handleRequest($request);
         if ($form->isSubmitted() === true && $form->isValid() === true) {
-           if ($user = $entityManager->getRepository(Users::class)->findOneBy(['name' => $form->get('name')->getData()])) {
+            if ($user = $entityManager->getRepository(Users::class)->findOneBy(['name' => $form->get('name')->getData()])) {
                 // If Account not confirmed.
-               if ($user->getConfirmationDate() === null ) {
+                if ($user->getConfirmationDate() === null ) {
                     $this->addFlash('warning', $this->parameters->getMessages('feedback', ['user' => 'before']));
                     return $this->redirectToRoute('home');
-               }
+                }
 
-               $token = hash('md5',uniqid(true));
-               $user->setToken($token);
-               $user->setSendLink(new DateTime());
-               $entityManager->persist($user);
-               $entityManager->flush();
-               try {
+                $token = hash('md5',uniqid(true));
+                $user->setToken($token);
+                $user->setSendLink(new DateTime());
+                $entityManager->persist($user);
+                $entityManager->flush();
+                try {
                     $mail->sendEmail(to: $user->getEmail(), subject : $this->parameters->getMailParameters($this->parameters::RESET)['sujet'], template: $this->parameters->getMailParameters($this->parameters::RESET)['template'], context:['mail' => $user->getEmail(), 'token' => $token, 'route' => $this->parameters->getMailParameters($this->parameters::RESET)['route']]);
                 } catch (TransportExceptionInterface $e) {
                     $this->addFlash('warning', $e);
                     return $this->redirectToRoute('reset');
                 }
+
                 $this->addFlash('success', $this->parameters->getMailParameters($this->parameters::RESET)['message']);
                 return $this->redirectToRoute('home');
-
             }
 
             $this->addFlash('danger', $this->parameters->getMessages('feedback', ['user' => 'unknown']));
@@ -250,7 +249,7 @@ class RegistrationController extends AbstractController
                     $this->addFlash('danger', $this->parameters->getMessages('errors', ['link' => 'invalid']));
                     return $this->redirectToRoute('app_login');
                 }
-                // Expired link
+                // Expired link.
                 $token = hash('md5',uniqid(true));
                 $user->setToken($token);
                 $user->setSendLink(new DateTime());

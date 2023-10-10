@@ -1,33 +1,31 @@
 const addFormToCollection = (e) => {
-    const collectionHolder = document.querySelector('.' + e.currentTarget.dataset.collectionHolderClass);
-    if( document.querySelectorAll('div.videos > p').length > 4){
-      return
+	const collectionHolder = document.querySelector('.' + e.currentTarget.dataset.collectionHolderClass)
+    if (document.querySelectorAll("div.videos > p").length > 4) {
+		return
     }
-    const item = document.createElement('p');
-    item.innerHTML = collectionHolder
-      .dataset
-      .prototype
-      .replace(
-        /__name__/g,
-        collectionHolder.dataset.index
-      );
-    collectionHolder.appendChild(item);
-    collectionHolder.dataset.index++;
-};
 
-document.querySelectorAll('.add_item_link')
-.forEach(btn => {
+    const item = document.createElement("p");
+    item.innerHTML = collectionHolder
+	.dataset
+	.prototype
+	.replace(/__name__/g, collectionHolder.dataset.index )
+	collectionHolder.appendChild(item);
+	collectionHolder.dataset.index++;
+}
+
+document.querySelectorAll(".add_item_link").forEach(btn => {
     btn.addEventListener("click", addFormToCollection)
 });
 
 
-const targets = document.querySelectorAll('.d-none')
-const button = document.querySelector('#hide')
-const classes = ['d-none', "d-sm-block"]
+
+const targets = document.querySelectorAll(".d-none")
+const button = document.querySelector("#hide")
+const classes = ["d-none", "d-sm-block"]
 
 responsive(classes)
 
-window.addEventListener('resize', (e)=>{
+window.addEventListener("resize", (e) => {
   responsive(classes)
 })
 
@@ -66,15 +64,15 @@ function responsive (classes) {
 /**
  * Get down to the tricks by clicking the arrow
  */
-const headerHeight = document.querySelector('.subnav')
-const navToAdd = document.querySelector('.navbar')
+const headerHeight = document.querySelector(".subnav")
+const navToAdd = document.querySelector(".navbar")
 if (headerHeight !== null && navToAdd !== null) {
     const height = headerHeight.clientHeight
     const add = navToAdd.clientHeight
-    const arrow = document.querySelector('.arrow')
+    const arrow = document.querySelector(".arrow")
     const total = height+add
     if(arrow !== null) {
-        arrow.addEventListener('click', (e) => {
+        arrow.addEventListener("click", (e) => {
             e.preventDefault();
             this.show(total)
         })
@@ -86,9 +84,12 @@ if (headerHeight !== null && navToAdd !== null) {
     })
     }
 }
-const up = document.querySelector('.up')
+/**
+ * Go straight up to the top of the window
+ */
+const up = document.querySelector(".up")
 if(up !== null) {
-    up.addEventListener('click', ()=>{
+    up.addEventListener("click", () => {
         window.scroll(0, 0)
     })
 }

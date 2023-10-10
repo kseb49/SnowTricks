@@ -17,13 +17,20 @@ class PasswordForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options) :void
     {
         $builder
-        ->add('password', RepeatedType::class,[
-            'type' => PasswordType::class,
-            'first_options'  => ['label' => 'Mot de passe'],
-            'second_options' => ['label' => 'Répétez votre mot de passe'],
-            'attr' => ['autocomplete' => 'new-password'],
-            'constraints' => [ new NotBlank(), new Length(['min' => 6])]
-        ]);
+        ->add(
+            'password',
+            RepeatedType::class,
+            [
+                'type' => PasswordType::class,
+                'first_options'  => ['label' => 'Mot de passe'],
+                'second_options' => ['label' => 'Répétez votre mot de passe'],
+                'attr' => ['autocomplete' => 'new-password'],
+                'constraints' => [
+                    new NotBlank(),
+                    new Length(['min' => 6])
+                ]
+            ]
+        );
 
     }
 

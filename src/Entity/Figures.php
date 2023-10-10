@@ -15,6 +15,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[UniqueEntity(fields: ['name'], message: 'Cette figure existe déjà')]
 class Figures
 {
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -63,6 +64,7 @@ class Figures
         $this->update_date = null;
         $this->messages = new ArrayCollection();
     }
+
 
     public function getVideos(): Collection
     {
@@ -122,7 +124,7 @@ class Figures
         return $this->creation_date;
     }
 
-    public function setCreationDate(\DateTimeInterface $creation_date = new DateTime()): static
+    public function setCreationDate(\DateTimeInterface $creation_date= new DateTime()): static
     {
         $this->creation_date = $creation_date;
 
@@ -222,7 +224,7 @@ class Figures
     public function removeMessage(Messages $message): static
     {
         if ($this->messages->removeElement($message)) {
-            // set the owning side to null (unless already changed)
+            // Set the owning side to null (unless already changed).
             if ($message->getFigures() === $this) {
                 $message->setFigures(null);
             }

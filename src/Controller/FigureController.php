@@ -33,6 +33,7 @@ class FigureController extends AbstractController
 
     public function __construct(public Parameters $parameters)
     {
+
     }
 
 
@@ -40,10 +41,10 @@ class FigureController extends AbstractController
     /**
     * Page of a single trick
     *
-    * @param Request $request Http Request
-    * @param Figures $figures Figure entity
+    * @param Request                $request Http Request
+    * @param Figures                $figures Figure entity
     * @param EntityManagerInterface $entityManager Entitymanager Interface
-    * @param MessagesRepository $messageRepository MessageRepository
+    * @param MessagesRepository     $messageRepository MessageRepository
     * @return Response
     */
     public function details(Request $request, Figures $figures, EntityManagerInterface $entityManager, MessagesRepository $messagesRepository) :Response
@@ -52,6 +53,7 @@ class FigureController extends AbstractController
             $this->addFlash('danger', $this->parameters->getMessages('errors', ['unknown' => 'message']));
             return $this->redirectToRoute('home');
         }
+
         // Comment form.
         $message = new Messages();
         $form = $this->createForm(AddMessagesForm::class, $message);
@@ -78,14 +80,14 @@ class FigureController extends AbstractController
     #[Route('/creation-figure', name:'create', priority: 1)]
     #[IsGranted('ROLE_USER', message:"Veuillez confirmer votre compte")]
     /**
-     * Create a trick
-     *
-     * @param Request $request
-     * @param EntityManagerInterface $entityManager
-     * @param ImageManager $upload Imagemanager service
-     * @param SluggerInterface $slugger
-     * @return Response
-     */
+    * Create a trick
+    *
+    * @param Request                $request
+    * @param EntityManagerInterface $entityManager
+    * @param ImageManager           $upload Imagemanager
+    * @param SluggerInterface       $slugger
+    * @return Response
+    */
     public function create(Request $request, EntityManagerInterface $entityManager, ImageManager $upload, SluggerInterface $slugger) :Response
     {
         $figure = new Figures();
@@ -95,7 +97,7 @@ class FigureController extends AbstractController
             $image = $form->get('images')->getData();
             if ($image) {
                 foreach ($image as $value) {
-                    if (count($figure->getImages()) == $this->getParameter('IMAGES_MAX')) {
+                    if (count($figure->getImages()) === $this->getParameter('IMAGES_MAX')) {
                         break;
                     }
                     try {
@@ -108,7 +110,7 @@ class FigureController extends AbstractController
                     $figure->addImage($picture);
                 }
             } else {
-                // set the default image.
+                // Set the default image.
                 $picture = new Images;
                 $picture->setImageName($this->getParameter('FIGURE_IMG'));
                 $figure->addImage($picture);
@@ -116,7 +118,7 @@ class FigureController extends AbstractController
             $videos = $form->get('videos')->getData();
             if ($videos) {
                 foreach ($videos as $value) {
-                    if (count($figure->getVideos()) == $this->getParameter('VIDEOS_MAX')) {
+                    if (count($figure->getVideos()) === $this->getParameter('VIDEOS_MAX')) {
                         break;
                     }
                     if ($this->check($figure->getVideos(), $value->getSrc(), 'src') !== true) {
@@ -138,9 +140,9 @@ class FigureController extends AbstractController
             return $this->redirectToRoute('home');
         }
 
-    return $this->render(
-        'edition/new_figure.html.twig',
-        ['figure_form' => $form]);
+        return $this->render(
+            'edition/new_figure.html.twig',
+            ['figure_form' => $form]);
 
     }
 
@@ -158,7 +160,7 @@ class FigureController extends AbstractController
         $figure = $entityManager->getRepository(Figures::class)->find($id);
         $form = $this->createForm(EditFigureForm::class, $figure);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() === true && $form->isValid() === true) {
             $figure->setUpdateDate(new DateTime());
             $figure->setSlug(strtolower($slugger->slug($form->get('name')->getData())));
             $entityManager->persist($figure);
@@ -190,7 +192,7 @@ class FigureController extends AbstractController
         }
         $submittedToken = $request->request->get('token');
         if ($this->isCsrfTokenValid('delete-item', $submittedToken)) {
-            //Delete the file
+            // Delete the file
             foreach ($figures->getImages() as $value) {
                 if ($value->getImageName() !== $this->getParameter('FIGURE_IMG')) {
                     $manager->delete('figures_directory',$value->getImageName());
