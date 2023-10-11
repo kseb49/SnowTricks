@@ -1,6 +1,6 @@
 const addFormToCollection = (e) => {
 	const collectionHolder = document.querySelector('.' + e.currentTarget.dataset.collectionHolderClass)
-    if (document.querySelectorAll("div.videos > p").length > 4) {
+    if (document.querySelectorAll("div.videos > p").length >= 4) {
 		return
     }
 
