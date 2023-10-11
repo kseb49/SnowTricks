@@ -118,13 +118,16 @@ class FigureController extends AbstractController
             $videos = $form->get('videos')->getData();
             if ($videos) {
                 foreach ($videos as $value) {
-                    if (count($figure->getVideos()) >= $this->getParameter('VIDEOS_MAX')) {
-                        break;
-                    }
-                    if ($this->check($figure->getVideos(), $value->getSrc(), 'src') !== true) {
-                        $embed = new Videos;
-                        $embed->setSrc($value->getSrc());
-                        $figure->addVideos($embed);
+                    // Case of empties inputs.
+                    if ($value->getSrc() !== null) {
+                        if (count($figure->getVideos()) >= $this->getParameter('VIDEOS_MAX')) {
+                            break;
+                        }
+                        if ($this->check(collection:$figure->getVideos(), subject:$value->getSrc(), param:'src') !== true) {
+                            $embed = new Videos;
+                            $embed->setSrc($value->getSrc());
+                            $figure->addVideos($embed);
+                        }
                     }
                 }
             }

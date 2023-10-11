@@ -16,14 +16,15 @@ trait CheckTrait
      * @param string     $param Name of the param
      * @return bool true on a match, false otherwise
      */
-    private function check(Collection $collection, string $subject, string $param) :bool
+    private function check(Collection $collection, ?string $subject = null, string $param) :bool
     {
-        $param = 'get'.ucfirst($param);
-        foreach ($collection as $src) {
-            if ($src->$param() === $subject) {
-                return true;
+        if($subject !== null) {
+            $param = 'get'.ucfirst($param);
+            foreach ($collection as $src) {
+                if ($src->$param() === $subject) {
+                    return true;
+                }
             }
-
         }
         return false;
 

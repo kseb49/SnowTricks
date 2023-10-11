@@ -23,10 +23,12 @@ class Figures
 
     #[ORM\Column(length: 100, unique:true)]
     #[Assert\NotBlank]
+    #[Assert\NotNull]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank]
+    #[Assert\NotNull]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]

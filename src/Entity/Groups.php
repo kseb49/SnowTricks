@@ -2,8 +2,9 @@
 
 namespace App\Entity;
 
-use App\Repository\GroupsRepository;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\GroupsRepository;
 
 #[ORM\Entity(repositoryClass: GroupsRepository::class)]
 #[ORM\Table(name: '`groups`')]
@@ -16,6 +17,8 @@ class Groups
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
+    #[Assert\NotBlank]
+    #[Assert\NotNull]
     private ?string $group_name = null;
 
 

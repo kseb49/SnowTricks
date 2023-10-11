@@ -17,6 +17,7 @@ class Videos
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
+    #[Assert\NotNull]
     private ?string $src = null;
 
 

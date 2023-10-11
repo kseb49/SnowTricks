@@ -11,11 +11,13 @@ use Symfony\Component\Validator\Constraints\All;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 class FigureForm extends AbstractType
 {
@@ -44,7 +46,8 @@ class FigureForm extends AbstractType
                 "label" => "Description",
                 'constraints' => [
                     new Length(
-                        ['min' => 50]
+                        ['min' => 50,
+                        'max' => 25000]
                     )
                 ]
             ]
@@ -56,8 +59,11 @@ class FigureForm extends AbstractType
                 'class' => Groups::class,
                 'choice_label' => 'group_name',
                 'label' => 'A quel groupe appartient ce trick?',
-                'required' => true,
-            ]
+                "constraints" => [
+                    new NotNull(['message' => 'Votre figure doit avoir une catégorie']),
+                    new NotBlank(),
+                ],
+            ],
         )
         ->add(
             'videos',
@@ -77,9 +83,9 @@ class FigureForm extends AbstractType
             [
                 'mapped' => false,
                 'help' => 'Une ou plusieurs images pour illustrer la figure',
-                'required' => false,
                 'multiple' => true,
                 'label' => "Images d'illustrations",
+                'attr' => ['class' => 'fileInput'],
                 'constraints' => [
                     new All(
                         [
@@ -107,7 +113,13 @@ class FigureForm extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(['data_class' => Figures::class]);
+        $resolver->setDefaults(
+            [
+                'data_class' => Figures::class,
+                'attr' => [
+                    'novalidate' => 'novalidate', // comment me to reactivate the html5 validation!
+                ],
+            ]);
 
     }
 
