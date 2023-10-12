@@ -23,12 +23,18 @@ class RegistrationFormType extends AbstractType
             ->add(
                 'name',
                 TextType::class,
-                ["label" => "Nom"],
+                [
+                    "label" => "Nom",
+                    'required' => false,
+                ],
             )
             ->add(
                 'email',
                 EmailType::class,
-                ["label" => "Adresse email"],
+                [
+                    "label" => "Adresse email",
+                    'required' => false,
+                ],
             )
             ->add(
                 'photo',
@@ -58,6 +64,7 @@ class RegistrationFormType extends AbstractType
                 RepeatedType::class,
                 [
                     'type' => PasswordType::class,
+                    'required' => false,
                     'first_options'  => ['label' => 'Mot de passe'],
                     'second_options' => ['label' => 'Répétez votre mot de passe'],
                     'attr' => ['autocomplete' => 'new-password'],
@@ -69,7 +76,13 @@ class RegistrationFormType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults([ 'data_class' => Users::class]);
+        $resolver->setDefaults(
+            [
+                'data_class' => Users::class,
+                // Comment me to reactivate the html5 validation!.
+                'attr' => ['novalidate' => 'novalidate'],
+            ]
+        );
 
     }
 

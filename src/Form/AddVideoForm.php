@@ -3,14 +3,10 @@
 namespace App\Form;
 
 use App\Entity\Figures;
-use App\Entity\Videos;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\UrlType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
 
 
 class AddVideoForm extends AbstractType
@@ -30,6 +26,7 @@ class AddVideoForm extends AbstractType
                 'by_reference' => false,
                 'allow_delete' => true,
                 'entry_options' => ['label' => false],
+                'required' => false,
             ]
         );
 

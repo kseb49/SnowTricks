@@ -26,6 +26,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 180, unique: true)]
     #[Assert\Email]
     #[Assert\NotBlank]
+    #[Assert\NotNull]
     #[Assert\Length(
         min: 10,
         max: 180,
@@ -47,10 +48,12 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
         minMessage: 'Votre mot de passe doit faire {{ limit }} caractères minimum'
     )]
     #[Assert\Type('string')]
+    #[Assert\NotNull]
     private ?string $password = null;
 
     #[ORM\Column(length: 100, unique: true)]
     #[Assert\NotBlank]
+    #[Assert\NotNull]
     #[Assert\Type('string')]
     #[Assert\Length(
         min: 3,

@@ -54,32 +54,31 @@ class VideosController extends AbstractController
             $videos = $form->get('videos')->getData();
             if ($videos) {
                 foreach ($videos as $value) {
-                    // The maximum number of videos allowed.
-                    if (count($figure->getVideos()) >= $this->getParameter('VIDEOS_MAX')) {
-                        $this->addFlash('warning', $this->parameters->getMessages('errors', ['max_reach' => 'videos']));
-                        return $this->redirectToRoute('figuresdetails', ["slug" => $figure->getSlug()]);
-                    }
-
-                    // Avoid duplicate videos.
-                    if (count($figure->getVideos()) > 0) {
-                        if ($this->check($figure->getVideos(), $value->getSrc(), 'src') === true) {
-                            $this->addFlash('danger', $this->parameters->getMessages('errors', ['videos' => 'used']));
+                        // The maximum number of videos allowed.
+                        if (count($figure->getVideos()) >= $this->getParameter('VIDEOS_MAX')) {
+                            $this->addFlash('warning', $this->parameters->getMessages('errors', ['max_reach' => 'videos']));
                             return $this->redirectToRoute('figuresdetails', ["slug" => $figure->getSlug()]);
                         }
-                    }
-                    $embed = new Videos;
-                    $embed->setSrc($value->getSrc());
-                    $figure->addVideos($embed);
-                    $entityManager->persist($figure);
-                    $entityManager->flush();
-                }
 
+                        // Avoid duplicate videos.
+                        if (count($figure->getVideos()) > 0) {
+                            if ($this->check($figure->getVideos(), $value->getSrc(), 'src') === true) {
+                                $this->addFlash('danger', $this->parameters->getMessages('errors', ['videos' => 'used']));
+                                return $this->redirectToRoute('figuresdetails', ["slug" => $figure->getSlug()]);
+                            }
+                        }
+                        $embed = new Videos;
+                        $embed->setSrc($value->getSrc());
+                        $figure->addVideos($embed);
+                        $entityManager->persist($figure);
+                        $entityManager->flush();
+                }
                 $this->addFlash('success', $this->parameters->getMessages('feedback', ['success' => 'videos']));
                 return $this->redirectToRoute('home');
-
             }
+            $this->addFlash('danger', $this->parameters->getMessages('feedback', ['edit' => 'missing']));
+            return $this->render('edition/add_video_form.html.twig', ['form' => $form, 'figure' => $figure]);
         }
-
         return $this->render('edition/add_video_form.html.twig', ['form' => $form, 'figure' => $figure]);
 
     }
@@ -94,7 +93,7 @@ class VideosController extends AbstractController
      * @param integer                $video_id The video id
      * @return Response
      */
-    #[Route('/modification-video/{id}/{video_id}',name:'edit_video')]
+    #[Route('/modification-video/{id}/{video_id}', name:'edit_video')]
     #[IsGranted('ROLE_USER', message:"Veuillez confirmer votre compte")]
     public function editVideo(Request $request, EntityManagerInterface $entityManager, int $id, int $video_id) :Response
     {
@@ -113,17 +112,21 @@ class VideosController extends AbstractController
 
                 }
             }
-
-            $video->setSrc($form->get('src')->getData());
-            $entityManager->persist($video);
-            $entityManager->flush();
-            $this->addFlash('success',$this->parameters->getMessages('feedback', ['edit' => 'message']));
-            return $this->redirectToRoute('home');
+            if ($form->get('src')->getData() !== null) {
+                $video->setSrc($form->get('src')->getData());
+                $entityManager->persist($video);
+                $entityManager->flush();
+                $this->addFlash('success',$this->parameters->getMessages('feedback', ['edit' => 'message']));
+                return $this->redirectToRoute('home');
+            }
+            $this->addFlash('danger', $this->parameters->getMessages('feedback', ['edit' => 'missing']));
+            return $this->render('edition/edit_video.html.twig', ['form' => $form, 'figure' => $figure]);
         }
 
         return $this->render('edition/edit_video.html.twig', ['form' => $form, 'figure' => $figure]);
 
     }
+
 
 
     #[Route('/suppression-video/{id}/{video_id}',name:'delete_video')]
