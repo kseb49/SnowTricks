@@ -94,13 +94,22 @@ if(up !== null) {
     })
 }
 
+
 const input = document.querySelector(".fileInput")
 const preview = document.querySelector(".preview")
-// const list = document.createElement("img")
-// list.classList.add(["prev_img"])
-
-input.addEventListener('change', updateImageDisplay)
-
+// Max images allowed
+let lengthAllowed = 5;
+// count existing images if add image page
+if(document.location.href.search(/l=/g) !== -1) {
+    lengthAllowed = 5 - parseInt(location.href.slice(document.location.href.search(/l=/g)+2))
+}
+if (input !== null) {
+    input.addEventListener('change', updateImageDisplay)
+}
+/**
+ * Display the images selected
+ * @returns
+ */
 function updateImageDisplay() {
     while(preview.firstChild) {
         preview.removeChild(preview.firstChild)
@@ -121,13 +130,13 @@ function updateImageDisplay() {
                 const img = document.createElement("img")
                 img.classList.add(["prev_img"])
                 img.src = URL.createObjectURL(file)
-                if(i < 6){
+                if(i < (lengthAllowed+1)){
                     preview.appendChild(img)
                 }
             }
             preview.classList.add('prev_container')
             preview.classList.remove('preview')
-        if(selFiles.length > 5) {
+        if(selFiles.length > lengthAllowed) {
             const para = document.createElement("p")
             para.textContent = "Le nombre d'images autorisées est dépassées. Seules les images affichées seront utilisées";
             para.classList.add('warning', 'prev_text')

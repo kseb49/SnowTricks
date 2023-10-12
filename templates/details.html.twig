@@ -86,7 +86,7 @@
                             <button type="button" class="btn btn-danger m-1 btn-sm" data-toggle="modal" data-target="#deleteModal">🗑️ Supprimer la figure</a>
                         </div>
                         <div class="col-sm-4 text-center">
-                            <a href = {{path('add_image',{trick_id : figures.id})}} type="button" class="btn btn-success m-1 btn-sm">Ajouter une image</a>
+                            <a href = {{path('add_image',{trick_id : figures.id})}}?l={{figures.images|length}} type="button" class="btn btn-success m-1 btn-sm">Ajouter une image</a>
                         </div>
                         <div class="col-sm-4 text-center">
                             <a href ={{path('add_video',{id : figures.id})}} type="button" class="btn btn-success m-1 btn-sm">Ajouter une vidéo</a>
