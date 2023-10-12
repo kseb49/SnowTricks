@@ -169,7 +169,7 @@ class FigureController extends AbstractController
             $entityManager->persist($figure);
             $entityManager->flush();
             $this->addFlash('success',$this->parameters->getMessages('feedback', ['edit' => 'message']));
-            return $this->redirectToRoute('figuresdetails', ['slug' => $figure->getSlug()]);
+            return $this->redirectToRoute('home');
         }
         return $this->render(
             'edition/edit_figure.html.twig',

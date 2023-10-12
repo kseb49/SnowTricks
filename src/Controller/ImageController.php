@@ -74,7 +74,7 @@ class ImageController extends AbstractController
                 }
 
                 $this->addFlash('success', $this->parameters->getMessages('feedback', ['success' => 'image']));
-                return $this->redirectToRoute('figuresdetails',["slug" => $figure->getSlug()]);
+                return $this->redirectToRoute('home');
             }
 
             $this->addFlash('warning', $this->parameters->getMessages('feedback', ['edit' => 'missing']));
@@ -121,7 +121,7 @@ class ImageController extends AbstractController
                 }
 
                 $this->addFlash('success', $this->parameters->getMessages('feedback', ['delete' => 'message']));
-                return $this->redirectToRoute('figuresdetails', ['slug' => $figure->getSlug()]);
+                return $this->redirectToRoute('home');
             }
 
             $this->addFlash('danger', $this->parameters->getMessages('feedback', ['only' => 'image']));
@@ -183,7 +183,7 @@ class ImageController extends AbstractController
                 $entityManager->persist($figure);
                 $entityManager->flush();
                 $this->addFlash('success',$this->parameters->getMessages('feedback',['edit' => 'message']));
-                return $this->redirectToRoute('figuresdetails',['slug' => $figure->getSlug()]);
+                return $this->redirectToRoute('home');
             }
 
             $this->addFlash('warning', $this->parameters->getMessages('feedback', ['edit' => 'missing']));
