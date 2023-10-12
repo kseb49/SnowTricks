@@ -3371,6 +3371,30 @@ textarea.form-control-lg {
   text-decoration: underline;
   color: inherit;
 }
+.preview{
+  display: none;
+}
+.prev_container{
+  display: grid;
+  margin: 5vmax;
+  align-items: center;/*aligns along the block (column) axis*/
+  justify-items: center;
+  grid-template-columns: repeat(5,1fr);
+  width: 80vw;
+}
+.prev_text{
+  grid-column: 1 / span 5;
+  text-align: center;
+}
+.prev_img{
+  width: 100%;
+  height: auto;
+  padding: 2vmax;
+}
+.warning{
+  color: red;
+  text-align: center;
+}
 /*images et videos suivantes
 .thumb_container > .control > .buttons[], <img .media .thumb>
 */
@@ -3507,6 +3531,20 @@ textarea.form-control-lg {
   }
   .premiere{
     width: 90vw;
+  }
+  .prev_container{
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
+  .prev_text{
+    grid-column: 1 / span 2;
+    text-align: center;
+  }
+  .prev_img{
+    width: 100%;
+    height: auto;
+    padding: 2vmax;
+    grid-column: auto;
   }
 }
 @media (min-width: 768px) {

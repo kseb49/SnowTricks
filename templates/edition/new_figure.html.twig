@@ -10,7 +10,6 @@
         {{ form_row(figure_form.description)}}
         {{ form_row(figure_form.groups_id)}}
         <div class="preview">
-            <p>Aucun fichiers sélectionnés</p>
         </div>
         {{ form_row(figure_form.images)}}
         <div class='videos mb-3' data-prototype="{{ form_widget(figure_form.videos.vars.prototype)|e('html_attr') }}"  data-index="{{ figure_form.videos|length > 0 ? figure_form.videos|last.vars.name + 1 : 0 }}">
