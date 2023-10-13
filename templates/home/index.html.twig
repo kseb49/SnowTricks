@@ -28,7 +28,7 @@
             {% endif %}
         {% endfor %}
     {####################}
-        {% for figures in messages | batch(3)%}
+        {% for figures in messages | batch(2)%}
             <div class="row grid" id="comments">
                 {% for key, figure in figures %}
                     {% include 'utils/deletemodal.html.twig' with {name : figure.name, path : 'figuresdelete', id : figure.id} %}

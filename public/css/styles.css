@@ -3361,7 +3361,28 @@ textarea.form-control-lg {
   grid-template-rows: 1fr 15fr;
   grid-template-areas:
   'buttons .'
-  '. .';
+  'title title';
+  margin-top : 1vmin;
+}
+.trick_name{
+  grid-area: title;
+  align-self: center;
+  justify-self: center;
+  font-size: 5rem;
+  text-transform: capitalize;
+  width: 100%;
+  font-family: 'Snowburst One','cursive';
+}
+.groups{
+  font-weight: bold;
+  font-size: 2rem;
+  font-family: 'Snowburst One','cursive';
+}
+.date_{
+  font-style: italic;
+}
+.author{
+  font-weight: bold;
 }
 .neutral_link{
   text-decoration: none;
@@ -3400,10 +3421,12 @@ textarea.form-control-lg {
 */
 .thumb_container{
   display: grid;
-  margin: 50px 10px;
   align-items: center;/*aligns along the block (column) axis*/
   grid-template-columns: repeat(4,1fr);
 }
+/* .marg{
+  margin:0%;
+} */
 .control{
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -3429,6 +3452,7 @@ textarea.form-control-lg {
   grid-template-columns: 1fr 1fr;
   grid-template-areas:
   'mod del';
+  column-gap: 1rem;
 }
 .buttons a{
   text-decoration: none;
@@ -3486,6 +3510,7 @@ textarea.form-control-lg {
 }
 .display{
   width: 90vw;
+  margin-top:2vmax;
 }
 .main{
   /* min-height: 100%;
@@ -3531,6 +3556,11 @@ textarea.form-control-lg {
   }
   .premiere{
     width: 90vw;
+    display: grid;
+    background-position:50%;
+  }
+  .trick_name{
+    font-size: 120%;
   }
   .prev_container{
     grid-template-columns: 1fr 1fr;
