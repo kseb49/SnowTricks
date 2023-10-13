@@ -33,7 +33,7 @@ class Videos
     }
 
 
-    public function setSrc(string $src): static
+    public function setSrc(?string $src): static
     {
         $this->src = $src;
 
