@@ -22,7 +22,7 @@ class ImageForm extends AbstractType
             FileType::class,
             [
                 'mapped' => false,
-                'required' => true,
+                'required' => false,
                 'constraints' => [
                     new File(
                         [

@@ -2,18 +2,6 @@
 {% block body %}
     <div class="container">
         {% include 'utils/deletemodal.html.twig' with {name : figures.name, path : 'figuresdelete', id : figures.id} %}
-        <h1 class="text-center m-5">{{ figures.name }}</h1>
-        <p class="text-center">{{figures.GroupsID.GroupName}}</p>
-        <p>
-          Ajouté le {{figures.CreationDate |date("d/m/y")}} par @{{figures.UsersId.name}}<br>
-            {% if figures.UpdateDate %}
-            Dèrnière mise à jour le {{figures.UpdateDate | date("d/m/y")}}
-            {% endif %}
-        </p>
-        <div class="container">
-            <button type='button' class="btn btn-primary hide display" id="hide">👀 Afficher les medias 👀</button>
-        </div>
-        {# <div class='container'> #}
         {# images #}
         {% for image in figures.images %}
             {% include 'utils/deletemodal.html.twig' with {name : image.ImageName, path :"delete_image", subject : 'image', key : image.Id, id : figures.id} %}
@@ -23,7 +11,8 @@
             {#A la une#}
             {% if loop.first %}
                     <div class="row">
-                        <div class="premiere d-none d-sm-block" style="background-image :url({{asset('images/figures/')}}{{image.ImageName}});">
+                        <div class="premiere d-sm-block" style="background-image :url({{asset('images/figures/')}}{{image.ImageName}});">
+                        <h1 class="text-center m-5 trick_name">{{ figures.name }}</h1>
                             {% if app.user and app.user.id == figures.UsersId.id %}
                                 {% if figures.images|length > 1 %}
                                     <div class="buttons">
@@ -35,9 +24,11 @@
                                     </div>
                                 {% endif %}
                             {% endif %}
-                        {# <img src={{asset('images/figures/')}}{{image.ImageName}} alt="" class="img-fluid big d-none d-sm-block"> #}
                         </div>
                     </div>
+                    <div class="container">
+            <button type='button' class="btn btn-primary hide display" id="hide">👀 Afficher les medias 👀</button>
+        </div>
             {% else %}
                     <div class="control d-none d-sm-block">
                         {% if app.user and app.user.id == figures.UsersId.id %}
@@ -57,11 +48,9 @@
         {% for key, video in figures.videos %}
             {% include 'utils/deletemodal.html.twig' with {name : video.src, path :"delete_video", subject : 'video', key : video.Id, id:figures.Id} %}
                 <div class="control d-none d-sm-block">
-                    {# <div class=""> #}
                         <div class="media footage">
                             <iframe class="" src={{video.src}} title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
                         </div>
-                    {# </div> #}
                     {% if app.user and app.user.id == figures.UsersId.id %}
                         <div class="buttons">
                             {% include 'utils/button.html.twig' with {id : figures.id, display : true, file: video.Id, path : 'edit_video', type:'video'} %}
@@ -80,13 +69,20 @@
                     {% endif %}
                 </div>
             </div>
+            <p class="text-center groups">{{figures.GroupsID.GroupName}}</p>
+        <p class="date_">
+          Ajouté le {{figures.CreationDate |date("d/m/y")}} par <span class="author">@{{figures.UsersId.name}}</span><br>
+            {% if figures.UpdateDate %}
+            Dèrnière mise à jour le {{figures.UpdateDate | date("d/m/y")}}
+            {% endif %}
+        </p>
             {% if app.user and app.user.id == figures.UsersId.id %}
-                <div class="row m-3 p-3 border bg-light">
+                <div class="row m-3 p-3">
                         <div class="col-sm-4 text-center">
                             <button type="button" class="btn btn-danger m-1 btn-sm" data-toggle="modal" data-target="#deleteModal">🗑️ Supprimer la figure</a>
                         </div>
                         <div class="col-sm-4 text-center">
-                            <a href = {{path('add_image',{trick_id : figures.id})}} type="button" class="btn btn-success m-1 btn-sm">Ajouter une image</a>
+                            <a href = {{path('add_image',{trick_id : figures.id})}}?l={{figures.images|length}} type="button" class="btn btn-success m-1 btn-sm">Ajouter une image</a>
                         </div>
                         <div class="col-sm-4 text-center">
                             <a href ={{path('add_video',{id : figures.id})}} type="button" class="btn btn-success m-1 btn-sm">Ajouter une vidéo</a>
@@ -166,19 +162,5 @@
                 </div>
                 {# fin commentaires #}
             </div>
-            {# {% if app.user and app.user.id == figures.UsersId.id %}
-                <div class="col">
-                    <div class="m-2">
-                        <button type="button" class="btn btn-danger m-1 btn-sm" data-toggle="modal" data-target="#deleteModal">🗑️ Supprimer la figure</a>
-                    </div>
-                    <div class="m-2">
-                        <a href = {{path('add_image',{trick_id : figures.id})}} type="button" class="btn btn-success m-1 btn-sm">Ajouter une image</a>
-                    </div>
-                    <div class="m-2">
-                        <a href ={{path('add_video',{id : figures.id})}} type="button" class="btn btn-success m-1 btn-sm">Ajouter une vidéo</a>
-                    </div>
-                </div>
-            </div>
-            {% endif %} #}
     </div>
 {% endblock %}

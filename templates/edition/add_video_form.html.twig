@@ -8,7 +8,7 @@
         {{ form_start(form) }}
             {{ form_errors(form) }}
             <button type="button" class="add_item_link btn btn-secondary" data-collection-holder-class="videos">Cliquer pour ajouter</button>
-            <div class='videos mb-3' data-prototype="{{ form_widget(form.videos.vars.prototype)|e('html_attr') }}"  data-index="{{ form.videos|length > 0 ? form.tags|last.vars.name + 1 : 0 }}">
+            <div class='videos mb-3' data-prototype="{{ form_widget(form.videos.vars.prototype)|e('html_attr') }}"  data-index="{{ form.videos|length > 0 ? form.videos|last.vars.name + 1 : 0 }}">
             </div>
             <button type="submit" class="btn btn-primary mt-5">Valider</button>
         {{ form_end(form) }}

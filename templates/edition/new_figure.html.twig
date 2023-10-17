@@ -9,11 +9,17 @@
         {{ form_row(figure_form.name)}}
         {{ form_row(figure_form.description)}}
         {{ form_row(figure_form.groups_id)}}
+        <div class="preview">
+        </div>
         {{ form_row(figure_form.images)}}
-        <div class='videos mb-3' data-prototype="{{ form_widget(figure_form.videos.vars.prototype)|e('html_attr') }}"  data-index="{{ figure_form.videos|length > 0 ? form.tags|last.vars.name + 1 : 0 }}">
+        <div class='videos mb-3' data-prototype="{{ form_widget(figure_form.videos.vars.prototype)|e('html_attr') }}"  data-index="{{ figure_form.videos|length > 0 ? figure_form.videos|last.vars.name + 1 : 0 }}">
             <button type="button" class="add_item_link btn btn-secondary" data-collection-holder-class="videos">Ajouter une vidéo</button>
         </div>
         <button type="submit" class="btn btn-primary">Créer</button>
     {{ form_end(figure_form) }}
 </div>
 {% endblock %}
+{# <div id=&quot;figure_form_videos___name__&quot;>
+    <div class=&quot;mb-3&quot;><label for=&quot;figure_form_videos___name___src&quot; class=&quot;form-label required&quot;>Liens vers des vidéos you tube</label><input type=&quot;text&quot; id=&quot;figure_form_videos___name___src&quot; name=&quot;figure_form[videos][__name__][src]&quot; required=&quot;required&quot; inputmode=&quot;url&quot; class=&quot;form-control&quot; />     
+    </div>
+</div> #}

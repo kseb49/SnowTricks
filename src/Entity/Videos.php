@@ -17,6 +17,7 @@ class Videos
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
+    #[Assert\NotNull]
     private ?string $src = null;
 
 
@@ -32,7 +33,7 @@ class Videos
     }
 
 
-    public function setSrc(string $src): static
+    public function setSrc(?string $src): static
     {
         $this->src = $src;
 

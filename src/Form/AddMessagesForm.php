@@ -20,7 +20,7 @@ class AddMessagesForm extends AbstractType
             'content',
             TextareaType::class,
             [
-                'required' => true,
+                'required' => false,
                 'help' => "Commenter cette figure",
                 'label' => false,
             ]

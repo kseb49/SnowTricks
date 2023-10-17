@@ -94,3 +94,52 @@ if(up !== null) {
     })
 }
 
+
+const input = document.querySelector(".fileInput")
+const preview = document.querySelector(".preview")
+// Max images allowed
+let lengthAllowed = 5;
+// count existing images if add image page
+if(document.location.href.search(/l=/g) !== -1) {
+    lengthAllowed = 5 - parseInt(location.href.slice(document.location.href.search(/l=/g)+2))
+}
+if (input !== null) {
+    input.addEventListener('change', updateImageDisplay)
+}
+/**
+ * Display the images selected
+ * @returns
+ */
+function updateImageDisplay() {
+    while(preview.firstChild) {
+        preview.removeChild(preview.firstChild)
+    }
+    const selFiles = input.files
+        if (selFiles.length === 0) {
+            const para = document.createElement("p")
+            para.textContent = "Aucun fichiers sélectionnés - Une image par défaut sera insérée";
+            para.classList.add(['prev_text'])
+            preview.appendChild(para);
+            preview.classList.add('prev_container')
+            preview.classList.remove('preview')
+            return
+        }
+        let i = 0;
+            for (const file of selFiles) {
+                i++;
+                const img = document.createElement("img")
+                img.classList.add(["prev_img"])
+                img.src = URL.createObjectURL(file)
+                if(i < (lengthAllowed+1)){
+                    preview.appendChild(img)
+                }
+            }
+            preview.classList.add('prev_container')
+            preview.classList.remove('preview')
+        if(selFiles.length > lengthAllowed) {
+            const para = document.createElement("p")
+            para.textContent = "Le nombre d'images autorisées est dépassées. Seules les images affichées seront utilisées";
+            para.classList.add('warning', 'prev_text')
+            preview.appendChild(para);
+        }
+}

@@ -200,7 +200,7 @@ class RegistrationController extends AbstractController
             }
 
             $this->addFlash('danger', $this->parameters->getMessages('feedback', ['user' => 'unknown']));
-            return $this->redirectToRoute('app_login');
+            return $this->render('security/reset.html.twig', ['form' => $form]);
         }
 
         return $this->render('security/reset.html.twig', ['form' => $form]);

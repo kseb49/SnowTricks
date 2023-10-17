@@ -9,6 +9,8 @@ parameters:
     FIGURE_IMG: '%env(FIGURE_IMG)%'
     IMAGES_MAX: '%env(IMAGES_MAX)%'
     VIDEOS_MAX: '%env(VIDEOS_MAX)%'
+    max_length: '%env(max_photo_length)%'
+
 services:
     # default configuration for services in *this* file
     _defaults:

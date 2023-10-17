@@ -27,6 +27,7 @@ class AddImageForm extends AbstractType
                 'required' => false,
                 'multiple' => true,
                 'label' => "Images d'illustrations",
+                'attr' => ['class' => 'fileInput'],
                 'constraints' => [
                     new All(
                         [

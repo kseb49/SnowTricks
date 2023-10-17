@@ -20,6 +20,7 @@ class Messages
 
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank]
+    #[Assert\NotNull]
     #[Assert\Type('string')]
     #[Assert\Length(
         min: 5,

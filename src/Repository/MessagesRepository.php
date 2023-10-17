@@ -22,7 +22,7 @@ class MessagesRepository extends ServiceEntityRepository
     /**
      * @var int Number of messages requested
      */
-    public const PAGINATOR_PER_PAGE = 5;
+    public const PAGINATOR_PER_PAGE = 10;
 
 
     public function __construct(ManagerRegistry $registry)

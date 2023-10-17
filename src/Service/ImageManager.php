@@ -2,21 +2,22 @@
 
 namespace App\Service;
 
-
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 
-class ImageManager
+class ImageManager extends AbstractController
 {
 
     public function __construct(
         private ParameterBagInterface $targetDirectory,
         private SluggerInterface $slugger,
-    ) 
+    )
     {
     }
+
 
     /**
      * Manage the incoming image - rename and store
@@ -27,10 +28,13 @@ class ImageManager
      */
     public function upload(UploadedFile $image, string $targetDir) :string
     {
-
+        $imgLength = $this->getParameter('max_length');
         $image_name = preg_replace("#[0-9]#", "", pathinfo($image->getClientOriginalName(),PATHINFO_FILENAME));
         $safeFilename = $this->slugger->slug($image_name);
         $new_photo_name =  $safeFilename.'-'.uniqid().'.'.$image->guessExtension();
+        if (strlen($new_photo_name > $imgLength)) {
+            $new_photo_name = substr($new_photo_name, -$imgLength, $imgLength);
+        }
         $image->move($this->getTargetDirectory()->get($targetDir),$new_photo_name);
         return $new_photo_name;
 

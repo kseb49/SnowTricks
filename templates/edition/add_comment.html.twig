@@ -2,12 +2,12 @@
 <div class="container">
 {% if connect  %}
     <h3>Ajouter un commentaire</h3><br>
-{% else %}
- <h3><a href="{{path('app_login')}}" class='neutral_link'>Connectez vous pour commenter</a></h3><br>
- {% endif %}
     {{ form_start(message_form)}}
         {{ form_errors(message_form) }}
         {{ form_row(message_form.content) }}
         <button type="submit" {{connect ? 'class="btn btn-primary"' : 'class="btn btn-secondary" disabled'}}>Commenter</button>
     {{ form_end(message_form) }}
+{% else %}
+ <h3><a href="{{path('app_login')}}" class='neutral_link'>Connectez vous pour commenter</a></h3><br>
+ {% endif %}
 </div>
