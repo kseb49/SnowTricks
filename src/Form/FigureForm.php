@@ -33,8 +33,10 @@ class FigureForm extends AbstractType
                 "label" => "Nom de la figure",
                 'constraints' => [
                     new Length(
-                        ['min' => 3,
-                        'max'  => 100]
+                        [
+                            'min' => 3,
+                            'max'  => 100,
+                        ]
                     )
                 ]
             ]
@@ -46,8 +48,10 @@ class FigureForm extends AbstractType
                 "label" => "Description",
                 'constraints' => [
                     new Length(
-                        ['min' => 50,
-                        'max' => 25000]
+                        [
+                            'min' => 50,
+                            'max' => 25000
+                        ]
                     )
                 ]
             ]
