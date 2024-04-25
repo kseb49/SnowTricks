@@ -53,6 +53,7 @@ Pour une mise en production :
 APP_ENV=prod
 APP_SECRET=!new32characterskey!
 ```
+[Symfony secret](https://symfony.com/doc/current/reference/configuration/framework.html#secret)
 
  Créez la base de données et les tables:
 
