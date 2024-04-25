@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Controller\Trait\LinkTrait;
 use DateTime;
 use App\Entity\Users;
 use App\Form\ResetForm;
@@ -25,6 +26,7 @@ use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 class RegistrationController extends AbstractController
 {
 
+    use LinkTrait;
 
     public function __construct(public Parameters $parameters)
     {
@@ -72,9 +74,7 @@ class RegistrationController extends AbstractController
             );
             $user->setEmail($form->get('email')->getData());
             $user->setName($form->get('name')->getData());
-            $token = hash('md5',uniqid(true));
-            $user->setToken($token);
-            $user->setSendLink(new DateTime());
+            $token = $this->setLink($user);
             $entityManager->persist($user);
             $entityManager->flush();
             // Send email with confirmation link.
@@ -131,9 +131,7 @@ class RegistrationController extends AbstractController
                     );
                 }
                 // * Send a new link if not.
-                $token = hash('md5',uniqid(true));
-                $user->setToken($token);
-                $user->setSendLink(new DateTime());
+                $token = $this->setLink($user);
                 try {
                     $mail->sendEmail(to: $user->getEmail(), subject : $this->parameters->getMailParameters($this->parameters::CONFIRM)['sujet'], template: $this->parameters->getMailParameters($this->parameters::CONFIRM)['template'], context:['mail' => $user->getEmail(), 'token' => $token, 'route' => $this->parameters->getMailParameters($this->parameters::CONFIRM)['route']]);
                 } catch (TransportExceptionInterface $e) {
@@ -183,9 +181,7 @@ class RegistrationController extends AbstractController
                     return $this->redirectToRoute('home');
                 }
 
-                $token = hash('md5',uniqid(true));
-                $user->setToken($token);
-                $user->setSendLink(new DateTime());
+                $token = $this->setLink($user);
                 $entityManager->persist($user);
                 $entityManager->flush();
                 try {
@@ -250,9 +246,7 @@ class RegistrationController extends AbstractController
                     return $this->redirectToRoute('app_login');
                 }
                 // Expired link.
-                $token = hash('md5',uniqid(true));
-                $user->setToken($token);
-                $user->setSendLink(new DateTime());
+                $token = $this->setLink($user);
                 $entityManager->persist($user);
                 $entityManager->flush();
                 try {
