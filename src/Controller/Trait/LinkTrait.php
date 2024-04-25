@@ -18,7 +18,7 @@ trait LinkTrait
      * @param string|null $algo Name of selected hashing algorithm (https://www.php.net/manual/fr/function.hash.php)
      * @return string The token created
      */
-    public function setLink(Users $user, ?string $algo= 'md5') :string
+    public function setLink(Users $user, ?string $algo='md5') :string
     {
 
         $token = hash($algo, uniqid(true));
