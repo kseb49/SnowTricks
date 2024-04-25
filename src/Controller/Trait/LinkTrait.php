@@ -12,6 +12,7 @@ trait LinkTrait
     /**
      * Create and set a token ready to persist
      * Token used to account confirmation or password reset
+     * The creation date is also managed
      *
      * @param Users $user
      * @param string|null $algo Name of selected hashing algorithm (https://www.php.net/manual/fr/function.hash.php)
